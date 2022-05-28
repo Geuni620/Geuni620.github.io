@@ -8,7 +8,6 @@ const POST_ITEM_DATA = {
   categories: ['Web', 'Frontend', 'Testing'],
   summary:
     'Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident repellat doloremque fugit quis rem temporibus! Maxime molestias, suntrem debitis odit harum impedit. Modi cupiditate harum dignissimos eos in corrupti!',
-  thumbnail: 'https://avatars.githubusercontent.com/u/56650238?v=4',
   link: '<https://www.google.co.kr/>',
 }
 
@@ -26,9 +25,7 @@ const PostList: FunctionComponent = function () {
 export default PostList
 
 const PostListWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 20px;
+  display: block;
   width: 768px;
   margin: 0 auto;
   padding: 50px 0 100px;
