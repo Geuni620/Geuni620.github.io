@@ -1,40 +1,9 @@
 import React, { FunctionComponent } from 'react'
 import styled from '@emotion/styled'
 import { Link } from 'gatsby'
+import { PostFrontmatterType } from 'types/PostItem.types'
 
-type PostItemProps = {
-  title: string
-  date: string
-  categories: string[]
-  summary: string
-  thumbnail: string
-  link: string
-}
-
-const PostItem: FunctionComponent<PostItemProps> = function ({
-  title,
-  date,
-  categories,
-  summary,
-  link,
-}) {
-  return (
-    <PostItemWrapper to={link}>
-      <PostItemContent>
-        <Title>{title}</Title>
-        <Date>{date}</Date>
-        <Category>
-          {categories.map(category => (
-            <CategoryItem key={category}>{category}</CategoryItem>
-          ))}
-        </Category>
-        <Summary>{summary}</Summary>
-      </PostItemContent>
-    </PostItemWrapper>
-  )
-}
-
-export default PostItem
+type PostItemProps = PostFrontmatterType & { link: string }
 
 const PostItemWrapper = styled(Link)`
   display: flex;
@@ -105,3 +74,28 @@ const Summary = styled.div`
   font-size: 16px;
   opacity: 0.8;
 `
+
+const PostItem: FunctionComponent<PostItemProps> = function ({
+  title,
+  date,
+  categories,
+  summary,
+  link,
+}) {
+  return (
+    <PostItemWrapper to={link}>
+      <PostItemContent>
+        <Title>{title}</Title>
+        <Date>{date}</Date>
+        <Category>
+          {categories.map(category => (
+            <CategoryItem key={category}>{category}</CategoryItem>
+          ))}
+        </Category>
+        <Summary>{summary}</Summary>
+      </PostItemContent>
+    </PostItemWrapper>
+  )
+}
+
+export default PostItem
