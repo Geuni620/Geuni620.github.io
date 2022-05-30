@@ -11,9 +11,6 @@ export type PostType = {
       summary: string
       date: string
       categories: string[]
-      thumbnail: {
-        publicURL: string
-      }
     }
   }
 }
