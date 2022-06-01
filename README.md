@@ -103,3 +103,30 @@ Looking for more guidance? Full documentation for Gatsby lives [on the website](
 Gatsby Cloud is an end-to-end cloud platform specifically built for the Gatsby framework that combines a modern developer experience with an optimized, global edge network.
 
 <!-- AUTO-GENERATED-CONTENT:END -->
+
+---
+
+<details>
+<summary>220602_slug 에러</summary>
+`Cannot read properties of undefined (reading 'slug')`
+다음과 같은 에러메세지가 떴음
+
+gatsby-node.js
+
+```JS
+// exports.createPages = async ({ actions }) => {
+//   const { createPage } = actions
+//   createPage({
+//     path: '/using-dsg',
+//     component: require.resolve('./src/templates/using-dsg.js'),
+//     context: {},
+//     defer: true,
+//   })
+// }
+```
+
+무슨 의미인지 잘 모르겠으나, 다음과 같이 주석처리하니 다른 에러가 떴음
+
+✓ [참고자료](https://dudghsx.tistory.com/18)
+
+</details>

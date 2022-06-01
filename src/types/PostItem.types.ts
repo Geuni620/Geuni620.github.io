@@ -1,5 +1,3 @@
-import { IGatsbyImageData } from 'gatsby-plugin-image'
-
 export type PostFrontmatterType = {
   title: string
   date: string
@@ -10,6 +8,9 @@ export type PostFrontmatterType = {
 export type PostListItemType = {
   node: {
     id: string
+    fields: {
+      slug: string
+    }
     frontmatter: PostFrontmatterType
   }
 }
