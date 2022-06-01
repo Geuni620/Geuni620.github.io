@@ -3,7 +3,7 @@ import styled from '@emotion/styled'
 import GlobalStyle from 'components/Common/GlobalStyle'
 import Introduction from 'components/Main/Introduction'
 import Footer from 'components/Common/Footer'
-import CategoryList from 'components/Main/CategoryList'
+import CategoryList, { CategoryListProps } from 'components/Main/CategoryList'
 import PostList, { PostType } from 'components/Main/PostList'
 import queryString, { ParsedQuery } from 'query-string'
 import { graphql } from 'gatsby'
@@ -62,7 +62,6 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
             if (list[category] === undefined) list[category] = 1
             else list[category]++
           })
-
           list['All']++
 
           return list
