@@ -109,24 +109,20 @@ Gatsby Cloud is an end-to-end cloud platform specifically built for the Gatsby f
 <details>
 <summary>220602_slug 에러</summary>
 `Cannot read properties of undefined (reading 'slug')`
-다음과 같은 에러메세지가 떴음
+'Error in function eval in ./src/components/Main/PostList.tsx:55'
+다음과 같은 에러메세지가 떴음.
 
-gatsby-node.js
+현재 blog를 만들고 있고 썸네일이 없는게 개인적으론 더 깔끔하다고 생각했음.
+그래서 썸네일을 자체적으로 지운 상태로 작업 중.
 
-```JS
-// exports.createPages = async ({ actions }) => {
-//   const { createPage } = actions
-//   createPage({
-//     path: '/using-dsg',
-//     component: require.resolve('./src/templates/using-dsg.js'),
-//     context: {},
-//     defer: true,
-//   })
-// }
+```
+thumbnail {
+  childImageSharp {
+  gatsbyImageData(width: 768, height: 400)
+  }
+}
 ```
 
-무슨 의미인지 잘 모르겠으나, 다음과 같이 주석처리하니 다른 에러가 떴음
-
-✓ [참고자료](https://dudghsx.tistory.com/18)
+다음과 같은 내용이 query에 속해있어서 에러가 발생했음.
 
 </details>
