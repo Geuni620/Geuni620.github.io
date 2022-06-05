@@ -19,20 +19,6 @@ const PostHeadInfoWrapper = styled.div`
   color: #ffffff;
 `
 
-// 추후 삭제
-const PrevPageIcon = styled.div`
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #ffffff;
-  color: #000000;
-  font-size: 22px;
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-`
-
 const Title = styled.div`
   margin-top: 20px;
   color: black;
@@ -55,13 +41,8 @@ const PostHeadInfo: FunctionComponent<PostHeadInfoProps> = function ({
   date,
   categories,
 }) {
-  const goBackPage = () => window.history.back()
-
   return (
     <PostHeadInfoWrapper>
-      <PrevPageIcon onClick={goBackPage}>
-        <FontAwesomeIcon icon={faArrowLeft} />
-      </PrevPageIcon>
       <Title>{title}</Title>
       <PostData>
         <div>{categories.join(' / ')}</div>
