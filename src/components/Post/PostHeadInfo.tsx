@@ -1,7 +1,5 @@
 import React, { FunctionComponent } from 'react'
 import styled from '@emotion/styled'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 
 export type PostHeadInfoProps = {
   title: string
@@ -13,7 +11,7 @@ const PostHeadInfoWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 768px;
-  height: 100%;
+  /* height: 100%; */
   margin: 0 auto;
   padding: 60px 0;
   color: #ffffff;

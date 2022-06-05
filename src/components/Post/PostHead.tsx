@@ -16,7 +16,6 @@ type PostHeadProps = PostHeadInfoProps & {
 const PostHeadWrapper = styled.div`
   position: relative;
   width: 100%;
-  height: 400px;
 `
 
 const BackgroundImage = styled((props: GatsbyImgProps) => (
