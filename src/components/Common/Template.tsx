@@ -18,7 +18,7 @@ const Template: FunctionComponent<TemplateProps> = function ({ children }) {
     <Container>
       <GlobalStyle />
       {children}
-      <Footer />
+      {/* <Footer /> */}
     </Container>
   )
 }
