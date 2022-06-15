@@ -29,4 +29,14 @@ thumbnail {
 
 </details>
 
-<!-- AUTO-GENERATED-CONTENT:END -->
+<details>
+<summary>220616_자동배포 설정 에러</summary>
+인프런에 나와있는 강의는 main을 build하고 dev branch를 관리함.
+하지만 main을 build 하고나니, repo에 들어왔을 때 build 파일명으로 먹히는데 깔끔하지 못했음.
+
+그래서 gh-pages를 build 하고, main을 블로그 관리용으로 쓰고 싶음.
+하지만, 배포과정이 까다로움,,, 무엇때문인지 모르겠지만 main에 push 한 후 빌드과정에서 에러가 발생함.
+
+현재는 수정중,,, 작업은 자동배포로 설정해보고 있음.
+
+</details>
