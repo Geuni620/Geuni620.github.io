@@ -3,7 +3,7 @@ module.exports = {
     title: `이근휘 블로그`,
     description: `주로 저의 생각을 정리합니다.`,
     author: `이근휘`,
-    siteUrl: 'https://my-website-link.com', // 배포 후 변경 예정
+    siteUrl: 'https://geuni620.github.io/',
   },
   plugins: [
     {
@@ -22,7 +22,7 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-canonical-urls',
       options: {
-        siteUrl: '<https://my-website.com/>',
+        siteUrl: 'https://geuni620.github.io/',
         stripQueryString: true,
       },
     },
