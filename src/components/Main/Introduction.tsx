@@ -14,10 +14,7 @@ const Introduction: FunctionComponent<IntroductionProps> = function ({
     <Background>
       <Wrapper>
         <ProfileImage profileImage={profileImage} />
-        <div>
-          <SubTitle>Hi there 🙌</SubTitle>
-          <Title>I'm Junior Frontend Developer Geuni620.</Title>
-        </div>
+        <Title>이근휘블로그</Title>
       </Wrapper>
     </Background>
   )
@@ -33,32 +30,22 @@ const Background = styled.div`
 
 const Wrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  width: 768px;
-  height: 400px;
   margin: 0 auto;
+  padding: 10px 50px;
 
   @media (max-width: 768px) {
     width: 100%;
-    height: 300px;
     padding: 0 20px;
   }
 `
 
-const SubTitle = styled.div`
-  font-size: 20px;
-  font-weight: 400;
-
-  @media (max-width: 768px) {
-    font-size: 15px;
-  }
-`
-
 const Title = styled.div`
-  margin-top: 5px;
-  font-size: 35px;
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 5px;
+  font-size: 30px;
   font-weight: 700;
 
   @media (max-width: 768px) {
