@@ -23,7 +23,7 @@ jobs:
           GH_API_KEY: ${{ secrets.ACCESS_TOKEN }}
 
       - name: deploy
-        uses: maxheld83/ghpages@v0.2.1
+        uses: peaceiris/actions-gh-pages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_PAT: ${{ secrets.ACCESS_TOKEN }}
