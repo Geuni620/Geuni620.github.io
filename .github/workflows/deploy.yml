@@ -1,37 +1,30 @@
-name: Deployment
+name: gatsby deploy
 
-  on:
-    push:
-      branches:
-        - main
+# main에 push 할때마다 아래 작업을 실행
+on:
+  push:
+    branches: [main]
 
 jobs:
-  update:
+  deploy:
+    name: deploy
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - name: Set up Node.js
-        uses: actions/setup-node@master
-        with:
-          node-version: 12.x
-      - name: Cache node_modules
-        uses: actions/cache@v1
-        with:
-          path: node_modules
-          key: ${{runner.OS}}-build-${{hashFiles('**/yarn.lock')}}
-          restore-keys: |
-            ${{ runner.OS }}-build-${{ runner.OS }}-
-      - name: Install dependencies
-        run: yarn install --prod --pure-lockfile
 
-      - name: Build
-        run: yarn run build
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+
+      - name: packages install
+        run: yarn install
+
+      - name: gatsby build
+        run: yarn build
         env:
-          NODE_ENV: production
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v2.5.0
+          GH_API_KEY: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: deploy
+        uses: maxheld83/ghpages@v0.2.1
         env:
-          PERSONAL_TOKEN: ${{secrets.GH_PAT}}
-          PUBLISH_BRANCH: master
-          PUBLISH_DIR: ./public
-          SCRIPT_MODE: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_PAT: ${{ secrets.ACCESS_TOKEN }}
+          BUILD_DIR: 'public/'
