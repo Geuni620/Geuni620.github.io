@@ -31,3 +31,11 @@ summary: '-'
 * 테스트 코드를 작성하는 이유는 build시간과도 관련이 있음.
   - 테스트 하지 않은 코드를 build하고, 문제가 발생했다면 다시 build 해야함
   - 하지만 테스트 코드를 작성했을 시 이런 번복사항을 줄일 수 있음.
+
+<br>
+
+---
+
+## 2022-11-18 (금)
+
+[react-hook-form을 선택한 이유와 적용 과정](https://tech.inflab.com/202207-rallit-form-refactoring/react-hook-form/)
