@@ -7,8 +7,8 @@ type ProfileImageProps = {
 }
 
 const ProfileImageWrapper = styled(GatsbyImage)`
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   padding: 5px;
   border-radius: 50%;
   display: flex;

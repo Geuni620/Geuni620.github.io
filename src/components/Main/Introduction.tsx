@@ -1,54 +1,79 @@
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, useEffect, useState } from 'react'
 import styled from '@emotion/styled'
 import { IGatsbyImageData } from 'gatsby-plugin-image'
 import ProfileImage from 'components/Main/ProfileImage'
 
-type IntroductionProps = {
+type HeaderProps = {
   profileImage: IGatsbyImageData
 }
 
-const Introduction: FunctionComponent<IntroductionProps> = function ({
-  profileImage,
-}) {
+const Header: FunctionComponent<HeaderProps> = function ({ profileImage }) {
+  const [previousScrollY, setPreviousScrollY] = useState(0)
+  const [visible, setVisible] = useState(true)
+
+  const detectScrollDirection = () => {
+    const currentScrollY = window.scrollY
+
+    if (previousScrollY > currentScrollY) {
+      //scroll up
+      setVisible(true)
+    } else if (previousScrollY < currentScrollY && 400 <= currentScrollY) {
+      // scroll down
+      setVisible(false)
+    }
+
+    setPreviousScrollY(window.scrollY)
+
+    console.log(visible, previousScrollY, window.scrollY)
+  }
+
+  useEffect(() => {
+    window.addEventListener('scroll', detectScrollDirection)
+
+    return () => window.removeEventListener('scroll', detectScrollDirection)
+  }, [previousScrollY])
+
   return (
-    <Background>
+    <Background isVisible={visible}>
       <Wrapper>
         <ProfileImage profileImage={profileImage} />
-        <Title>이근휘블로그</Title>
       </Wrapper>
     </Background>
   )
 }
 
-export default Introduction
+export default Header
 
-const Background = styled.div`
+interface VisibleProps {
+  isVisible: boolean
+}
+
+const Background = styled.header<VisibleProps>`
+  position: fixed;
   width: 100%;
-  background-image: linear-gradient(60deg, #29323c 0%, #485563 100%);
+  top: ${({ isVisible }) => (isVisible ? 0 : -70)}px;
+  left: 0;
+
   color: #ffffff;
+  backdrop-filter: blur(5px);
+  box-shadow: rgb(0 0 0 / 8%) 0px 0px 8px;
+  opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
+
+  transition: top 0.5s ease 0s, opacity 0.5s ease 0s;
+  z-index: 999;
+
+  @media (max-width: 768px) {
+    /**@todo 작성할 것 */
+  }
 `
 
 const Wrapper = styled.div`
   display: flex;
   margin: 0 auto;
-  padding: 10px 50px;
+  padding: 10px 60px;
 
   @media (max-width: 768px) {
     width: 100%;
     padding: 0 20px;
-  }
-`
-
-const Title = styled.div`
-  height: 45px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-left: 5px;
-  font-size: 30px;
-  font-weight: 700;
-
-  @media (max-width: 768px) {
-    font-size: 25px;
   }
 `
