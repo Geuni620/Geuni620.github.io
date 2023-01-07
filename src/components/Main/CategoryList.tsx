@@ -1,7 +1,6 @@
 import React, { FunctionComponent, ReactNode } from 'react'
 import styled from '@emotion/styled'
 import { Link } from 'gatsby'
-import { GatsbyImage } from 'gatsby-plugin-image/dist/src/components/gatsby-image.browser'
 
 type CategoryItemProps = {
   active: boolean
@@ -32,7 +31,7 @@ const CategoryList: FunctionComponent<CategoryListProps> = function ({
           key={name}
           to={`/?category=${name}`}
         >
-          #{name}({count})
+          {name}({count})
         </CategoryItem>
       ))}
     </CategoryListWrapper>
@@ -45,7 +44,7 @@ const CategoryListWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   width: 768px;
-  margin: 100px auto 0;
+  margin: 100px auto 20px;
 `
 
 const CategoryItem = styled(({ active, ...props }: GatsbyLinkProps) => (
@@ -59,5 +58,9 @@ const CategoryItem = styled(({ active, ...props }: GatsbyLinkProps) => (
 
   &:last-of-type {
     margin-right: 0;
+  }
+
+  &:hover {
+    text-decoration: underline;
   }
 `
