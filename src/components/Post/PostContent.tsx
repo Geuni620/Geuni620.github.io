@@ -11,16 +11,17 @@ const MarkdownRenderer = styled.div`
   flex-direction: column;
   width: 768px;
   margin: 0 auto;
+  padding-bottom: 50px;
   word-break: break-all;
 
   // Markdown Style
-  line-height: 1.8;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 400;
 
   // Apply Padding Attribute to All Elements
   p {
     padding: 3px 0;
+    margin-bottom: 16px;
   }
 
   // Adjust Heading Element Style
@@ -34,7 +35,7 @@ const MarkdownRenderer = styled.div`
   * + h1,
   * + h2,
   * + h3 {
-    margin-top: 80px;
+    margin-top: 50px;
   }
 
   hr + h1,
@@ -44,15 +45,15 @@ const MarkdownRenderer = styled.div`
   }
 
   h1 {
-    font-size: 30px;
+    font-size: 50px;
   }
 
   h2 {
-    font-size: 25px;
+    font-size: 40px;
   }
 
   h3 {
-    font-size: 20px;
+    font-size: 30px;
   }
 
   // Adjust Quotation Element Style
@@ -67,7 +68,7 @@ const MarkdownRenderer = styled.div`
   ol,
   ul {
     margin-left: 20px;
-    padding: 30px 0;
+    margin-bottom: 16px;
   }
 
   // Adjust Horizontal Rule style
@@ -78,8 +79,7 @@ const MarkdownRenderer = styled.div`
 
   // Adjust Link Element Style
   a {
-    color: #4263eb;
-    text-decoration: underline;
+    color: #0687f0;
   }
 
   // Adjust Code Style
@@ -97,6 +97,9 @@ const MarkdownRenderer = styled.div`
   code[class*='language-'],
   pre[class*='language-'] {
     tab-size: 2;
+    font-size: 14px;
+    color: #eb5757;
+    background-color: hsla(44, 6%, 50%, 0.15);
   }
 `
 
