@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useMemo } from 'react'
-import styled from '@emotion/styled'
-import Introduction from 'components/Main/Introduction'
+import Header from 'components/Main/Header'
 import CategoryList, { CategoryListProps } from 'components/Main/CategoryList'
 import PostList, { PostType } from 'components/Main/PostList'
 import queryString, { ParsedQuery } from 'query-string'
@@ -76,7 +75,7 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
 
   return (
     <Template title={title} description={description} url={siteUrl}>
-      <Introduction profileImage={gatsbyImageData} />
+      <Header profileImage={gatsbyImageData} />
       <CategoryList
         selectedCategory={selectedCategory}
         categoryList={categoryList}

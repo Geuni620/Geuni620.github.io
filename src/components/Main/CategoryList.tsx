@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, ReactNode } from 'react'
 import styled from '@emotion/styled'
 import { Link } from 'gatsby'
 import { GatsbyImage } from 'gatsby-plugin-image/dist/src/components/gatsby-image.browser'
