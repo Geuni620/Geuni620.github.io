@@ -7,6 +7,24 @@ export type PostHeadInfoProps = {
   categories: string[]
 }
 
+const PostHeadInfo: FunctionComponent<PostHeadInfoProps> = function ({
+  title,
+  date,
+  categories,
+}) {
+  return (
+    <PostHeadInfoWrapper>
+      <Title>{title}</Title>
+      <PostData>
+        <div>{categories.join(' / ')}</div>
+        <div>{date}</div>
+      </PostData>
+    </PostHeadInfoWrapper>
+  )
+}
+
+export default PostHeadInfo
+
 const PostHeadInfoWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -32,21 +50,3 @@ const PostData = styled.div`
   font-size: 18px;
   font-weight: 700;
 `
-
-const PostHeadInfo: FunctionComponent<PostHeadInfoProps> = function ({
-  title,
-  date,
-  categories,
-}) {
-  return (
-    <PostHeadInfoWrapper>
-      <Title>{title}</Title>
-      <PostData>
-        <div>{categories.join(' / ')}</div>
-        <div>{date}</div>
-      </PostData>
-    </PostHeadInfoWrapper>
-  )
-}
-
-export default PostHeadInfo

@@ -7,7 +7,6 @@ import { graphql } from 'gatsby'
 import { IGatsbyImageData } from 'gatsby-plugin-image'
 import { PostListItemType } from 'types/PostItem.types'
 import Template from 'components/Common/Template'
-import Footer from 'components/Common/Footer'
 
 type IndexPageProps = {
   location: {
@@ -82,8 +81,6 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
         categoryList={categoryList}
       />
       <PostList selectedCategory={selectedCategory} posts={edges} />
-
-      <Footer />
     </Template>
   )
 }

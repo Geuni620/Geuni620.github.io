@@ -1,7 +1,9 @@
 import styled from '@emotion/styled'
 
 const Footer = () => {
-  return <Wrapper>© 2022 Geuni, Powered By Gatsby.</Wrapper>
+  return (
+    <Wrapper>© {new Date().getFullYear()} Geuni, Powered By Gatsby.</Wrapper>
+  )
 }
 
 const Wrapper = styled.footer`

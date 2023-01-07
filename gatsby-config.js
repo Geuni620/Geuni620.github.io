@@ -1,6 +1,6 @@
 module.exports = {
   siteMetadata: {
-    title: `이근휘 블로그`,
+    title: `Geuni620 블로그`,
     description: `주로 저의 생각을 정리합니다.`,
     author: `이근휘`,
     siteUrl: 'https://geuni620.github.io/',
