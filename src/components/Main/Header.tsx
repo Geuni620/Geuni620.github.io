@@ -23,8 +23,6 @@ const Header: FunctionComponent<HeaderProps> = function ({ profileImage }) {
     }
 
     setPreviousScrollY(window.scrollY)
-
-    console.log(visible, previousScrollY, window.scrollY)
   }
 
   useEffect(() => {

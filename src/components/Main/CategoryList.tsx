@@ -31,7 +31,7 @@ const CategoryList: FunctionComponent<CategoryListProps> = function ({
           key={name}
           to={`/?category=${name}`}
         >
-          #{name}({count})
+          {name}({count})
         </CategoryItem>
       ))}
     </CategoryListWrapper>
@@ -58,5 +58,9 @@ const CategoryItem = styled(({ active, ...props }: GatsbyLinkProps) => (
 
   &:last-of-type {
     margin-right: 0;
+  }
+
+  &:hover {
+    text-decoration: underline;
   }
 `
