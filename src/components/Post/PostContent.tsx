@@ -76,8 +76,8 @@ const MarkdownRenderer = styled.div`
 
   // Adjust Horizontal Rule style
   hr {
-    border: 1px solid #000000;
-    margin: 100px 0;
+    border: 1px solid rgb(233, 236, 239);
+    margin-bottom: 48px;
   }
 
   // Adjust Link Element Style

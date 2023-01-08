@@ -5,4 +5,5 @@ categories: ['']
 summary: '-'
 ---
 
-![wecode-pre-study](/static/wecode-pre-study.png)
+![testtest](/ramp-up.jpg)
+![test](/profile-image.png)
