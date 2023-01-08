@@ -1,10 +1,8 @@
 import React, { FunctionComponent, useMemo } from 'react'
-import Header from 'components/Main/Header'
 import CategoryList, { CategoryListProps } from 'components/Main/CategoryList'
 import PostList, { PostType } from 'components/Main/PostList'
 import queryString, { ParsedQuery } from 'query-string'
 import { graphql } from 'gatsby'
-import { IGatsbyImageData } from 'gatsby-plugin-image'
 import { PostListItemType } from 'types/PostItem.types'
 import Template from 'components/Common/Template'
 
@@ -23,11 +21,6 @@ type IndexPageProps = {
     allMarkdownRemark: {
       edges: PostListItemType[]
     }
-    file: {
-      childImageSharp: {
-        gatsbyImageData: IGatsbyImageData
-      }
-    }
   }
 }
 
@@ -38,9 +31,6 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
       siteMetadata: { title, description, siteUrl },
     },
     allMarkdownRemark: { edges },
-    file: {
-      childImageSharp: { gatsbyImageData },
-    },
   },
 }) {
   const parsed: ParsedQuery<string> = queryString.parse(search)
