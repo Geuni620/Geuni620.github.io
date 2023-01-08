@@ -58,10 +58,13 @@ const MarkdownRenderer = styled.div`
 
   // Adjust Quotation Element Style
   blockquote {
-    margin: 30px 0;
     padding: 5px 15px;
     border-left: 2px solid #000000;
     font-weight: 800;
+
+    p {
+      margin: 0;
+    }
   }
 
   // Adjust List Element Style
