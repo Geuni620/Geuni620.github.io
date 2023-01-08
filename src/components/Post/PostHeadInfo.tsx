@@ -30,7 +30,7 @@ const PostHeadInfoWrapper = styled.div`
   flex-direction: column;
   width: 768px;
   margin: 0 auto;
-  padding: 60px 0;
+  padding: 100px 0px 60px 0px;
   color: #ffffff;
 `
 
