@@ -1,13 +1,8 @@
 import React, { FunctionComponent, useEffect, useState } from 'react'
 import styled from '@emotion/styled'
-import { IGatsbyImageData } from 'gatsby-plugin-image'
 import ProfileImage from 'components/Main/ProfileImage'
 
-type HeaderProps = {
-  profileImage: IGatsbyImageData
-}
-
-const Header: FunctionComponent<HeaderProps> = function ({ profileImage }) {
+const Header: FunctionComponent = function () {
   const [previousScrollY, setPreviousScrollY] = useState(0)
   const [visible, setVisible] = useState(true)
 
@@ -34,7 +29,7 @@ const Header: FunctionComponent<HeaderProps> = function ({ profileImage }) {
   return (
     <Background isVisible={visible}>
       <Wrapper>
-        <ProfileImage profileImage={profileImage} />
+        <ProfileImage />
       </Wrapper>
     </Background>
   )

@@ -75,7 +75,6 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
 
   return (
     <Template title={title} description={description} url={siteUrl}>
-      <Header profileImage={gatsbyImageData} />
       <CategoryList
         selectedCategory={selectedCategory}
         categoryList={categoryList}
@@ -112,11 +111,6 @@ export const getPostList = graphql`
             categories
           }
         }
-      }
-    }
-    file(name: { eq: "profile-image" }) {
-      childImageSharp {
-        gatsbyImageData(width: 120, height: 120)
       }
     }
   }
