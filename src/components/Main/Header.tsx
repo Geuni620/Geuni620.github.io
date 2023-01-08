@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react'
 import styled from '@emotion/styled'
 import ProfileImage from 'components/Main/ProfileImage'
+import { Link } from 'gatsby'
 
 const Header: FunctionComponent = function () {
   const [previousScrollY, setPreviousScrollY] = useState(0)
@@ -29,7 +30,9 @@ const Header: FunctionComponent = function () {
   return (
     <Background isVisible={visible}>
       <Wrapper>
-        <ProfileImage />
+        <Link to="/">
+          <ProfileImage />
+        </Link>
       </Wrapper>
     </Background>
   )
