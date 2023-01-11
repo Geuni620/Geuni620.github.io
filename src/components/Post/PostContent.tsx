@@ -104,6 +104,12 @@ const MarkdownRenderer = styled.div`
     color: #eb5757;
     background-color: hsla(44, 6%, 50%, 0.15);
   }
+
+  figcaption {
+    font-size: 14px;
+    text-align: center;
+    color: #888;
+  }
 `
 
 const PostContent: FunctionComponent<PostContentProps> = function ({ html }) {
