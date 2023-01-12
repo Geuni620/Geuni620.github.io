@@ -5,7 +5,7 @@ categories: ['서평']
 summary: '-'
 ---
 
-![](https://velog.velcdn.com/images/geuni620/post/a5ab8d5b-e585-49cf-b0fa-98939819b6ff/image.jpeg)
+![브레이킹 루틴](images/book-record.jpeg)
 
 2022년이 돼서 처음으로 읽은 책 브레이킹 루틴.
 사실 책을 읽는 내 모습은 나 역시 낯설다.
