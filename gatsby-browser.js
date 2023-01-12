@@ -1,4 +1,8 @@
-import 'prismjs/themes/prism-tomorrow.css'
+import 'prismjs/themes/prism.css'
+
+//prism-twilight.css
+// prism-tomorrow.css
+// prism-okaidia.css
 
 /**
  * Implement Gatsby's Browser APIs in this file.

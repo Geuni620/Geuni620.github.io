@@ -22,6 +22,7 @@ const MarkdownRenderer = styled.div`
   p {
     padding: 3px 0;
     margin-bottom: 16px;
+    line-height: 24px;
   }
 
   // Adjust Heading Element Style
@@ -61,15 +62,18 @@ const MarkdownRenderer = styled.div`
     padding: 5px 15px;
     border-left: 2px solid #000000;
     font-weight: 800;
+    font-style: italic;
+    line-height: 24px;
 
     p {
-      margin: 0;
+      margin: 3px 0px;
     }
   }
 
   // Adjust List Element Style
   ol,
   ul {
+    list-style: none;
     margin-left: 20px;
     margin-bottom: 16px;
   }
@@ -101,14 +105,34 @@ const MarkdownRenderer = styled.div`
   pre[class*='language-'] {
     tab-size: 2;
     font-size: 14px;
-    color: #eb5757;
-    background-color: hsla(44, 6%, 50%, 0.15);
+  }
+
+  p {
+    code {
+      color: #eb5757;
+      background-color: hsla(44, 6%, 50%, 0.15);
+    }
   }
 
   figcaption {
     font-size: 14px;
+    margin-top: 5px;
     text-align: center;
     color: #888;
+  }
+
+  p {
+    strong {
+      font-weight: 700;
+    }
+  }
+
+  input[type='checkbox'] {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+
+    margin-right: 5px;
   }
 `
 
