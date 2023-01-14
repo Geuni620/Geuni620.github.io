@@ -102,6 +102,13 @@ module.exports = {
               rel: 'nofollow',
             },
           },
+          {
+            resolve: `gatsby-remark-table-of-contents`,
+            options: {
+              className: 'table-of-contents',
+            },
+          },
+          'gatsby-remark-autolink-headers',
         ],
       },
     },
