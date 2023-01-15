@@ -1,7 +1,6 @@
-import React, { useEffect, useMemo } from 'react'
-import ScrollSpy from 'hooks/scroll-spy'
-
+import React, { useEffect } from 'react'
 import styled from '@emotion/styled'
+import ScrollSpy from 'hooks/scroll-spy'
 
 interface TableOfContentElement {
   contents: any
@@ -49,11 +48,8 @@ const Contents = styled.div`
     scale: 1;
 
     & .active {
-      color: #0969da;
-      background-color: #ddf4ff;
+      color: black;
       font-weight: 700;
-      border-radius: 5%;
-      transform: scale(1.1);
     }
   }
 
