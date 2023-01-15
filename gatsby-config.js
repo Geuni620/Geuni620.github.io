@@ -70,11 +70,18 @@ module.exports = {
       options: {
         plugins: [
           {
+            resolve: 'gatsby-remark-autolink-headers',
+            options: {
+              className: 'headerElement',
+            },
+          },
+          {
             resolve: 'gatsby-remark-smartypants',
             options: {
               dashes: 'oldschool',
             },
           },
+
           {
             resolve: 'gatsby-remark-prismjs',
             options: {
@@ -108,7 +115,6 @@ module.exports = {
               className: 'table-of-contents',
             },
           },
-          'gatsby-remark-autolink-headers',
         ],
       },
     },
