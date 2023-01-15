@@ -5,6 +5,7 @@ import queryString, { ParsedQuery } from 'query-string'
 import { graphql } from 'gatsby'
 import { PostListItemType } from 'types/PostItem.types'
 import Template from 'components/Common/Template'
+import { isBrowser } from 'utils/index'
 
 type IndexPageProps = {
   location: {
@@ -64,13 +65,15 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
   )
 
   return (
-    <Template title={title} description={description} url={siteUrl}>
-      <CategoryList
-        selectedCategory={selectedCategory}
-        categoryList={categoryList}
-      />
-      <PostList selectedCategory={selectedCategory} posts={edges} />
-    </Template>
+    isBrowser() && (
+      <Template title={title} description={description} url={siteUrl}>
+        <CategoryList
+          selectedCategory={selectedCategory}
+          categoryList={categoryList}
+        />
+        <PostList selectedCategory={selectedCategory} posts={edges} />
+      </Template>
+    )
   )
 }
 
