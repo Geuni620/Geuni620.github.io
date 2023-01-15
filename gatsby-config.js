@@ -1,3 +1,7 @@
+require('dotenv').config({
+  path: `.env.${process.env.NODE_ENV}`,
+})
+
 module.exports = {
   siteMetadata: {
     title: `Geuni620 블로그`,
@@ -6,6 +10,12 @@ module.exports = {
     siteUrl: 'https://geuni620.github.io/',
   },
   plugins: [
+    {
+      resolve: `gatsby-plugin-google-gtag`,
+      options: {
+        trackingId: process.env.GA_ID,
+      },
+    },
     {
       resolve: 'gatsby-plugin-typescript',
       options: {
