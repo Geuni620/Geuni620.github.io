@@ -1,3 +1,7 @@
+require('dotenv').config({
+  path: `.env.${process.env.NODE_ENV}`,
+})
+
 module.exports = {
   siteMetadata: {
     title: `Geuni620 블로그`,
@@ -7,11 +11,13 @@ module.exports = {
   },
   plugins: [
     {
-      resolve: `gatsby-plugin-google-analytics`,
+      resolve: `gatsby-plugin-google-gtag`,
       options: {
-        trackingId: 'G-XWJMDQNM9B',
-        head: true,
-        defer: true,
+        trackingIds: [process.env.GA_ID],
+        pluginConfig: {
+          head: true,
+          anonymize_ip: true,
+        },
       },
     },
     {
