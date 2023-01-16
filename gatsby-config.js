@@ -7,12 +7,11 @@ module.exports = {
   },
   plugins: [
     {
-      resolve: `gatsby-plugin-google-gtag`,
+      resolve: `gatsby-plugin-google-analytics`,
       options: {
         trackingId: 'G-XWJMDQNM9B',
-        pluginConfig: {
-          head: true,
-        },
+        head: true,
+        defer: true,
       },
     },
     {
@@ -105,4 +104,7 @@ module.exports = {
       },
     },
   ],
+  flags: {
+    DEV_SSR: true,
+  },
 }
