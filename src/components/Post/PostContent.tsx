@@ -73,7 +73,7 @@ const MarkdownRenderer = styled.div`
   // Adjust List Element Style
   ol,
   ul {
-    list-style: none;
+    /* list-style: none; */
     margin-left: 20px;
     margin-bottom: 16px;
   }
