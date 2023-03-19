@@ -57,10 +57,6 @@ const Background = styled.header<VisibleProps>`
 
   transition: top 0.5s ease 0s, opacity 0.5s ease 0s;
   z-index: 999;
-
-  @media (max-width: 768px) {
-    /**@todo 작성할 것 */
-  }
 `
 
 const Wrapper = styled.div`
@@ -69,7 +65,6 @@ const Wrapper = styled.div`
   padding: 10px 60px;
 
   @media (max-width: 768px) {
-    width: 100%;
-    padding: 0 20px;
+    padding: 10px 20px;
   }
 `

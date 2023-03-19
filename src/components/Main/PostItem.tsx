@@ -62,12 +62,20 @@ const Title = styled.div`
   -webkit-box-orient: vertical;
   font-size: 20px;
   font-weight: 700;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `
 
 const Date = styled.div`
   font-size: 14px;
   font-weight: 400;
   opacity: 0.5;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
 `
 
 const Category = styled.div`
@@ -85,6 +93,10 @@ const CategoryItem = styled.div`
   font-size: 14px;
   font-weight: 700;
   color: white;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
 `
 
 const Summary = styled.div`
@@ -98,4 +110,8 @@ const Summary = styled.div`
   -webkit-box-orient: vertical;
   font-size: 16px;
   opacity: 0.8;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
 `

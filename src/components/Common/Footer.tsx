@@ -15,6 +15,11 @@ const Wrapper = styled.footer`
   font-size: 15px;
   text-align: center;
   line-height: 1.5;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+    padding: 50px 0;
+  }
 `
 
 export default Footer
