@@ -32,6 +32,10 @@ const Layout = styled.aside`
   padding-top: 130px;
   margin-left: 5rem;
   overflow: auto;
+
+  @media (max-width: 1300px) {
+    display: none;
+  }
 `
 
 const Contents = styled.div`
@@ -51,9 +55,5 @@ const Contents = styled.div`
       color: black;
       font-weight: 700;
     }
-  }
-
-  @media (max-width: 1300px) {
-    display: None;
   }
 `
