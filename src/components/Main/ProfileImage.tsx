@@ -28,8 +28,8 @@ const ProfileImageWrapper = styled(GatsbyImage)`
   width: 50px;
   height: 50px;
   padding: 5px;
-  border-radius: 50%;
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  border-radius: 50%;
+  isolation: isolate;
 `
