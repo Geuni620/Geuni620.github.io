@@ -32,8 +32,4 @@ const ProfileImageWrapper = styled(GatsbyImage)`
   display: flex;
   justify-content: center;
   align-items: flex-end;
-
-  @media (max-width: 768px) {
-    display: none;
-  }
 `
