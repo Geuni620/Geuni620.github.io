@@ -1,5 +1,5 @@
 ---
-date: '2023-04-21'
+date: '2023-05-01'
 title: 'next 13 app dir revalidate'
 categories: ['TIL']
 summary: '-'
