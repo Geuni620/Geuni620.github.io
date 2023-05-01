@@ -11,7 +11,7 @@ jobs:
       - name: Install Node Version Manager
         run: npm install -g n
       - name: Set N_PREFIX
-        run: sudo n 18.13.0
+        run: sudo n 18.15.0
       - name: Remove node_modules
         run: rm -rf node_modules
       - name: yarn install
