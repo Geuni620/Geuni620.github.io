@@ -31,5 +31,5 @@ const ProfileImageWrapper = styled(GatsbyImage)`
   display: flex;
   justify-content: center;
   border-radius: 50%;
-  isolation: isolate;
+  /* isolation: isolate; */ // TODO: Test
 `
