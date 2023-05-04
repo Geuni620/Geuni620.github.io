@@ -58,7 +58,7 @@ export default function App({ Component, pageProps }: AppProps) {
   - 옵션은 다양하게 있는데 default로 작성해뒀어요.
 - dev tools는 `NODE_ENV`가 Production으로 설정되었을 때는 표시되지 않아요.
 
-![왼쪽 중간 조금 아래에 보면 꽃 모양 누르면 껐다가 켤 수 있어요.(빨간박스)](./tanstack-query%20dev%20tools.png)
+![왼쪽 중간 조금 아래에 보면 꽃 모양 누르면 껐다가 켤 수 있어요.(빨간박스)](./tanstack-query_dev_tools.png)
 
 <br>
 
@@ -202,7 +202,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
 ```
 
-![queryErrorHandler defaultOptions으로 걸어주면 Error가 떴을 때 alert 뜨도록 해놓았어요.](./tanstack-query%20error%20alert.png)
+![queryErrorHandler defaultOptions으로 걸어주면 Error가 떴을 때 alert 뜨도록 해놓았어요.](./tanstack-query_alert.png)
 
 queryErrorHandler defaultOptions으로 걸어주면 Error가 떴을 때 alert 뜨도록 해놓았어요.
 
@@ -265,7 +265,7 @@ isFetching
 
 ### Query로 데이터를 미리 채우는 방법들
 
-![queryClient의 메서드](./queryClient%EC%9D%98%20%EB%A9%94%EC%84%9C%EB%93%9C.png)
+![queryClient의 메서드](./queryClient_method.png)
 
 사용자에게 보여주고 싶은 정보가 있을 때 캐시에 아직 데이터가 없을 경우, 미리 데이터를 채울 수 있어요.
 
@@ -537,7 +537,7 @@ const { data: photoList = fallback } = useQuery(
 };
 ```
 
-![1분마다 서버에서 data를 알아서 업데이트 해요.](./data%20updated.png)
+![1분마다 서버에서 data를 알아서 업데이트 해요.](./data_updated.png)
 
 <br>
 
