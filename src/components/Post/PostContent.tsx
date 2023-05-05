@@ -78,6 +78,10 @@ const MarkdownRenderer = styled.div`
     margin-bottom: 16px;
   }
 
+  li {
+    margin-bottom: 16px;
+  }
+
   // Adjust Horizontal Rule style
   hr {
     border: 1px solid rgb(233, 236, 239);

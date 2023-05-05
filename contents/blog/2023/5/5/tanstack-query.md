@@ -11,11 +11,11 @@ summary: '-'
 
 <br>
 
-> 공부하고 학습한 내용을 토대로 작성해보겠습니다.
+> 공부하고 학습한 내용을 토대로 작성해보겠습니다.  
 > tanstack-query를 작성하며 query라고 편히 부르겠습니다.
 
-그리고 useQuery는 get만 해당한다고 보시면 될 거 같아요. 나머진 모두 Mutate입니다.
-useQuery & useMutation
+> 그리고 useQuery는 get만 해당한다고 보시면 될 거 같아요. 나머진 모두 Mutate입니다.  
+> useQuery & useMutation
 
 <br>
 
@@ -64,8 +64,6 @@ export default function App({ Component, pageProps }: AppProps) {
 
 ---
 
-<br>
-
 ## folder
 
 ```tsx
@@ -80,13 +78,15 @@ export default function App({ Component, pageProps }: AppProps) {
 - folder는 다양하게 사용할 수 있겠지만 components나 pages내에서 hook으로 차용하기보단
   hooks라는 폴더내 queries 폴더를 두고 여기서 분기시켜주는게 좋을 것 같아요.
 - 예를들어 다음과 같습니다.
-  `queries/login/useGetUserData.ts`
+
+  `queries/login/useGetUserData.ts`  
   `queries/modal/useGetPhotoList.ts`
-- 그리고 아래서 또 설명드리겠지만, queries폴더 내 constanst는 queryKeys를 관리하기 위함이에요.
-  → useQuery 또는 useMutation은 querykey를 매개변수로 받는데,
+
+- 그리고 아래서 또 설명드리겠지만, queries폴더 내 constanst는 queryKeys를 관리하기 위함이에요.  
+  → useQuery 또는 useMutation은 querykey를 매개변수로 받는데,  
   역할은 useEffect의 dependency array라고 생각하시면 될거 같아요.
 - custom hooks를 사용하려고 해요.
-  - 다수의 useQuery를 사용할 때 사용중인 queryKey의 종류가 헷갈렸어요.
+  - 다수의 useQuery를 사용할 때 사용중인 queryKey의 종류가 헷갈렸어요.  
     → 그래서 queryKeys를 상수로 지정해놓은거에요
   - custom hooks를 사용하지 않고 useQuery로 사용한다면 상수로 지정해놓은 쿼리 키도 헷갈릴 거 같았어요.
 
@@ -128,8 +128,6 @@ const { photoList, searchQuery, setSearchQuery } = useGetPhotoListQuery()
 
 ---
 
-<br>
-
 ## fetching Error indicator 전역으로 관리
 
 ```tsx
@@ -144,7 +142,7 @@ const { photoList, searchQuery, setSearchQuery } = useGetPhotoListQuery()
 
 - queryClient 파일 내부에서 QueryClient를 생성하고 관리하려고 해요.
 - 이렇게 했을 때 전역적으로 에러 핸들러를 관리할 수 있고, `isFetching`, `isLoading`의 indictor도 설정해줄 수 있어요.
-- 즉, 사용하게 될 app 파일을 오염시키지 않고 독자적으로 관리하고 싶어서 만들었습니다!
+- 즉, 사용하게 될 app 파일을 오염시키지 않고 독자적으로 관리하고 싶어서 만들었습니다.
 
 ```tsx
 //queryClient.ts
@@ -204,41 +202,25 @@ export default function App({ Component, pageProps }: AppProps) {
 
 ![queryErrorHandler defaultOptions으로 걸어주면 Error가 떴을 때 alert 뜨도록 해놓았어요.](./tanstack-query_alert.png)
 
-queryErrorHandler defaultOptions으로 걸어주면 Error가 떴을 때 alert 뜨도록 해놓았어요.
-
-→ 참고로 retry의 default는 3번이에요. 즉, 3번 재요청하고 3번 사이에 success가 없을 시 Error 띄웁니다.
-
-이외에도 방법은 여러가지가 있는 거 같아요. ([React Error Boundary](https://reactjs.org/docs/error-boundaries.html), [tanstack query hooks useErrorBoundary](https://tanstack.com/query/latest/docs/react/reference/useQuery?from=reactQueryV3&original=https%3A%2F%2Ftanstack.com%2Fquery%2Fv3%2Fdocs%2Freference%2FuseQuery))
-
-<br>
-
-```
-❓ 마찬가지로 `isFetching`과 `isLoading` 역시 전역으로 관리할 수 있는데요.
-이 부분은 조금만 더 찾아보겠습니다.
-저는 Loading 컴포넌트를 만들고 필요한 곳에 suspense 내 fallback으로 넣어주는게 어떨까 하는데요.
-
-suspense를 app.pages.tsx에서 감싸주고 fallback으로 넣을 수도 있을 것 같아요.
-```
+- 참고로 retry의 default는 3번이에요. 즉, 3번 재요청하고 3번 사이에 success가 없을 시 Error 띄웁니다.
+- 이외에도 방법은 여러가지가 있는 거 같아요.  
+  ([React Error Boundary](https://reactjs.org/docs/error-boundaries.html), [tanstack query hooks useErrorBoundary](https://tanstack.com/query/latest/docs/react/reference/useQuery?from=reactQueryV3&original=https%3A%2F%2Ftanstack.com%2Fquery%2Fv3%2Fdocs%2Freference%2FuseQuery))
 
 <br>
 
 ---
 
-<br>
-
 ## 그 외 짧은 지식.
 
 ### isLoading, isFetching
 
-isLoading
+**isLoading**
 
-: 가져오는 상태에 있음을 의미, isFetching이 참이면서, 쿼리에 대해 캐시된 데이터가 없는 상태.
+- 가져오는 상태에 있음을 의미, isFetching이 참이면서, 쿼리에 대해 캐시된 데이터가 없는 상태.
 
-<br>
+**isFetching**
 
-isFetching
-
-: cache의 여부에 상관없이 데이터를 가져온다면 항상 동작함.
+- cache의 여부에 상관없이 데이터를 가져온다면 항상 동작함.
 
 <br>
 
@@ -260,8 +242,6 @@ isFetching
 <br>
 
 ---
-
-<br>
 
 ### Query로 데이터를 미리 채우는 방법들
 
@@ -345,8 +325,6 @@ export const useUpdatePhotoList = () => {
 
 ![PhotoList Modal창 checkBox에 check하면 data가 null로 변경되도록 했어요.](./PhotoList.png)
 
-PhotoList Modal창 checkBox에 check하면 data가 null로 변경되도록 했어요.
-
 참고로 useQuery와 queryClient.setQueryData 실행 이후 onSuccess가 실행되어요.
 
 <br>
@@ -374,8 +352,6 @@ placeholder나, fallback은 모두 캐시에 추가되지는 않습니다.
 <br>
 
 ---
-
-<br>
 
 ### select
 
@@ -444,8 +420,6 @@ export const useGetPhotoListQuery = () => {
 
 ---
 
-<br>
-
 ### refetching
 
 ```tsx
@@ -512,9 +486,7 @@ export const useGetPhotoListQuery = () => {
 
 ---
 
-<br>
-
-### **polling**
+### polling
 
 useQuery의 옵션 중 `refetchOnInterval` 이 있는데요. 이건 boolean type이 아닌 time 즉, ms(밀리세컨)이에요.
 
@@ -541,6 +513,8 @@ const { data: photoList = fallback } = useQuery(
 
 <br>
 
+---
+
 ### useQuery data
 
 ```tsx
@@ -554,6 +528,8 @@ export function useUser(): UseUser {
 → 순환적인 것처럼 보이지만, 기존 user의 값을 이용해서 user의 값을 업데이트하는 것입니다.
 
 <br>
+
+---
 
 ### Dependent query
 
@@ -574,8 +550,6 @@ Dependent Query는 user가 true일 때, useQuery가 실행되도록 구현한 �
 <br>
 
 ---
-
-<br>
 
 ### useMutation
 
@@ -618,6 +592,8 @@ export const useDeletePhotoListQuery = (): UseMutateFunction<
 ```
 
 <br>
+
+---
 
 ### invalidateQueries
 
