@@ -1,7 +1,7 @@
 ---
 date: '2023-05-05'
 title: 'Tanstack-query'
-categories: ['TIL']
+categories: ['tanstack-query']
 summary: '-'
 ---
 
