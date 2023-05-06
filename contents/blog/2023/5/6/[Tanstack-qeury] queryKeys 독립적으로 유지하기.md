@@ -5,8 +5,6 @@ categories: ['tanstack-query']
 summary: '-'
 ---
 
-# tanstack-query
-
 ### queryKeys 독립적으로 유지하기
 
 ```TSX

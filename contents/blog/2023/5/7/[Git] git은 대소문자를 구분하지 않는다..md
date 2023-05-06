@@ -5,8 +5,6 @@ categories: ['Git']
 summary: '-'
 ---
 
-# git
-
 ### github은 대소문자를 구분하지 않는다.
 
 오늘 컴포넌트명 중 SearchbarInput를 SearchBarInput으로 수정하였다.  
