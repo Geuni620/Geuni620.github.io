@@ -4,6 +4,7 @@ module.exports = {
     description: `주로 저의 생각을 정리합니다.`,
     author: `이근휘`,
     siteUrl: 'https://geuni620.github.io/',
+    defaultImage: 'https://avatars.githubusercontent.com/u/56650238?v=4',
   },
   plugins: [
     {

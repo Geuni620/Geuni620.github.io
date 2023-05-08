@@ -16,6 +16,7 @@ type IndexPageProps = {
         title: string
         description: string
         siteUrl: string
+        defaultImage: string
       }
     }
     allMarkdownRemark: {
@@ -28,7 +29,7 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
   location: { search },
   data: {
     site: {
-      siteMetadata: { title, description, siteUrl },
+      siteMetadata: { title, description, siteUrl, defaultImage },
     },
     allMarkdownRemark: { edges },
   },
@@ -64,7 +65,12 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
   )
 
   return (
-    <Template title={title} description={description} url={siteUrl}>
+    <Template
+      title={title}
+      description={description}
+      url={siteUrl}
+      image={defaultImage}
+    >
       <CategoryList
         selectedCategory={selectedCategory}
         categoryList={categoryList}
