@@ -39,13 +39,7 @@ const CommentWidget: FunctionComponent = function () {
     element.current.appendChild(utterances)
   }, [])
 
-  return <UtterancesWrapper ref={element} />
+  return <div ref={element} />
 }
 
 export default CommentWidget
-
-const UtterancesWrapper = styled.div`
-  @media (max-width: 768px) {
-    padding: 0 20px;
-  }
-`

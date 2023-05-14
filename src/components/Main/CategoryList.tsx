@@ -52,8 +52,9 @@ const CategoryListWrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px;
+    gap: 10px;
     transform: translateX(-1%);
+    margin-bottom: 0;
   }
 `
 
@@ -75,7 +76,7 @@ const CategoryItem = styled(({ active, ...props }: GatsbyLinkProps) => (
   }
 
   @media (max-width: 768px) {
-    font-size: 15px;
+    font-size: 18px;
     margin-right: 0;
   }
 `

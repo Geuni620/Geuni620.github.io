@@ -35,7 +35,6 @@ const PostHeadInfoWrapper = styled.div`
 
   @media (max-width: 768px) {
     width: 100%;
-    padding: 80px 20px 0px 20px;
   }
 `
 
@@ -58,10 +57,4 @@ const PostData = styled.div`
   margin-top: 10px;
   font-size: 18px;
   font-weight: 700;
-
-  @media (max-width: 768px) {
-    align-items: flex-start;
-    font-size: 15px;
-    font-weight: 400;
-  }
 `

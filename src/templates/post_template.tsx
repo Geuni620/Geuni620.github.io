@@ -67,6 +67,10 @@ const Layout = styled.div`
 
 const Post = styled.div`
   /* for Layout */
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `
 
 export const queryMarkdownDataBySlug = graphql`
