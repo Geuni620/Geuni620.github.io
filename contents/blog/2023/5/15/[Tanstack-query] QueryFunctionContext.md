@@ -36,7 +36,7 @@ export default useVisitorCountQuery;
 
 <br>
 
-![queryFn](./tanstack-query%20queryFn.png)
+![queryFn](./queryFn.png)
 
 위에서 볼 수 있듯 다양한 값들이 들어가는데, 해당 내용은 [공식문서](https://tanstack.com/query/v4/docs/react/guides/query-functions#query-function-variables) 확인할 수 있었다.
 
