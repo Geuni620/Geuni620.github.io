@@ -1,6 +1,6 @@
 ---
 date: '2023-05-15'
-title: '[Tanstack-query] client-state vs server-state'
+title: '[Tanstack-query] QueryFunctionContext'
 categories: ['tanstack-query']
 summary: '-'
 ---
