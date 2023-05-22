@@ -1,7 +1,7 @@
 ---
 date: '2023-05-19'
 title: '[NextJS] components는 JSX 구성 요소로 사용할 수 없습니다.'
-categories: ['NextJS']
+categories: ['next.js']
 summary: '-'
 ---
 
