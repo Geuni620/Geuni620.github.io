@@ -1,7 +1,7 @@
 ---
 date: '2023-05-31'
 title: 'npx create-react-app error'
-categories: ['일기']
+categories: ['react']
 summary: 'template was not provided.'
 ---
 
