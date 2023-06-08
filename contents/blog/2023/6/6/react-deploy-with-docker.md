@@ -163,13 +163,13 @@ docker exec -it react-app bash
 
 <br>
 
-[apply-docker-ignore](./apply-dockerignore.png)
+![apply-docker-ignore](./apply-dockerignore.png)
 
 - 단 node_modules는 복사 되어있는데, 이건 컨테이너 내부에서 npm install 한 결과임
 
 <br>
 
-### Volume and Bind
+### Volume and Bind Mount
 
 - 코드를 변경했을 때, 도커를 이용해서 띄워놓은 컨테이너의 코드도 변경되는가?
   - 변경되지 않음.
@@ -177,7 +177,12 @@ docker exec -it react-app bash
 
 <br>
 
-- 이럴 때 사용하는 것이 Volume과 Bind
+- 이럴 때 사용하는 것이 Volume과 Bind Mount
+
+![volume&bind-mount](./volume%26bind-mount.png)
+
+- 우리는 로컬 환경에서 실시간으로 컨테이너에 수정사항을 반영해야함
+- 그래서 Bind Mount 방식으로 컨테이너를 띄워보자.
 
 <br>
 
@@ -188,6 +193,35 @@ docker run -d --name react-app -v $(pwd)/src:/app/src -d -p 3000:3000 --name rea
 
 - local dir과 docker container로 띄운 app dir를 동기화시킴
 
+<br>
+
+```
+docker exec -it react-app bash
+cd src/
+touch hello // 도커 컨테이너 내부에 파일을 만듦
+
+
+exit
+
+docker rm react-app -f # 그리고 hello 파일도 삭제할 것.
+```
+
+- 의도치 않게 컨테이너 환경에서 소스 코드를 수정하게 될 수도 있음
+- 이 경우 도커 컨테이너에서 호스트를 수정하지 못하도록 읽기 전용 모드를 사용하면 양방향 Sync에서 호스트 → 컨테이너로 동기화 됨
+
+```
+# :ro를 추가해서 읽기전용으로 만듦
+docker run -d --name react-app -v $(pwd)/src:/app/src:ro -d -p 3000:3000 --name react-app react-image
+
+docker exec -it react-app bash
+cd src
+touch hello # 에러 발생, touch: cannot touch 'hello': Read-only file system
+```
+
+![touch-hello-error](./touch-hello-error.png)
+
 ### 참고자료
 
 [프론트엔드 개발자를 위한 Docker로 React 개발 및 배포하기](https://velog.io/@oneook/Docker%EB%A1%9C-React-%EA%B0%9C%EB%B0%9C-%EB%B0%8F-%EB%B0%B0%ED%8F%AC%ED%95%98%EA%B8%B0)
+
+[Docker 컨테이너에 데이터 저장 (볼륨/바인드 마운트)](https://www.daleseo.com/docker-volumes-bind-mounts/)
