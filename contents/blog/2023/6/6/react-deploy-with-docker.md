@@ -171,6 +171,23 @@ docker exec -it react-app bash
 
 ### Volume and Bind
 
+- 코드를 변경했을 때, 도커를 이용해서 띄워놓은 컨테이너의 코드도 변경되는가?
+  - 변경되지 않음.
+- 그럼 컨테이너 종료 → 다시 이미지 빌드 → 컨테이너 띄우기를 반복하기엔 너무 번거로움.
+
+<br>
+
+- 이럴 때 사용하는 것이 Volume과 Bind
+
+<br>
+
+```
+# docker run -d --name <컨테이너 이름> -v <호스트 디렉토리>:<컨테이너 디렉토리> <이미지 이름>
+docker run -d --name react-app -v $(pwd)/src:/app/src -d -p 3000:3000 --name react-app react-image
+```
+
+- local dir과 docker container로 띄운 app dir를 동기화시킴
+
 ### 참고자료
 
 [프론트엔드 개발자를 위한 Docker로 React 개발 및 배포하기](https://velog.io/@oneook/Docker%EB%A1%9C-React-%EA%B0%9C%EB%B0%9C-%EB%B0%8F-%EB%B0%B0%ED%8F%AC%ED%95%98%EA%B8%B0)
