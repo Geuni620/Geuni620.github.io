@@ -17,7 +17,7 @@ create-react-app react-docker-yt
 
 <br>
 
-![root에 Dockerfile 생성](./root%EC%97%90-dockerfile-%EC%83%9D%EC%84%B1.png)
+![root에 Dockerfile 생성](./add-root-dockerfile.png)
 
 <br>
 
@@ -179,7 +179,7 @@ docker exec -it react-app bash
 
 - 이럴 때 사용하는 것이 Volume과 Bind Mount
 
-![volume&bind-mount](./volume%26bind-mount.png)
+![volume&bind-mount](./volume-bind-mount.png)
 
 - 우리는 로컬 환경에서 실시간으로 컨테이너에 수정사항을 반영해야함
 - 그래서 Bind Mount 방식으로 컨테이너를 띄워보자.
@@ -220,8 +220,150 @@ touch hello # 에러 발생, touch: cannot touch 'hello': Read-only file system
 
 ![touch-hello-error](./touch-hello-error.png)
 
+<br>
+
+### Docker Environment Variables
+
+```JSX
+// App.jsx
+function App() {
+  return (
+    <div className="App">
+      <p>{`Hello ${process.env.REACT_APP_NAME}`}</p>
+    </div>
+  );
+}
+
+export default App;
+
+//.env
+REACT_APP_NAME="myName"
+REACT_APP_TITLE="test"
+```
+
+<br>
+
+```
+docker run --env-file ./.env -d --name react-app -v $(pwd)/src:/app/src:ro -d -p 3000:3000 --name react-app react-image
+```
+
+<br>
+
+### Docker Compose
+
+- 지금까지 도커 명령어를 입력해보았다.
+- 하나씩 추가하다보니, 도커 이미지를 Build하고, 컨테이너를 띄우는 명령어가 너무 길다는 생각이 들었다.
+- 이럴 때 사용할 수 있는게 Docker Compose이다.
+
+<br>
+
+- Docker Compose는 여러 컨테이너를 하나의 서비스로 묶어서 관리할 수 있게 해주는 도구이다.
+
+```
+# docker-compose.yml
+
+# docker 컨테이너 버전을 명시
+version: "3"
+# services는 컨테이너를 의미함.
+services:
+  react-app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      # docker-compose를 사용하면 현재 디렉터리를 기준으로 다음 소스를 슬래시로 구분하여 작성할 수 있음
+      # 원래는 $(pwd)/src:/app/src 와 같이 작성해야함.
+      - ./src:/app/src
+    env_file:
+      - ./.env
+```
+
+- 위와 같이 docker-compose.yml 파일을 작성하고 난 후 command에 다음과 같이 입력
+
+```
+# docker-compose.yml 명시된 모든 서비스 컨테이너를 생성하고 실행시켜주는 명령어
+docker-compose up -d
+```
+
+<br>
+
+![docker-compose-up](./docker-compose-up.png)
+
+- 이미지[react-docker-yt_react-app] / 컨테이너[react-docker-yt-react-app-1]로 각각 생성되었다.
+
+<br>
+
+```
+# 모든 서비스 컨테이너를 한 번에 정지시키고 삭제한다.
+docker-compose down
+```
+
+- docker-compose down 명령어를 입력하면, 컨테이너가 정지되고 삭제된다.
+- 단 이미지는 남아있다.
+
+<br>
+
+그럼 위에서 `-it` 옵션을 써야할 경우는 어떻게 하지?  
+다른 말로 docker-compose를 사용해서 docker container 터미널 환경으로 접속하는 방법은?
+
+```
+version: "3"
+services:
+  react-app:
+    # stdin_open / tty를 각각 true로 추가해주면 -it옵션을 사용할 수 있다.
+    stdin_open: true
+    tty: true
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/app/src
+    env_file:
+      - ./.env
+```
+
+<br>
+
+만약 Dockerfile을 수정했다고 가정해보자
+
+```
+FROM node:18.15.0
+WORKDIR /app
+COPY package.json .
+RUN npm install
+ENV KOREA_FOOD=good # 이 부분을 추가해주었음.
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+그리고 `docker-compose up -d`를 실행했음.
+**하지만 image를 다시 빌드하진 않는다.**
+
+![docker-compose-not-re-build](./docker-compose-not-re-build.png)
+
+이럴 경우는 다음과 같이 docker-compose에게 re-build할 것을 알려주어야한다.
+
+```
+ docker-compose up -d --build
+```
+
+- 이까지가 image build와 Container에 관한 내용이었다.
+- 이제 Production 환경에 대해 배워보자.
+- 지금까지는 develop 환경에서만 실습했다.
+
+---
+
+###
+
 ### 참고자료
 
 [프론트엔드 개발자를 위한 Docker로 React 개발 및 배포하기](https://velog.io/@oneook/Docker%EB%A1%9C-React-%EA%B0%9C%EB%B0%9C-%EB%B0%8F-%EB%B0%B0%ED%8F%AC%ED%95%98%EA%B8%B0)
 
+<br>
+
 [Docker 컨테이너에 데이터 저장 (볼륨/바인드 마운트)](https://www.daleseo.com/docker-volumes-bind-mounts/)
+
+<br>
+
+[Docker Compose 커맨드 사용법](https://www.daleseo.com/docker-compose/)
