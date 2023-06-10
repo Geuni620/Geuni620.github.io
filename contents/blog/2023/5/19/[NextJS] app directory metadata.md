@@ -11,20 +11,20 @@ summary: '-'
 
 ```TSX
 return(
-    <Suspense fallback={<Loading />}>
-        <CommentSectionStreamer promise={commentsList} />
-    </Suspense>
+   <Suspense fallback={<Loading />}>
+            <CommentSectionStreamer promise={commentsList} />
+        </Suspense>
 )
 ```
 
-- 해당 부분은 아직 Typescript에 반영되지 않은 듯 하다.
-  - 다음과 같은 에러가 뜬다.
-
-![server component type error](./server-components-type-error.png)
+위와 같이 Suspense를 사용해서 Async Server Component를 사용하려고 했다.
 
 <br>
 
-공식문서에서도 다음과 같이 확인할 수 있다.
+![server component type error](./server-components-type-error.png)
+해당 부분은 아직 Typescript에 반영되지 않은 듯 하다.
+
+<br>
 
 ```
 Async Server Component TypeScript Error
@@ -34,18 +34,20 @@ This is a known issue with TypeScript and is being worked on upstream.
 - As a temporary workaround, you can add {/* @ts-expect-error Async Server Component */} above the component to disable type checking for it.
 ```
 
-<br>
+공식문서에서도 다음과 같이 확인할 수 있다.
 
-- 그래서 이렇게 주석을 추가해주었다.
+<br>
 
 ```TSX
 return(
-    <Suspense fallback={<Loading />}>
-        {/* @ts-expect-error Async Server Component */}
-        <CommentSectionStreamer promise={commentsList} />
-    </Suspense>
+<Suspense fallback={<Loading />}>
+    {/* @ts-expect-error Async Server Component */}
+    <CommentSectionStreamer promise={commentsList} />
+</Suspense>
 )
 ```
+
+그래서 이렇게 주석을 추가해주었다.
 
 <br>
 
