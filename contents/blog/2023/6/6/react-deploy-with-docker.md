@@ -1,5 +1,5 @@
 ---
-date: '2023-06-06'
+date: '2023-06-13'
 title: 'react-deploy-with-docker'
 categories: ['docker', 'react']
 summary: '-'
@@ -14,8 +14,6 @@ summary: '-'
 ```
 create-react-app react-docker-yt
 ```
-
-<br>
 
 ![root에 Dockerfile 생성](./add-root-dockerfile.png)
 
@@ -117,7 +115,7 @@ docker run -d --name  react-app -p 3307:3000 react-image
 - localhost:3307 포트로 접근하는 모든 트래픽을 도커 컨테이너 3000으로 보낸다는 뜻
 - 즉, 3307로 접근하면 됨 → 도커 컨테이너 내 3000으로 접속하는 것과 같음.
 
-[Synchronize localhost and containerhost](./localhost-container-host.png)
+![Synchronize localhost and containerhost](./localhost-container-host.png)
 
 <br>
 
@@ -130,6 +128,7 @@ docker exec -it react-app bash
 
 - 접속한 후 ls를 눌러보면, 개발환경의 모든 파일이 복사되었는지 확인 할 수 있음
 - 불필요한 것까지 복사되었음
+
   - node_modules
   - package-lock.json
 
@@ -147,8 +146,6 @@ Dockerfile
 .env
 ```
 
-<br>
-
 - 기존 컨테이너 / 이미지를 모두 제거하고 다시 build하고 컨테이너 띄우기
 
 ```
@@ -160,8 +157,6 @@ docker run -d --name react-app -p 3000:3000 react-image
 # 이제 ls 찍어서 확인해보기
 docker exec -it react-app bash
 ```
-
-<br>
 
 ![apply-docker-ignore](./apply-dockerignore.png)
 
@@ -175,16 +170,12 @@ docker exec -it react-app bash
   - 변경되지 않음.
 - 그럼 컨테이너 종료 → 다시 이미지 빌드 → 컨테이너 띄우기를 반복하기엔 너무 번거로움.
 
-<br>
-
-- 이럴 때 사용하는 것이 Volume과 Bind Mount
+- **이럴 때 사용하는 것이 Volume과 Bind Mount**
 
 ![volume&bind-mount](./volume-bind-mount.png)
 
 - 우리는 로컬 환경에서 실시간으로 컨테이너에 수정사항을 반영해야함
 - 그래서 Bind Mount 방식으로 컨테이너를 띄워보자.
-
-<br>
 
 ```
 # docker run -d --name <컨테이너 이름> -v <호스트 디렉토리>:<컨테이너 디렉토리> <이미지 이름>
@@ -240,8 +231,6 @@ export default App;
 REACT_APP_NAME="myName"
 REACT_APP_TITLE="test"
 ```
-
-<br>
 
 ```
 docker run --env-file ./.env -d --name react-app -v $(pwd)/src:/app/src:ro -d -p 3000:3000 --name react-app react-image
@@ -348,24 +337,22 @@ CMD ["npm", "start"]
  docker-compose up -d --build
 ```
 
-- 이까지가 image build와 Container에 관한 내용이었다.
+- 여기까지가 image build와 Container에 관한 내용이었다.
 - 이제 Production 환경에 대해 배워보자.
 - 지금까지는 develop 환경에서만 실습했다.
 
 ---
 
-<br>
-
 ### 개발환경과 프로덕션 환경 각각 세팅하기
 
-[dev-environment](./dev-environment.png)
+![dev-environment](./dev-environment.png)
 
 - 지금까진 개발환경에서만 Docker를 사용했음.
 - 즉, 브라우저가 localhost:3000번으로 데이터를 달라고 요청을 보냈고, dev server에서 index.html 파일을 전송한 후, JS가 실행되어 웹페이지를 띄웠다.
 
 <br>
 
-[production-environment](./prod-ennironment.png)
+![production-environment](./prod-ennironment.png)
 
 - 프로덕션 환경에선, build된 파일(세 개의 정적파일)을 전송하는 것
 - 즉, 브라우저가 우리 사이트 포트번호 3000번에 트래픽을 보낸다.
@@ -374,11 +361,11 @@ CMD ["npm", "start"]
 
 <br>
 
-[multi-stage-docker-builds](./multi-stage-docker-builds.png)
+![multi-stage-docker-builds](./multi-stage-docker-builds.png)
 
 - 실제론 두 단계에 걸쳐서 진행해보자
 
-### Stage.1
+<br>
 
 - 먼저 Dockerfile을 dev용과 prod용으로 나누자.
 - Dev는 `Dockerfile.dev`라고 이름을 변경해줌.
@@ -434,7 +421,7 @@ COPY  --from=build /app/build /usr/share/nginx/html
 
 [How to use this image](https://hub.docker.com/_/nginx)
 
-- nginx작업 공간은 이 홈페이지에서 확인 가능하다.
+- nginx작업 공간은 위 홈페이지에서 확인 가능하다.
 
 <br>
 
@@ -446,7 +433,7 @@ docker build -f Dockerfile.prod -t docker-image-prod .
 
 <br>
 
-[docker production 이미지를 얻음](./docker-prod)
+![docker production 이미지를 얻음](./docker-prod.png)
 
 - 그리고 command에 다음과 같이 입력(이전에 길게 적었지만, docker-compose.yml에 등록한 부분)
 
@@ -458,7 +445,7 @@ docker run --env-file ./.env -d --name react-app -v -d -p 8000:80 --name react-a
 - 그래서 8000번으로 접속하면 nginx가 80번 포트로 받게 될 것이다.
 - 그리고 코드를 변경해도 아무것도 변경되지 않는다. 그 이유는 production이기 때문.
 
-[docker-ps](./docker-prod-ps.png)
+![docker-ps](./docker-prod-ps.png)
 
 <br>
 
@@ -502,8 +489,6 @@ services:
       - "3000:3000"
 ```
 
-<br>
-
 ```
 # docker-compose.dev.yml
 version: "3"
@@ -522,8 +507,6 @@ services:
     <!-- 여기를 각각 다르게 구성했다. dev or prod -->
       - REACT_APP_NAME=keunhwee-dev
 ```
-
-<br>
 
 ```
 # docker-compose.prod.yml
@@ -568,6 +551,9 @@ services:
 ![prod-version](./docker-compose-prod-yml.png)
 
 - env파일이 제대로 동작하지 않는다. 즉, undefined가 떴다.
+
+<br>
+
 - 그 이유는 여기에 있다.
 
 ```
