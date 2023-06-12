@@ -354,7 +354,287 @@ CMD ["npm", "start"]
 
 ---
 
-###
+<br>
+
+### 개발환경과 프로덕션 환경 각각 세팅하기
+
+[dev-environment](./dev-environment.png)
+
+- 지금까진 개발환경에서만 Docker를 사용했음.
+- 즉, 브라우저가 localhost:3000번으로 데이터를 달라고 요청을 보냈고, dev server에서 index.html 파일을 전송한 후, JS가 실행되어 웹페이지를 띄웠다.
+
+<br>
+
+[production-environment](./prod-ennironment.png)
+
+- 프로덕션 환경에선, build된 파일(세 개의 정적파일)을 전송하는 것
+- 즉, 브라우저가 우리 사이트 포트번호 3000번에 트래픽을 보낸다.
+- 그럼 이에 수신하도록 구성된 특정 포트의 도커 컨테이너에 요청을 보낼 수 있음(NGINX가 브라우저에 요청을 받고, Docker의 특정 포트번호에 요청을 보냄)
+- 그럼 build된 파일을 전송해줌
+
+<br>
+
+[multi-stage-docker-builds](./multi-stage-docker-builds.png)
+
+- 실제론 두 단계에 걸쳐서 진행해보자
+
+### Stage.1
+
+- 먼저 Dockerfile을 dev용과 prod용으로 나누자.
+- Dev는 `Dockerfile.dev`라고 이름을 변경해줌.
+
+```
+# 다시 build 시켜준다.
+docker build -f ./Dockerfile.dev .
+```
+
+- 여기서 -f 옵션을 넣어서 Dockerfile.dev를 지정시켜준다.
+- 원래는 `docker build .`만으로 Dockerfile이 한 개만 있어서 지정되었지만, 이제 prod, dev를 분리했기때문에 지정해주어야한다.
+
+```
+# docker-compose.yml
+version: "3"
+services:
+  react-app:
+    stdin_open: true
+    tty: true
+    <!-- 여기를 변경시켜줘야한다. -->
+    # 여기서 build를 dev로 지정해준다.
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/app/src
+    env_file:
+      - ./.env
+```
+
+<br>
+
+- 그리고 나서 Dockerfile.prod를 만들어준다
+
+```
+<!-- as를 통해 build라는 이름을 지정해줌 -->
+FROM node:18.15.0 as build
+WORKDIR /app
+COPY package.json .
+RUN npm install
+COPY . .
+<!-- CMD가 아닌 RUN으로 변경한 후 npm run build -->
+RUN npm run build
+
+
+<!-- nginx에 build된 파일을 복사해서 가져가야함 -->
+<!-- --from=build local작업공간 nginx작업공간 -->
+FROM nginx
+COPY  --from=build /app/build /usr/share/nginx/html
+```
+
+[How to use this image](https://hub.docker.com/_/nginx)
+
+- nginx작업 공간은 이 홈페이지에서 확인 가능하다.
+
+<br>
+
+- 그리고 command에 다음과 같이 입력
+
+```
+docker build -f Dockerfile.prod -t docker-image-prod .
+```
+
+<br>
+
+[docker production 이미지를 얻음](./docker-prod)
+
+- 그리고 command에 다음과 같이 입력(이전에 길게 적었지만, docker-compose.yml에 등록한 부분)
+
+```
+docker run --env-file ./.env -d --name react-app -v -d -p 8000:80 --name react-app-prod docker-image-prod
+```
+
+- 여기서 nginx의 포트번호는 80번이다.
+- 그래서 8000번으로 접속하면 nginx가 80번 포트로 받게 될 것이다.
+- 그리고 코드를 변경해도 아무것도 변경되지 않는다. 그 이유는 production이기 때문.
+
+[docker-ps](./docker-prod-ps.png)
+
+<br>
+
+### production compose 작성하기
+
+- 기존에 docker-compose.yml은 dev를 기준으로 작성되어 있다.
+- 기존에 docker-compose.yml → docker-compose-backup.yml로 변경하고 `docker-compose-dev.yml`, `docker-compose-prod.yml`을 각각 생성하자.
+- 그리고 새롭게 docker-compose.yml을 만들어주기.
+
+![현재-디렉토리](./docker-compose-dir.png)
+
+<br>
+
+- 그리고 docker-compose-backup.yml을 그대로 복사해서 docker-compose.yml에 붙여넣어주기
+
+```
+# docker-compose.yml
+# docker 컨테이너 버전을 명시
+version: "3"
+
+# services는 컨테이너를 의미함.
+services:
+  react-app:
+    stdin_open: true
+    tty: true
+
+<!-- 이 부분도 사실은 다르게 구성해야됨. 하지만 여기선 덮어쓰는 방법을 적용해보자. -->
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+
+
+
+
+<!-- 아래는 여기선 제거했다. 그 이유는 dev, prod 각각에서 재 작성해야하기 때문. -->
+    env_file:
+      - ./.env
+    volumes:
+      - ./src:/app/src
+    ports:
+      - "3000:3000"
+```
+
+<br>
+
+```
+# docker-compose.dev.yml
+version: "3"
+services:
+  react-app:
+    stdin_open: true
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/app/src
+    environment:
+    <!-- 여기를 각각 다르게 구성했다. dev or prod -->
+      - REACT_APP_NAME=keunhwee-dev
+```
+
+<br>
+
+```
+# docker-compose.prod.yml
+version: "3"
+services:
+  react-app:
+    stdin_open: true
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - "8000:80"
+    environment:
+    <!-- 여기를 각각 다르게 구성했다. dev or prod -->
+      - REACT_APP_NAME=keunhwee-prod
+```
+
+- 그리고 dev, prod를 실행시키기 위해 다음과 같이 명령어를 입력해줘야함
+
+```
+# dev를 docker로 띄움
+ docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d --build
+
+ # dev를 down 시킴
+ docker-compose -f docker-compose.yml -f docker-compose-dev.yml down
+
+ # prod를 docker로 띄움
+  docker-compose -f docker-compose.yml -f docker-compose-prod.yml up -d --build
+```
+
+- 순서를 꼭 지켜줘야한다!
+
+<br>
+
+![dev-version](./docker-compose-dev-yml.png)
+
+- volume가 적용되어 있어, 코드를 변경해도 반영된다.
+
+<br>
+
+![prod-version](./docker-compose-prod-yml.png)
+
+- env파일이 제대로 동작하지 않는다. 즉, undefined가 떴다.
+- 그 이유는 여기에 있다.
+
+```
+# 기존 Dockerfile.prod
+FROM node:18.15.0 as build
+WORKDIR /app
+COPY package.json .
+RUN npm install
+COPY . .
+RUN npm run build
+
+FROM nginx
+COPY  --from=build /app/build /usr/share/nginx/html
+
+
+# 다시 작성한 Dockerfile.prod
+FROM node:18.15.0 as build
+WORKDIR /app
+COPY package.json .
+RUN npm install
+COPY . .
+ARG REACT_APP_NAME
+ENV REACT_APP_NAME=$REACT_APP_NAME
+RUN npm run build
+
+FROM nginx
+COPY  --from=build /app/build /usr/share/nginx/html
+```
+
+- npm run build시 .env 환경 변수가 참조되지 못해 undefined로 떴던 것이었다.
+- args를 통해 REACT_APP_NAME을 작성한 후, ENV에 달러표시로 REACT_APP_NAME을 변수로 참조하도록 하면, 정상적으로 동작한다.
+
+![수정 후, env가 잘 참조되어있다.](./docker-compose-prod-yml-env.png)
+
+<br>
+
+### Target Build
+
+- 특정, 일부 단계만 build하고 싶은 경우.
+
+```
+# stage.1
+FROM node:18.15.0 as build
+WORKDIR /app
+COPY package.json .
+RUN npm install
+COPY . .
+RUN npm run build
+
+# stage.2
+FROM nginx
+COPY  --from=build /app/build /usr/share/nginx/html
+```
+
+```
+docker build --target build -f Dockerfile.prod -t multi-stage-example .
+```
+
+- 이렇게 build를 하면 stage.1만 build 된다.
+
+![target을 지정한 상태에서 build](./target-build.png)
+
+<br>
+
+![target을 지정하지 않은 상태에서 build](./non-target-build.png)
+
+- target을 지정하지 않은 상태에서 build하면, 아래 nginx까지 함께 build된 것을 확인할 수 있다.
 
 ### 참고자료
 
