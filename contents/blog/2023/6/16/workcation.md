@@ -1,6 +1,6 @@
 ---
 date: '2023-06-16'
-title: 'worcation'
+title: 'workcation'
 categories: ['일기']
 summary: '-'
 ---
