@@ -51,6 +51,32 @@ return(
 
 <br>
 
+
+---
+
+### Typescript JSX 태그 타입 별도 구분
+
+Typescript 5.1버전으로 업데이트 되면서 서버컴포넌트에서 [Promise를 반환하는 경우에 대한 타입을 별도로 추가되었다.](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-1.html#decoupled-type-checking-between-jsx-elements-and-jsx-tag-types)
+
+사용방법을 몰라 조금 헤맸는데, 아주 간단하다.    
+next.js에서도 기존에 대안방법이라고 제시하던 위 링크의 내용이 수정되었다.   
+[next.js 공식문서의 내용](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-1.html#decoupled-type-checking-between-jsx-elements-and-jsx-tag-types)을 살펴보면, 
+
+1. Typescript의 버전을 5.1.3이상으로 올리기
+2. @types/react의 버전을 18.2.8이상으로 올리기
+
+<br>
+
+```
+npm install @types/react@latest typescript@latest
+```
+
+<br>
+
+![더 이상 에러가 뜨지 않는다.](./solve-server-components-type-error.png)
+
+
+
 ### 참고자료
 
 [async and await in Server Components](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching#async-and-await-in-server-components)
