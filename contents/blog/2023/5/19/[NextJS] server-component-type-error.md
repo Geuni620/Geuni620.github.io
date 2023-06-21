@@ -81,4 +81,10 @@ npm install @types/react@latest typescript@latest
 
 [async and await in Server Components](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching#async-and-await-in-server-components)
 
-[# Async 서버 컴포넌트 Promise 반환 이슈](https://curryyou.tistory.com/529)
+[# Async 서버 컴포넌트 Promise 반환 이슈](https://curryyou.tistory.com/529)   
+
+---
+
+[TypeScript 5.1에서 변경된 점은 무엇일까요?](https://velog.io/@reum107/what-changes-in-typescript-5.1)   
+
+[Async Server Component TypeScript Error](https://nextjs.org/docs/app/building-your-application/configuring/typescript#async-server-component-typescript-error)
