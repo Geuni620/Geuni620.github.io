@@ -135,7 +135,11 @@ echo "deploy done"
 
 - 이렇게 하면 EC2에 복사된 파일이 잘 정착하고, Docker를 통해 Production 파일이 컨테이너로 띄워진다.
 - 위에서 작성해놓았듯,  
-  브라우저 → `dev.deep.jejodo.life`로 접속하면, → 로드밸런싱을 통해 apache가 80번 포트로 해당 요청을 받는다. → apache는 3040번 포트로 요청을 보내고 → docker는 3040번 포트로 요청을 받아서 → next.js가 3000번 포트로 요청을 받는다. 그리고 다시 역으로 돌아가서 → 브라우저로 응답을 보내준다.
+  브라우저 → `dev.deep.jejodo.life`로 접속  
+  → 로드밸런싱을 통해 apache가 80번 포트로 해당 요청을 받는다.  
+  → apache는 3040번 포트로 요청을 보내고  
+  → docker는 3040번 포트로 요청을 받아서  
+  → next.js가 3000번 포트로 요청을 받는다. 그리고 다시 역으로 돌아가서 → 브라우저로 응답을 보내준다.
 
 <br>
 
@@ -147,10 +151,41 @@ echo "deploy done"
 - etc/apache2/sites-enabled/000-geuni.conf
 
 ```APACHE
+# 기존에 사용하던 deep.jejodo.life 도메인으로 연결됨
+<VirtualHost *:80>
+  ServerName deep.jejodo.life
+  ServerAdmin joo@jaminlife.me
 
+        ProxyRequests Off
+        ProxyPreserveHost On
+        ProxyVia Full
 
+        <Proxy /*>
+    Allow from all
+                Require all granted
+        </Proxy>
 
+        ProxyPass / http://127.0.0.1:3020/
+        ProxyPassReverse / http://127.0.0.1:3020/
+</VirtualHost>
 
+# devdeep.jejodo.life 도메인으로 접속시 연결됨
+<VirtualHost *:80>
+  ServerName devdeep.jejodo.life
+  ServerAdmin lkh@jaminlife.me
+
+        ProxyRequests Off
+        ProxyPreserveHost On
+        ProxyVia Full
+
+        <Proxy /*>
+    Allow from all
+                Require all granted
+        </Proxy>
+
+        ProxyPass / http://127.0.0.1:3040/
+        ProxyPassReverse / http://127.0.0.1:3040/
+</VirtualHost>
 ```
 
 - 아파치는 80번 포트로 요청을 받는데, 여기서 3040번 포트를 어떻게 바라 볼 수 있을까?
@@ -170,6 +205,10 @@ sudo service apache2 restart
 # 아파치 서버 재시작 한지 status로 확인
 sudo service apache2 status
 ```
+
+![apache-restart](./apache_restart.png)
+
+<br>
 
 ![url을 한번 확인해보자](./deep.jejodo.life.png)
 
