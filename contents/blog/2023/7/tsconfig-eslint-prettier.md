@@ -150,7 +150,7 @@ export default defineConfig({
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
     "plugin:react-hooks/recommended",
-    "plugin:tailwindcss/recommended"
+    "plugin:tailwindcss/recommended" // 만약 이걸 설치했다면, vscode extension 중 headwind는 제거해야한다. 충돌이 발생하기 때문.
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
