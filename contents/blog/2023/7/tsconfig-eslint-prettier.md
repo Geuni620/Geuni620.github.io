@@ -1,6 +1,6 @@
 ---
 date: '2023-07-01'
-title: 'tsconfig-eslint-prettier for next.js'
+title: 'tsconfig-eslint-prettier'
 categories: ['next.js', 'eslint', 'prettier', 'tsconfig']
 summary: '-'
 ---
@@ -193,7 +193,7 @@ export default defineConfig({
 
 <br>
 
-![next/core-web-vitals와 ](./next-eslint-error.png)
+![next/core-web-vitals와 plugin:@next/next/recommended 충돌](./next-eslint-error.png)
 
 ```JSON
 // eslintrc.json
