@@ -95,7 +95,7 @@ const MarkdownRenderer = styled.div`
 
   // Adjust Code Style
   pre[class*='language-'] {
-    margin: 30px 0;
+    margin: 0 0 30px 0;
     padding: 15px;
     font-size: 15px;
 
