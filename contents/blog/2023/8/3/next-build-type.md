@@ -1,7 +1,7 @@
 ---
 date: '2023-08-03'
 title: 'next.js의 build type에 따른 데이터 refresh'
-categories: ['docker', 'docker-compose']
+categories: ['next.js']
 summary: '-'
 ---
 
