@@ -1,6 +1,6 @@
 ---
 date: '2023-08-03'
-title: 'next.js의 build type에 따른 데이터 refresh'
+title: 'CSR / SSR / SSG / ISG는 항상 최신데이터를 가져올까?'
 categories: ['next.js']
 summary: '-'
 ---
@@ -9,8 +9,6 @@ summary: '-'
 > 그럼 build 했을 때 api로 데이터 fetching을 할텐데, 이건 항상 최신 데이터일까?
 
 <br>
-
-# CSR / SSR / SSG / ISG는 항상 최신데이터를 가져올까?
 
 [build type에 따른 데이터 fetcing 실험은 이 github repo에서 확인할 수 있다.](https://github.com/Geuni620/csr-ssr-ssg-isg-fetching.git)
 
@@ -133,9 +131,8 @@ ISG는 build 될 때 데이터를 fetching하고, revalidate time을 적용하�
 
    - 이때 re-generate 되기 시작
 
-<br>
-
 3. 새로고침을 계속해도 00:59:51을 반환한다
+
    - 그러다가 시간이 변경되는데, (01:00:11) 이건 re-generate가 된 후 build 된 시간이다.
    - 즉 re-generate가 끝나는시간은 항상 10초를 보장하지 않는다.
    - re-generate가 1초만에 끝났을 수도 있고, 10초가 넘어가서 끝났을 수도 있다.
