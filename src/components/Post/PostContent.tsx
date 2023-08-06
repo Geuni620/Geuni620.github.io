@@ -5,6 +5,8 @@ interface PostContentProps {
   html: string
 }
 
+const MARGIN_BOTTON = '1.5rem'
+
 const MarkdownRenderer = styled.div`
   // Renderer Style
   display: flex;
@@ -21,8 +23,8 @@ const MarkdownRenderer = styled.div`
   // Apply Padding Attribute to All Elements
   p {
     padding: 3px 0;
-    margin-bottom: 16px;
-    line-height: 24px;
+    margin-bottom: ${MARGIN_BOTTON};
+    line-height: 1.6em;
   }
 
   // Adjust Heading Element Style
@@ -30,13 +32,13 @@ const MarkdownRenderer = styled.div`
   h2,
   h3 {
     font-weight: 800;
-    margin-bottom: 30px;
+    margin-bottom: ${MARGIN_BOTTON};
   }
 
   * + h1,
   * + h2,
   * + h3 {
-    margin-top: 50px;
+    margin-top: 2em;
   }
 
   hr + h1,
@@ -67,22 +69,31 @@ const MarkdownRenderer = styled.div`
     font-size: 18px;
     color: #000;
     background-color: #f7f7f7;
+    margin-bottom: ${MARGIN_BOTTON};
 
     p {
       margin: 10px 0;
     }
   }
 
-  // Adjust List Element Style
   ol,
   ul {
-    /* list-style: none; */
+    margin-bottom: ${MARGIN_BOTTON};
     margin-left: 20px;
-    margin-bottom: 16px;
+  }
+
+  // Hide markers for list items with checkboxes
+  ul > li:has(input[type='checkbox']) {
+    list-style: none;
+  }
+
+  // 체크박스 스타일일 경우 margin-left 0으로 간격 유지
+  .contains-task-list {
+    margin-left: 0;
   }
 
   li {
-    margin-bottom: 16px;
+    margin-bottom: 0.5em;
   }
 
   // Adjust Horizontal Rule style
