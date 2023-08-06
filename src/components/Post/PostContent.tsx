@@ -113,16 +113,15 @@ const MarkdownRenderer = styled.div`
     text-decoration: underline;
   }
 
-  // Adjust Code Style
   pre[class*='language-'] {
     margin: 0 0 30px 0;
     padding: 15px;
     font-size: 15px;
 
-    ::-webkit-scrollbar-thumb {
+    /* ::-webkit-scrollbar-thumb {
       background: rgba(255, 255, 255, 0.5);
       border-radius: 3px;
-    }
+    } */
   }
 
   code[class*='language-'],
@@ -131,6 +130,7 @@ const MarkdownRenderer = styled.div`
     font-size: 14px;
   }
 
+  li,
   p {
     code {
       color: #eb5757;
