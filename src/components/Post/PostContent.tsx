@@ -94,6 +94,12 @@ const MarkdownRenderer = styled.div`
   // Adjust Link Element Style
   a {
     color: #0687f0;
+    font-weight: 500;
+    transition: all 0.3s ease-in-out;
+  }
+
+  a:hover {
+    text-decoration: underline;
   }
 
   // Adjust Code Style
