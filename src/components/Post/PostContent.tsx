@@ -59,14 +59,17 @@ const MarkdownRenderer = styled.div`
 
   // Adjust Quotation Element Style
   blockquote {
-    padding: 5px 15px;
-    border-left: 2px solid #000000;
-    font-weight: 800;
-    font-style: italic;
-    line-height: 24px;
+    padding: 20px;
+    border-left: 5px solid #a3aaae;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 28px;
+    font-size: 18px;
+    color: #000;
+    background-color: #f7f7f7;
 
     p {
-      margin: 3px 0px;
+      margin: 10px 0;
     }
   }
 
