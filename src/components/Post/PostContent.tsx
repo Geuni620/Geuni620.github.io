@@ -5,6 +5,8 @@ interface PostContentProps {
   html: string
 }
 
+const MARGIN_BOTTON = '1.5rem'
+
 const MarkdownRenderer = styled.div`
   // Renderer Style
   display: flex;
@@ -21,8 +23,8 @@ const MarkdownRenderer = styled.div`
   // Apply Padding Attribute to All Elements
   p {
     padding: 3px 0;
-    margin-bottom: 16px;
-    line-height: 24px;
+    margin-bottom: ${MARGIN_BOTTON};
+    line-height: 1.6em;
   }
 
   // Adjust Heading Element Style
@@ -30,13 +32,13 @@ const MarkdownRenderer = styled.div`
   h2,
   h3 {
     font-weight: 800;
-    margin-bottom: 30px;
+    margin-bottom: ${MARGIN_BOTTON};
   }
 
   * + h1,
   * + h2,
   * + h3 {
-    margin-top: 50px;
+    margin-top: 0.5rem;
   }
 
   hr + h1,
@@ -59,27 +61,39 @@ const MarkdownRenderer = styled.div`
 
   // Adjust Quotation Element Style
   blockquote {
-    padding: 5px 15px;
-    border-left: 2px solid #000000;
-    font-weight: 800;
-    font-style: italic;
-    line-height: 24px;
+    padding: 20px;
+    border-left: 5px solid #a3aaae;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 28px;
+    font-size: 18px;
+    color: #000;
+    background-color: #f7f7f7;
+    margin-bottom: ${MARGIN_BOTTON};
 
     p {
-      margin: 3px 0px;
+      margin: 10px 0;
     }
   }
 
-  // Adjust List Element Style
   ol,
   ul {
-    /* list-style: none; */
+    margin-bottom: ${MARGIN_BOTTON};
     margin-left: 20px;
-    margin-bottom: 16px;
+  }
+
+  // Hide markers for list items with checkboxes
+  ul > li:has(input[type='checkbox']) {
+    list-style: none;
+  }
+
+  // 체크박스 스타일일 경우 margin-left 0으로 간격 유지
+  .contains-task-list {
+    margin-left: 0;
   }
 
   li {
-    margin-bottom: 16px;
+    margin-bottom: 0.5em;
   }
 
   // Adjust Horizontal Rule style
@@ -91,6 +105,12 @@ const MarkdownRenderer = styled.div`
   // Adjust Link Element Style
   a {
     color: #0687f0;
+    font-weight: 500;
+    transition: all 0.3s ease-in-out;
+  }
+
+  a:hover {
+    text-decoration: underline;
   }
 
   // Adjust Code Style
