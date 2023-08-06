@@ -1,8 +1,8 @@
 ---
 date: '2023-08-06'
-title: 'google search console - 색인이 생성되지 않은 페이지'
-categories: ['next.js']
-summary: '수동으로 색인 생성 요청하기'
+title: '색인이 생성되지 않은 페이지'
+categories: ['google-search-console', 'seo', '검색엔진']
+summary: '구글 서치 콘솔에 수동으로 색인 생성 요청하기'
 ---
 
 > 사내 블로그와 개인 블로그를 google search console과 네이버 서치어드바이저에 모두 등록시켰다.  
