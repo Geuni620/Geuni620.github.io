@@ -5,6 +5,14 @@ categories: ['daily']
 summary: 'http 통신할 때, accessToken을 서버에선 어떻게 가지고 있을 수 있을까?'
 ---
 
+아래에 내용은 잘못된 부분이 존재합니다. 당시엔 저렇게 생각했지만 현재는 다음과 같은 글을 다시 썼습니다.
+읽어보시기 전에 이 글을 보셔도 좋고, 읽고 나서 이 글을 보셔도 좋습니다.
+이 글은 꼭 읽어주셨으면 합니다. **아래는 잘못된 내용이 포함**되어 있으니까요.
+
+[이 글](https://geuni620.github.io/blog/2023/8/24/next-auth/)
+
+---
+
 > next-auth로 어떻게 token을 관리하는걸까?  
 > 현재 프론트는 next.js / backend는 express로 구성되어있다.  
 > db는 mysql, orm은 prisma를 사용했다.  
