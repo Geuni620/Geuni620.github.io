@@ -1,5 +1,5 @@
 ---
-date: '2023-08-19'
+date: '2023-08-24'
 title: 'next-auth token 관리하기?'
 categories: ['daily']
 summary: 'next-auth, 대체 어떻게 잘 다룰 수 있는걸까...?'
