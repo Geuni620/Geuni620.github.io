@@ -1,7 +1,7 @@
 ---
 date: '2023-08-30'
 title: '모바일 노치(notch) 대응 후, 페이지 이동 시 notch 대응 풀리는 현상'
-categories: ['daily']
+categories: ['next.js', 'pwa', 'notch']
 summary: 'app directory로 notch 대응했으나, 페이지 이동시 풀리는 현상'
 ---
 
