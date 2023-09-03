@@ -1,6 +1,6 @@
 ---
 date: '2023-08-24'
-title: 'next-auth token 관리하기?'
+title: 'next-auth token 관리하기-2'
 categories: ['next-auth']
 summary: 'next-auth, 대체 어떻게 잘 다룰 수 있는걸까...?'
 ---
@@ -65,10 +65,10 @@ export const requireAuth = async (
   1. authHeader에 authorization이라는 token을 심어서 보냈다.
      이때, 이 token은 불필요하다. 왜냐하면, cookie를 통해서 jwt가 암호화된 상태로 전달되기 때문이다.
      그리고 이 jwt는 서버에서 cookie-parser를 통해서 가져온 후, secret를 통해서 복호화한다.
-     즉, accessToken은 불필요했다.
+     즉, header의 accessToken은 불필요했다.
 
   2. `if (!token || token.accessToken !== accessToken)` 중 앞의 `!token`과 뒤의 `token.accessToken !== accessToken`는 각각 error 문구를 다르게 보여줘야했다.  
-     예를 들면, !token은, getToken으로 cookie를 복호화하는 도중 에러가 발생했어요. 라고 보여줘야했을 것 같고, 뒤의 부분은 token.accessToken과 accessToken이 같지않아요. 라고 보여줘야했을 것 같다.
+     예를 들면, !token은, `getToken으로 cookie를 복호화하는 도중 에러가 발생했어요.` 라고 보여줘야했을 것 같고, 뒤의 부분은 `token.accessToken과 accessToken이 같지않아요.` 라고 보여줘야했을 것 같다.
 
 <br>
 
@@ -79,7 +79,7 @@ export const requireAuth = async (
 1. next-auth를 통해서 google oauth로 로그인한다
 2. 로그인 하고 나서 cookie에 `next-auth-session-token`이 저장된다.
 3. server로 요청을 보낼 때 cookie를 심어서 보낸다.
-4. server에서 middleware로 cookie를 가져오고, getToken 함수에 request와 scecret key를 넣어서 cookie를 복호화한다.
+4. server에서 middleware로 cookie를 가져오고, getToken 함수에 request와 secret key를 넣어서 cookie를 복호화한다.
 5. 복호화하면 유저정보가 나오는데, 이 정보를 이용해서 db에 해당하는 유저정보는 반환한다.
 
 <br>
