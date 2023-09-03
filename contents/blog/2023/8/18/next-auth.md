@@ -31,19 +31,18 @@ summary: 'http 통신할 때, accessToken을 서버에선 어떻게 가지고 �
 
 그래서 next-auth 공식문서를 찾아봤고, 결국 두 가지로 관리할 수 있다는 걸 알게됐다.
 
-1. next-auth의 sesstion
+1. next-auth의 session
 2. db
 
 <br>
 
 db를 사용하려면 [adapter](https://authjs.dev/reference/adapters)를 쓰는 것 같은데, 나는 DB로 token을 관리하고 싶지 않았다.
-cookie와 sesstion으로 관리하고 싶었고, db에 token을 저장하고 싶지도 않았다.
+cookie와 session으로 관리하고 싶었고, db에 token을 저장하고 싶지도 않았다.
 
 <br>
 
-근데, 방법을 몰라 access_token을 다음과 같이 반환받게 되는데,
-jwt와 sesstion을 사용하지 않았을 때, access_token을 useSession hooks에서 받아오지 못했다.
-하지만 다음과 같이 구현하면, useSession hooks을 통해 accessToken을 반환받을 수 있다.
+accessToken은 아래 코드를 통해 session에 추가해주면 반환받을 수 있다.
+만약 추가해주지 않는다면, useSession hooks을 통해 accessToken을 가져올 수 없다.
 
 ```TSX
 export const authOptions: NextAuthOptions = {
@@ -113,6 +112,7 @@ export const authOptions: NextAuthOptions = {
 ### express에서 token 관리하기
 
 ```TS
+// middleware.ts
 import { Request, Response, NextFunction } from 'express';
 import { getToken } from 'next-auth/jwt';
 
@@ -160,19 +160,13 @@ export const requireAuth = async (
 ```
 
 **결국 backend에서도 next-auth package를 설치한다.** 그리고 import로 getToken 함수를 가져온다.
-secret key는 .env 환경변수로 관리해주고, 클라이언트에서 오는 accessToken과 cookie에 심어져 오는 accessToken을 비교해준다.
-이 비교한 결과가 true로 일치할 경우 해당 user에 대한 정보를 반환한다.
+secret key는 `.env` 환경변수로 관리해주고, 클라이언트에서 header에 심어서 오는 accessToken과 cookie에 심어져 오는 accessToken을 비교해준다.
+비교한 결과가 true로 일치할 경우 해당 user에 대한 정보를 반환한다.
 
-<br>
-
-express에서 위 코드는 middleware로 사용했다.
-
-<br>
+express에서 위 검증과정을 위해 middleware를 사용했다.
 
 next-auth는 풀스택을 위한 라이브러리이다. next.js를 이용해서 로그인 로직을 구현할 때 api폴더를 사용해서 서버 api를 구현할 수 있다.
 즉, next.js내에서만 next-auth를 사용하면 되는 것이다. 하지만 나의 경우엔, express server를 따로 두고 있다.
 
-<br>
-
 cookie의 token은 암호화된 상태로 오게되는데, jwt이다. 이걸 복호화하기 위해 복호화 라이브러리도 설치해서 적용해봤는데, 결국 다 에러가 난다.
-즉, getToken을 통해 간단히 cookie에 심어져오는 token을 복호화 할 수 있다.
+즉, `getToken`을 통해 간단히 cookie에 심어져오는 token을 복호화 할 수 있다.
