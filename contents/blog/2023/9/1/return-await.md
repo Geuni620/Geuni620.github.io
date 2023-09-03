@@ -11,6 +11,8 @@ summary: '각각을 테스트해보자.'
 
 ### 예시
 
+[예시코드](https://github.com/Geuni620/return-await-test)
+
 ```TSX
 // 원래 함수
 async function waitAndMaybeReject() {
