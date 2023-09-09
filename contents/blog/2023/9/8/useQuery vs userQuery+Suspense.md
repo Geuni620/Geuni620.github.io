@@ -256,14 +256,31 @@ the component mounts, it calls useQuery, which creates an Observer.
 
 <br>
 
+### 여기서 잠깐만.
+
+- 그럼 suspense는 컴포넌트 마운트 되기 전, 컴포넌트를 그리는 단계에서 promise를 catch 하는게 맞나?
+- react 실행되는 생명주기는 어떻게 되는 걸까?
+- react-query 내부는 어떻게 동작할까?
+- react의 hooks는 어떻게 동작하지? 이게 schedule와 연관된 걸까?
+
+<br>
+
+이런 궁금증이 남는다.
+
+잠깐 찾아본 결과 이런 문서를 발견했다.
+
 ### 참고자료
 
 suspense
 [토스ㅣSLASH 21 - 프론트엔드 웹 서비스에서 우아하게 비동기 처리하기](https://youtu.be/FvRtoViujGg?si=rixcZx7yBijQ7Orq)
 [sebmarkbage SynchronousAsync.js](https://gist.github.com/sebmarkbage/2c7acb6210266045050632ea611aebee)
 
+[Suspense와 선언적으로 Data fetching처리](https://fe-developers.kakaoent.com/2021/211127-211209-suspense/)
+
 <br>
 
 react-query
 [Inside React Query 번역본](https://velog.io/@hyunjine/Inside-React-Query)  
 [Inside React Query](https://tkdodo.eu/blog/inside-react-query)
+
+<br>
