@@ -266,8 +266,34 @@ the component mounts, it calls useQuery, which creates an Observer.
 <br>
 
 이런 궁금증이 남는다.
-
 잠깐 찾아본 결과 이런 문서를 발견했다.
+
+[[React] React-Query와 Suspense](https://programmerplum.tistory.com/179#toc-Suspense)  
+[Suspense for Data Fetching의 작동 원리와 컨셉 (feat.대수적 효과)](https://maxkim-j.github.io/posts/suspense-argibraic-effect/)
+
+- 위 두 글을 통해서 '그럼 suspense는 컴포넌트 마운트 되기 전, 컴포넌트를 그리는 단계에서 promise를 catch 하는게 맞나?'의 정답을 찾았다!
+
+<br>
+
+- suspense로 감싸진 컴포넌트(예를 들어 <UserInfoNav/>)가 렌더링을 시도한다.
+- 내부에서 useQuery는 어떠한 resource에 의해 감싸지게 될텐데, 이게 위에서 본 wrapPromise이다.
+- 이 wrapPromise는 read()를 호출한 후, 데이터가 들어오기 전이라면, 컴포넌트 렌더링을 정지한다.
+- 그리고 react는 이 컴포넌트를 패스하고 다른 컴포넌트를 렌더링 시도한다.
+- 렌더링 시도할 컴포넌트가 남아있지 않을 경우, 컴포넌트 트리 상에서 존재하는 것 중 가장 가까운 Suspense(여기선 다시 정지한 컴포넌트(<UserInfoNav/>)의 가장 가까운 Suspense)의 fallback ui를 찾는다.
+
+<br>
+
+- 즉 컴포넌트를 렌더링하는 단계에서 promise를 catch하는 것이 맞다.
+
+<br>
+
+- react 실행되는 생명주기는 어떻게 되는 걸까?
+- react-query 내부는 어떻게 동작할까?
+- react의 hooks는 어떻게 동작하지? 이게 schedule와 연관된 걸까?
+
+아래 세 가지는 react에 관련된 내용이니, 또 다음 주제를 통해 블로그를 작성해야겠다.
+
+<br>
 
 ### 참고자료
 
@@ -276,6 +302,7 @@ suspense
 [sebmarkbage SynchronousAsync.js](https://gist.github.com/sebmarkbage/2c7acb6210266045050632ea611aebee)
 
 [Suspense와 선언적으로 Data fetching처리](https://fe-developers.kakaoent.com/2021/211127-211209-suspense/)
+[Suspense for Data Fetching의 작동 원리와 컨셉 (feat.대수적 효과)](https://maxkim-j.github.io/posts/suspense-argibraic-effect/)
 
 <br>
 
