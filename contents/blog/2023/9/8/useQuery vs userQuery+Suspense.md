@@ -5,8 +5,8 @@ categories: ['react-query', 'tanstack-query', 'react']
 summary: '어떤 게 사용자에게 더 빠르게 Loading UI라도 먼저 보여줄 수 있을까?'
 ---
 
-> useQuery에선 isLoading을 return 해준다.
-> Suspense에서도 Promise가 pending 상태라면, fallback을 보여준다.
+> useQuery에선 isLoading을 return 해준다.  
+> Suspense에서도 Promise가 pending 상태라면, fallback을 보여준다.  
 > 그럼 useQuery만 사용했을 때와, useQuery와 Suspense를 사용했을 때 어떤 게 더 빨리 Loading UI를 사용자에게 보여줄 수 있을까?
 
 <br>
@@ -17,8 +17,8 @@ summary: '어떤 게 사용자에게 더 빠르게 Loading UI라도 먼저 보�
 
 <br>
 
-처음 이 주제에 대해 궁금하기 시작한 건 동료개발자분 덕이다.
-내가 만들고 있는 서비스에서 Nav에 user가 sign-up할 때 작성했던 데이터를 불러와서 보여줘야하는 부분이 있었다.
+처음 이 주제에 대해 궁금하기 시작한 건 동료개발자분 덕이다.  
+내가 만들고 있는 서비스에서 Nav에 user가 sign-up할 때 작성했던 데이터를 불러와서 보여줘야하는 부분이 있었다.  
 `UserInfoNav`라는 컴포넌트에 작성했는데, Suspense로 감싸서 fallback ui를 적용했는데, 다음과 같았다.
 
 ```TSX
@@ -74,9 +74,12 @@ export default UserInfoNav;
 
 <br>
 
-당시 탐구할 땐 같은 주제라고 생각했는데, 지금와서 생각해보니 data의 fetching 시점은 다른 주제인 것 같다.
-data fetching 시점은 useQuery를 사용하기 때문에 어쨌든 동일할 것이라는 생각이 든다. (개인적인 생각이다)
-그리고 탐구하다보니 알게 된 사실인데, react-query가 존재하기 전에는 useEffect를 사용해서 data fetching 했다.(고 한다.)
+~~당시 탐구할 땐 같은 주제라고 생각했는데, 지금와서 생각해보니 data의 fetching 시점은 다른 주제인 것 같다.~~
+~~data fetching 시점은 useQuery를 사용하기 때문에 어쨌든 동일할 것이라는 생각이 든다. (개인적인 생각이다)~~
+
+<br>
+
+그리고 탐구하다보니 알게 된 사실인데, react-query가 존재하기 전에는 useEffect를 사용해서 data fetching 했다.(고 한다.)  
 'useEffect와 useQuery 둘 중 data의 fetching 시점은 어떤게 더 빠를까?'  
 useEffect와 useQuery 내부 동작이 어떤지는 찾아보지 않아서 잘 모르겠지만, 둘이 실행되는 시점은 **동일**하다.
 즉, mount 된 후에 useQuery도 useEffect도 실행된다.
@@ -290,6 +293,23 @@ the component mounts, it calls useQuery, which creates an Observer.
 <br>
 
 - 즉 컴포넌트를 렌더링하는 단계에서 promise를 catch하는 것이 맞다.
+- 그리고 위에서 개인적인 생각이라고 말했던 부분도, 정정이 필요하다.
+
+```
+당시 탐구할 땐 같은 주제라고 생각했는데, 지금와서 생각해보니 data의 fetching 시점은 다른 주제인 것 같다.
+data fetching 시점은 useQuery를 사용하기 때문에 어쨌든 동일할 것이라는 생각이 든다. (개인적인 생각이다)
+```
+
+- 위 부분 역시, 잘못됐다. Suspense를 적용함으로써, 응답을 기다리며 명령형으로 코드를 작성할 필요가 없어졌다.
+
+* 즉, useQuery의 isLoading과 같은 값을 리턴할 이유도 없어졌으니, 코드가 줄어들고, 비동기 데이터의 표시는 더 빨라질 것이라고 추측된다.
+
+<br>
+
+### 결론
+
+- suspense + useQuery가 loading 시점도 빨리보여준다.
+- suspense + useQuery가 data의 fetching 시점도 빨리 가져간다.
 
 <br>
 
