@@ -13,13 +13,13 @@ summary: '어떤 게 사용자에게 더 빠르게 Loading UI라도 먼저 보�
 
 하나의 가정이 필요하다.
 
-- 네트워크 속도 동일.
+- 네트워크 속도 동일하다.
 
 <br>
 
 처음 이 주제에 대해 궁금하기 시작한 건 동료개발자분 덕이다.
 내가 만들고 있는 서비스에서 Nav에 user가 sign-up할 때 작성했던 데이터를 불러와서 보여줘야하는 부분이 있었다.
-UserInfoNav라는 컴포넌트에 작성했는데, Suspense로 감싸서 fallback ui를 적용했는데, 다음과 같았다.
+`UserInfoNav`라는 컴포넌트에 작성했는데, Suspense로 감싸서 fallback ui를 적용했는데, 다음과 같았다.
 
 ```TSX
 // UserInfoNav.tsx
@@ -58,7 +58,7 @@ export default UserInfoNav;
 ```
 
 - 여기선 useQuery에서 return해주는 isLoading으로 처리해주었다.
-- 그 이유는, Suspense로 감싸주었을 때 fallback ui를 보여주어야하는데, 이게 동작하지 않는다.
+- 그 이유는, Suspense로 감싸주었을 때, fallback ui를 보여주어야하는데 이게 동작하지 않는다.
 - 해당 부분에서 `useGiRokEInfoGetQuery` hooks는 서버에 데이터를 요청하기 때문에 Promise를 return하는데도 불구하고 동작하지 않는다.
 - **아직 원인 파악 중이다...**
 
@@ -71,6 +71,9 @@ export default UserInfoNav;
 
 지금 이 글은 제목에서도 적혀있듯, 'useQuery와 useQuery+Suspense 중 어떤게 loading UI를 사용자에게 더 빨리 보여줄 수 있을까?' 이다.
 처음 나의 흥미를 불러 일으킨, 'data의 fetching 시점은 어떤게 더 빠를까?'였는데, 탐구하다보니, 기준을 위와 같이 잡게 됐다.
+
+<br>
+
 당시 탐구할 땐 같은 주제라고 생각했는데, 지금와서 생각해보니 data의 fetching 시점은 다른 주제인 것 같다.
 data fetching 시점은 useQuery를 사용하기 때문에 어쨌든 동일할 것이라는 생각이 든다. (개인적인 생각이다)
 그리고 탐구하다보니 알게 된 사실인데, react-query가 존재하기 전에는 useEffect를 사용해서 data fetching 했다.(고 한다.)
@@ -87,7 +90,7 @@ Suspense 내부 코드를 먼저 확인해보고 싶었다.
 
 [Data fetching with React Suspense](https://blog.logrocket.com/data-fetching-react-suspense/)
 
-위 글에선 Suspense 내부 동작을 직접 구현해 놓은 코드가 있다.
+위 글에선 Suspense 내부 동작을 **참고용**으로 구현해 놓은 코드가 있다.
 
 ```TSX
 // wrapPromise.ts
@@ -137,6 +140,9 @@ export default fetchData;
 ```
 
 ```TSX
+// https://velog.io/@imnotmoon/React-Suspense-ErrorBoundary-%EC%A7%81%EC%A0%91-%EB%A7%8C%EB%93%A4%EA%B8%B0
+// https://velog.io/@seeh_h/suspense%EC%9D%98-%EB%8F%99%EC%9E%91%EC%9B%90%EB%A6%AC
+// 두 블로그에서 코드를 참고했다 🙇‍♂️
 import React from "react";
 
 export interface SuspenseProps {
@@ -202,7 +208,7 @@ export default class Suspense extends React.Component<
 
 - 위 코드에서 확인할 수 있듯이, Suspense 내부에서는 Promise를 확인한다.
 - 그리고 Promise가 pending 상태라면, pending을 true로 설정하고 fallback ui를 보여주는 것이다.
-- 여기서 핵심은 ErrorBoundary로 error를 throw하듯이, suspense로 Promise를 throw하고 Suspense에서 Promise를 받아서 상태를 확인한다는 것이다.
+- 여기서 핵심은 ErrorBoundary로 error를 throw하듯이, suspense로 **Promise를 throw하고 Suspense에서 Promise를 받아서 상태를 확인한다는 것**이다.
 
 <br>
 
@@ -266,7 +272,7 @@ the component mounts, it calls useQuery, which creates an Observer.
 <br>
 
 이런 궁금증이 남는다.
-잠깐 찾아본 결과 이런 문서를 발견했다.
+잠깐 찾아본 결과 궁금증의 해답을 제시하는 글을 발견했다.
 
 [[React] React-Query와 Suspense](https://programmerplum.tistory.com/179#toc-Suspense)  
 [Suspense for Data Fetching의 작동 원리와 컨셉 (feat.대수적 효과)](https://maxkim-j.github.io/posts/suspense-argibraic-effect/)
@@ -303,6 +309,7 @@ suspense
 
 [Suspense와 선언적으로 Data fetching처리](https://fe-developers.kakaoent.com/2021/211127-211209-suspense/)
 [Suspense for Data Fetching의 작동 원리와 컨셉 (feat.대수적 효과)](https://maxkim-j.github.io/posts/suspense-argibraic-effect/)
+[Suspense을 사용해 선언적으로 로딩 화면 구현하기](https://lasbe.tistory.com/160)
 
 <br>
 
