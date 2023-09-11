@@ -237,34 +237,6 @@ the component mounts, it calls useQuery, which creates an Observer.
 
 <br>
 
-### 결론
-
-'useQuery와 useQuery+Suspense 중 어떤게 loading UI를 사용자에게 더 빨리 보여줄 수 있을까?'
-
-결국 **Suspense로 감싸주었을 때가 더 빠를 것이라고 추측**할 수 있다.
-추측컨데, 다음과 같이 동작할 것이라고 생각된다.
-
-- Suspense를 감싼 컴포넌트가 있다.
-- 컴포넌트 상단에서부터 코드를 쭉 읽어간다.
-- 약 5줄 쯤에 useQuery를 만난다.
-- useQuery promise를 throw한다.
-- suspense에서 promise를 받아서 pending 상태인지 확인한다.
-- pending 상태라면, fallback ui를 보여준다.
-
-<br>
-
-만약 useQuery만 사용한다면 다음과 같을 것이다.
-
-- 컴포넌트 상단에서부터 코드를 쭉 읽어간다.
-- useQuery를 만나도 일단 내려간다.
-- 컴포넌트가 모두 그려진 후에 useQuery가 실행된다.
-
-<br>
-
-두 과정을 비교해봤을 때, 큰 차이는 없을 것이라고 생각되지만, useQuery + suspense를 사용했을 때가 미세하게(정말정말) 더 빠를 것이라고 생각된다.
-
-<br>
-
 ### 여기서 잠깐만.
 
 - 그럼 suspense는 컴포넌트 마운트 되기 전, 컴포넌트를 그리는 단계에서 promise를 catch 하는게 맞나?
@@ -300,18 +272,19 @@ the component mounts, it calls useQuery, which creates an Observer.
 data fetching 시점은 useQuery를 사용하기 때문에 어쨌든 동일할 것이라는 생각이 든다. (개인적인 생각이다)
 ```
 
-- 위 부분 역시, 잘못됐다. Suspense를 적용함으로써, 응답을 기다리며 명령형으로 코드를 작성할 필요가 없어졌다.
-
-* 즉, useQuery의 isLoading과 같은 값을 리턴할 이유도 없어졌으니, 코드가 줄어들고, 비동기 데이터의 표시는 더 빨라질 것이라고 추측된다.
+- 위 부분 역시 Suspense를 적용함으로써, 응답을 기다리며 명령형으로 코드를 작성할 필요가 없어졌다.
+- 즉, useQuery의 isLoading과 같은 값을 리턴할 이유도 없어졌으니, 코드가 줄어들고, 비동기 데이터의 표시는 더 빨라질 것이라고 추측된다.
 
 <br>
 
 ### 결론
 
-- suspense + useQuery가 loading 시점도 빨리보여준다.
+- suspense + useQuery가 loading 시점도 빨리 보여준다.
 - suspense + useQuery가 data의 fetching 시점도 빨리 가져간다.
 
 <br>
+
+아직 해결하지 못한 궁금증들
 
 - react 실행되는 생명주기는 어떻게 되는 걸까?
 - react-query 내부는 어떻게 동작할까?
@@ -323,17 +296,24 @@ data fetching 시점은 useQuery를 사용하기 때문에 어쨌든 동일할 �
 
 ### 참고자료
 
-suspense
+suspense  
 [토스ㅣSLASH 21 - 프론트엔드 웹 서비스에서 우아하게 비동기 처리하기](https://youtu.be/FvRtoViujGg?si=rixcZx7yBijQ7Orq)
+
 [sebmarkbage SynchronousAsync.js](https://gist.github.com/sebmarkbage/2c7acb6210266045050632ea611aebee)
 
 [Suspense와 선언적으로 Data fetching처리](https://fe-developers.kakaoent.com/2021/211127-211209-suspense/)
+
 [Suspense for Data Fetching의 작동 원리와 컨셉 (feat.대수적 효과)](https://maxkim-j.github.io/posts/suspense-argibraic-effect/)
+
 [Suspense을 사용해 선언적으로 로딩 화면 구현하기](https://lasbe.tistory.com/160)
+
+[Suspense의 동작 원리](https://velog.io/@seeh_h/suspense%EC%9D%98-%EB%8F%99%EC%9E%91%EC%9B%90%EB%A6%AC)
+
+[React Suspense 소개 (feat. React v18)](https://www.daleseo.com/react-suspense/)
 
 <br>
 
-react-query
+react-query  
 [Inside React Query 번역본](https://velog.io/@hyunjine/Inside-React-Query)  
 [Inside React Query](https://tkdodo.eu/blog/inside-react-query)
 
