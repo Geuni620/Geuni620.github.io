@@ -1,7 +1,7 @@
 ---
 date: '2023-05-07'
 title: '[Git] git은 대소문자를 구분하지 않는다.'
-categories: ['Git']
+categories: ['개발']
 summary: '-'
 ---
 

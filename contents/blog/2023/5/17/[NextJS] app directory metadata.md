@@ -1,7 +1,7 @@
 ---
 date: '2023-05-17'
 title: '[NextJS] app 디렉토리 metadata'
-categories: ['next.js']
+categories: ['개발']
 summary: '-'
 ---
 

@@ -1,7 +1,7 @@
 ---
 date: '2023-05-15'
 title: '[Tanstack-query] QueryFunctionContext'
-categories: ['tanstack-query']
+categories: ['개발']
 summary: '-'
 ---
 

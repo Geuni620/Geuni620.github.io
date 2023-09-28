@@ -1,7 +1,7 @@
 ---
 date: '2023-07-01'
 title: '프론트 개발환경 세팅을 위한 eslint, prettier, tsconfig를 알아보자!'
-categories: ['next.js', 'eslint', 'prettier', 'tsconfig']
+categories: ['개발']
 summary: '뭐가 이리 많지...'
 ---
 

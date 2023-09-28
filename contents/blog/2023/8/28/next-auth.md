@@ -1,7 +1,7 @@
 ---
 date: '2023-08-28'
 title: 'next-auth token 관리하기-3'
-categories: ['next-auth']
+categories: ['개발']
 summary: '우연히 발견한 github issue글을 토대로 해결할 수 있었다!'
 ---
 

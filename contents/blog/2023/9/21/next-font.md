@@ -1,7 +1,7 @@
 ---
 date: '2023-09-21'
 title: 'app directory에서 font를 설정해보자~!'
-categories: ['next.js']
+categories: ['개발']
 summary: 'css로 font를 적용했을 때와, next/font로 적용했을 때 무엇이 더 빠를까?'
 ---
 

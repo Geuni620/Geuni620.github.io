@@ -1,7 +1,7 @@
 ---
 date: '2023-08-13'
 title: '블로그를 다시 만들까 하는 고민'
-categories: ['daily']
+categories: ['일상']
 summary: '-'
 ---
 

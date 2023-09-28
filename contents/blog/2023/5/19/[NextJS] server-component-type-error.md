@@ -1,7 +1,7 @@
 ---
 date: '2023-05-19'
 title: '[NextJS] Async Server Component TypeScript Error 해결하기'
-categories: ['next.js']
+categories: ['개발']
 summary: '"components는 JSX 구성 요소로 사용할 수 없습니다." typeError 해결하기'
 ---
 

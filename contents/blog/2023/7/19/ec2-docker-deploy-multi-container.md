@@ -1,8 +1,8 @@
 ---
 date: '2023-07-19'
 title: 'ec2-docker-deploy-multi-container'
-categories: ['docker', 'docker-compose']
-summary: '-'
+categories: ['개발']
+summary: 'ec2에 서버와 프론트 모두 배포해보자'
 ---
 
 > 이름을 거창하게 지어봤지만, 이전 [ec2-docker-deploy](https://geuni620.github.io/blog/2023/6/26/ec2-docker-deploy/)에서 server 배포가 추가된 것 뿐이다.

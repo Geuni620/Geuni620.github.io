@@ -1,7 +1,7 @@
 ---
 date: '2023-06-13'
 title: 'react-deploy-with-docker'
-categories: ['docker', 'react']
+categories: ['개발']
 summary: '-'
 ---
 

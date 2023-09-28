@@ -1,7 +1,7 @@
 ---
 date: '2023-08-06'
 title: '색인이 생성되지 않은 페이지'
-categories: ['google-search-console', 'seo', '검색엔진']
+categories: ['개발']
 summary: '구글 서치 콘솔에 수동으로 색인 생성 요청하기'
 ---
 

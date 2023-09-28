@@ -1,7 +1,7 @@
 ---
 date: '2023-08-19'
 title: 'next-auth token 관리하기-1'
-categories: ['next-auth']
+categories: ['개발']
 summary: 'http 통신할 때, accessToken을 서버에선 어떻게 가지고 있을 수 있을까?'
 ---
 

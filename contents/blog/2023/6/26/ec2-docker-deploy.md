@@ -1,7 +1,7 @@
 ---
 date: '2023-06-26'
 title: 'ec2-docker-deploy'
-categories: ['docker', 'deploy']
+categories: ['개발']
 summary: '-'
 ---
 

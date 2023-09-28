@@ -1,7 +1,7 @@
 ---
 date: '2023-05-01'
 title: 'next 13 app dir revalidate'
-categories: ['next.js']
+categories: ['개발']
 summary: '-'
 ---
 

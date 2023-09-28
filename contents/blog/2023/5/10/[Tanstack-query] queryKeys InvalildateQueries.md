@@ -1,7 +1,7 @@
 ---
 date: '2023-05-10'
 title: '[Tanstack-query] queryKeys InvalildateQueries'
-categories: ['tanstack-query']
+categories: ['개발']
 summary: '-'
 ---
 

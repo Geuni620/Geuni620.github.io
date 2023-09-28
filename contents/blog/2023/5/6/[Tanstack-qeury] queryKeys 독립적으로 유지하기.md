@@ -1,7 +1,7 @@
 ---
 date: '2023-05-06'
 title: '[Tanstack-query] queryKeys 독립적으로 유지하기'
-categories: ['tanstack-query']
+categories: ['개발']
 summary: '-'
 ---
 

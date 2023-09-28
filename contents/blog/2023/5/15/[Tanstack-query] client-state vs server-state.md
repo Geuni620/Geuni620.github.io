@@ -1,7 +1,7 @@
 ---
 date: '2023-05-15'
 title: '[Tanstack-query] client-state vs server-state'
-categories: ['tanstack-query']
+categories: ['개발']
 summary: '-'
 ---
 

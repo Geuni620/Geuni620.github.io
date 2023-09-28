@@ -1,7 +1,7 @@
 ---
 date: '2023-08-08'
 title: 'deploy 후 docker log 확인하기'
-categories: ['docker', 'log', 'ec2']
+categories: ['개발']
 summary: 'docker container를 이용해서 EC2에 배포했는데, 웹사이트가 멈춰버렸다. 왜 멈춘걸까? 어떻게 해결할 수 있을까?'
 ---
 

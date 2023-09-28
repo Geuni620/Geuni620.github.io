@@ -1,7 +1,7 @@
 ---
 date: '2023-06-26'
 title: '"§"이 뜨는 이유'
-categories: ['일기']
+categories: ['일상']
 summary: '-'
 ---
 

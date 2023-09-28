@@ -1,7 +1,7 @@
 ---
 date: '2023-07-22'
 title: 'React.FC가 그렇게 이상한가요?'
-categories: ['typescript', 'snippet']
+categories: ['개발']
 summary: '-'
 ---
 

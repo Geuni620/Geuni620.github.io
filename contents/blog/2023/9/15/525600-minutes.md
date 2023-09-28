@@ -1,7 +1,7 @@
 ---
 date: '2023-09-15'
 title: '525600분'
-categories: ['회고']
+categories: ['일상']
 summary: '-'
 ---
 

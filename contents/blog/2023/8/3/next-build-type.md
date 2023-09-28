@@ -1,7 +1,7 @@
 ---
 date: '2023-08-03'
 title: 'CSR / SSR / SSG / ISG는 항상 최신데이터를 가져올까?'
-categories: ['next.js']
+categories: ['개발']
 summary: '-'
 ---
 

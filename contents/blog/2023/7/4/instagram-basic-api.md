@@ -1,7 +1,7 @@
 ---
 date: '2023-07-04'
 title: 'instagram Basic API'
-categories: ['instagram', 'api']
+categories: ['개발']
 summary: '-'
 ---
 

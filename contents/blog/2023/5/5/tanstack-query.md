@@ -1,7 +1,7 @@
 ---
 date: '2023-05-05'
-title: 'Tanstack-query'
-categories: ['tanstack-query']
+title: 'Tanstack-query에 대해 학습해보자'
+categories: ['개발']
 summary: '-'
 ---
 

@@ -1,7 +1,7 @@
 ---
 date: '2023-05-15'
 title: '[Tanstack-query] useMutation, 캐시 무효화시키기'
-categories: ['tanstack-query']
+categories: ['개발']
 summary: '-'
 ---
 

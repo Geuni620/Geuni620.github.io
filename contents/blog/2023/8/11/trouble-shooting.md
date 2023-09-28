@@ -1,17 +1,7 @@
 ---
 date: '2023-08-11'
 title: '작은 기능 중, 작은 이슈를 해결하기 위해 달렸던 3개월'
-categories:
-  [
-    'trouble',
-    'trouble-shooting',
-    'issue',
-    'google-analytics',
-    'ssg',
-    'isg',
-    'views',
-    '조회수',
-  ]
+categories: ['개발']
 summary: '대체 왜 google analytics의 views(조회수)는 revalidate time이 적용되지 않는걸까?'
 ---
 

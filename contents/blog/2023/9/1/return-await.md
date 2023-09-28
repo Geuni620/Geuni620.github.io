@@ -1,7 +1,7 @@
 ---
 date: '2023-09-02'
 title: 'promise의 반환으로 no return, return, return await의 차이'
-categories: ['비동기', 'node', javascript]
+categories: ['개발']
 summary: '각각을 테스트해보자.'
 ---
 

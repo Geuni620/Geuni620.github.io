@@ -1,7 +1,7 @@
 ---
 date: '2023-09-23'
 title: '스크롤 가장 하단으로 이동시키기'
-categories: ['scrollIntoView', 'resizeObserver']
+categories: ['개발']
 summary: '채팅의 기록을 남길 때, 가장 최근에 남긴 기록을 최하단에서 보고싶을 때'
 ---
 
