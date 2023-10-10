@@ -1,6 +1,6 @@
 ---
 date: '2023-10-03'
-title: 'next.js에서 useQuery + Suspense를 사용했을 때 fallback ui가 보이지 않는다'
+title: 'next.js에서 useQuery + Suspense를 사용했을 때 fallback ui가 보이지 않는다 -1'
 categories: ['개발']
 summary: 'react에선 새로고침할 때마다 fallback ui를 잘 보여주는데...'
 ---
