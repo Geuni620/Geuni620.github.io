@@ -39,3 +39,19 @@ export const s3 = new S3Client({
 - 많은 글들을 확인해보다가 위 블로그 글을 발견했다.
 - 여기서 잠깐, ESM을 사용하고 있다고 생각했는데 tsconfig.json에 확인해보니 modules은 commonjs이다.
 - import/export 문을 사용하고 있어서 당연히 ESM이라고 생각했었는데...
+
+<br>
+
+- 확인결과 tsconfig.json도 module에 common.js를 사용하고 있었고, package.json에서 type을 따로 지정해주지 않았었다. 즉, default로 common.js로 build되고 있었다.
+- 하지만, import문을 사용했었는데, 문제가 되진 않았고 빌드에러도 발생하지 않았다.
+- import문이 사용가능했다는게 의아하긴 하지만, 결국 common.js를 사용했다.
+- 결정적인건 이미지 업로드할 때 업로드 후 다시 불러오는 과정에서 이미지 로딩이 오래걸렸다.
+  - 로딩 fallback이 사라졌음에도 불구하고 이미지가 즉각적으로 보이진 않았다.
+- 그래서 [plaiceholder](https://plaiceholder.co/docs)를 이용해서 dash64를 생성하고, 이를 next/image의 [blurDataUrl](https://nextjs.org/docs/app/api-reference/components/image#blurdataurl)에 넣어주려고 했다.
+- 하지만 plaiceholder는 common.js를 지원하지 않는다. 즉, ESM만 지원한다. 그래서 에러가 발생했었다.
+
+<br>
+
+### 이상하다
+
+왜냐하면, ESM이 아닌 common.js는 동기적으로 동작하는데, env 파일이 import 되지 않았었기 때문이다.
