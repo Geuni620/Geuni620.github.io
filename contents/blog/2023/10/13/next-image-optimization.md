@@ -1,6 +1,213 @@
 ---
 date: '2023-10-13'
-title: '내가 업로드하는 이미지, 왜 이렇게 느릴까?'
+title: 'Image 컴포넌트를 사용하지 않고, img 태그를 사용한 이유'
 categories: ['개발']
 summary: 'Image 업로드하는 속도를 잡아보자.'
 ---
+
+> 내가 개발하고 있는 기록이 서비스는 '기록'을 하기위한 플랫폼이다.
+> 즉 하루하루의 한 문장이라도 기록을 남긴다.
+> 이때 이미지도 함께 올릴 수 있는데, 이미지 업로드 속도가 너무 느리다.
+
+<br>
+
+### 현재 상황
+
+일단 간단하게 설명하면 다음과 같다.
+
+1. 이미지와 메시지를 업로드 하고 싶다.
+2. 메시지를 작성한다. + 이미지를 선택한다.
+3. 전송버튼을 누른다.
+
+<br>
+
+그럼 다음과 같은 로직으로 돌아간다.
+
+1. tanstack-query를 통해 메시지를 서버로 전송한다.
+2. 서버에 메시지를 저장한 후, record id를 반환한다. (mutation async)
+3. 반환된 record id를 통해 이미지를 서버로 전송한다.
+4. 서버에서 이미지를 S3로 업로드 한다.
+5. 업로드한 url, record id를 db에 저장한다.
+6. 다시 클라이언트 tanstack-query내에 onSuccess를 통해 invalidate queries를 무효화한다.
+7. 메시지 리스트 + 이미지가 포함된 data를 받아온 뒤 업데이트한다.
+
+<br>
+
+### 원인파악
+
+위의 상황 중 7번에서 문제가 발생하는데, 메시지는 바로 Ui상에 반영되지만, 이미지는 바로 반영되지 않는다.
+일정시간이 지난 후 layout shift가 발생하면서 이미지가 생긴다.
+
+<br>
+
+먼저 원인을 파악하기 위해 network tab에서 확인해본 결과, 이미지를 불러오는 과정에 문제가 있는 듯 했다.
+다음과 같은 고민을 했다.
+
+- 로직이 문제인건가? (recordId를 반환받고 그 후에 image를 업로드하는 saveImage를 병렬이 아닌 직렬로 동작해서 그런건가?)
+- image 로딩처리를 해주면 사용자가 업로드 중인걸 아니까 조금은 낫지 않을까?
+- lighthouse로 성능지표를 확인해봐야겠다.
+
+<br>
+
+### 실천방안 1. loading처리를 해주자.
+
+- loading 처리도 크게 두 가지로 나눌 수 있다.
+
+1. useQuery를 가져올 때 loading처리를 해줄 수 있다.
+2. next/image를 통해 Image 컴포넌트에 props로 onLoad를 사용해서 loading 처리를 해줄 수도 있다.
+
+<br>
+
+### 1-1 useQuery loading 처리
+
+먼저 1번부터 살펴보자.
+핵심은 Suspense로 UploadImageList를 감싸줬고, UploadImageList에는 `placeholder`,`blurDataURL`를 넣어줬다.
+Loading처리도 해주고, Image가 로딩 될 땐
+
+```TSX
+import { Suspense, useState } from 'react';
+
+const MessageBox: React.FC<MessageBoxProps> = ({
+  id,
+  timeStamp,
+  text,
+  title,
+  userEmail,
+  onEditMessage,
+  token,
+  hasImage,
+}) => {
+
+  return (
+    <div>
+      <Link>
+        <div className="z-20 w-full px-5 py-[25px] text-[18px] font-bold leading-[26px] text-black">
+          // Image를 Suspense로 감싸줬다.
+          {hasImage && (
+            <Suspense
+              fallback={
+                <div className="relative flex h-[275px] w-[275px] items-center justify-center">
+                  <LoadingIcon />
+                </div>
+              }
+            >
+              <UploadImageList token={token} userEmail={userEmail} id={id} />
+            </Suspense>
+          )}
+        </div>
+      </Link>
+    </div>
+  );
+};
+
+export default MessageBox;
+```
+
+<br>
+
+```TSX
+import Image from 'next/image';
+
+import { useImageGetByRecordIdQuery } from './useImageGetByRecordIdQuery';
+
+interface Image {
+  img: {
+    height: number;
+    width: number;
+    src: string;
+  };
+  base64: string;
+}
+
+interface UploadImageListProps {
+  token: string | undefined;
+  userEmail: string | undefined;
+  id: string;
+}
+
+const UploadImageList: React.FC<UploadImageListProps> = ({
+  token,
+  userEmail,
+  id,
+}) => {
+  const { imageList } = useImageGetByRecordIdQuery({
+    token,
+    userEmail,
+    recordId: id,
+  });
+
+  return (
+    <div className="relative h-[275px] w-[275px] ">
+      {imageList.data.slice(0, 1).map((image: Image, idx: number) => {
+        return (
+          <Image
+            key={idx}
+            src={image.img.src}
+            alt="user upload image"
+            className="border-[1px] border-solid border-black object-cover"
+            blurDataURL={image.base64}
+            placeholder="blur"
+            fill
+          />
+        );
+      })}
+    </div>
+  );
+};
+
+export default UploadImageList;
+```
+
+<br>
+
+![loading-image](./loading-image.png)
+
+![blur-image](./blur-image.png)
+
+순차적으로 로딩이 돌고(useQuery), Image가 불러와졌더라도, 완전히 load되기 전에 blur가 동작해서 희미하게 나마 이미지를 보여주기 시작한다.
+
+<br>
+
+언듯보기엔 잘 된것 같아보이지만, 이미지와 메시지를 바로 작성한 뒤 업로드가 될 때는
+
+1. 메시지가 먼저 올라가고,
+2. 이미지가 loading fallback을 보이더니
+3. blur처리가 된다.
+
+즉, layout shift는 여전히 발생한다.
+
+<br>
+
+### 1-2 next/image loading 처리
+
+대체적으로 인터넷에 찾아보면 Image컴포넌트를 사용하는 걸 권한다. 왜냐하면 해주는게 많기 때문이다.
+1-1에서의 문제점은 로딩과 이미지, 메시지가 따로 놀아서 메시지 올라가고, 로딩폴백 뜨더나, blur처리된 이미지가 보이고, 이미지가 적용되었다.
+그리고 1과 2사이의 term 긴 편이었다.
+
+그래서 이미지를 올리자마자 skeleton loading을 보여주고, 이미지가 로딩되면 skeleton loading을 없애주는 방식으로 적용해주려고 했다.
+
+```TSX
+const MessageBox: React.FC<MessageBoxProps> = () => {
+
+  return (
+    <div
+      key={index}
+      className="relative h-[275px] w-[275px] border-[1px] border-solid border-black"
+    >
+      <div className="skeleton" aria-hidden="true" />
+      <Image
+        fill
+        style={{
+          objectFit: 'cover',
+        }}
+        key={index}
+        sizes="(max-width: 400px) 275px"
+        src={image.url}
+        alt="user upload image"
+        quality={70}
+        onLoad={() => document.querySelector('.skeleton')?.remove()}
+      />
+    </div>
+  );
+};
+```
