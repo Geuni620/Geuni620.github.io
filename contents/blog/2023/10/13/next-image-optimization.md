@@ -1,6 +1,6 @@
 ---
 date: '2023-10-13'
-title: 'Image 컴포넌트를 사용하지 않고, img 태그를 사용한 이유'
+title: 'Image 컴포넌트를 사용하지 않고, img 태그를 사용한 이유 -1'
 categories: ['개발']
 summary: 'Image 업로드하는 속도를 잡아보자.'
 ---
@@ -24,7 +24,7 @@ summary: 'Image 업로드하는 속도를 잡아보자.'
 그럼 다음과 같은 로직으로 돌아간다.
 
 1. tanstack-query를 통해 메시지를 서버로 전송한다.
-2. 서버에 메시지를 저장한 후, record id를 반환한다. (mutation async)
+2. 서버에 메시지를 저장한 후, record id를 반환한다. (mutateAsync)
 3. 반환된 record id를 통해 이미지를 서버로 전송한다.
 4. 서버에서 이미지를 S3로 업로드 한다.
 5. 업로드한 url, record id를 db에 저장한다.
@@ -36,7 +36,8 @@ summary: 'Image 업로드하는 속도를 잡아보자.'
 ### 원인파악
 
 위의 상황 중 7번에서 문제가 발생하는데, 메시지는 바로 Ui상에 반영되지만, 이미지는 바로 반영되지 않는다.
-일정시간이 지난 후 layout shift가 발생하면서 이미지가 생긴다.
+일정시간이 지난 후 layout shift가 발생하면서 이미지가 생긴다.  
+또한 state를 reset해줘야하는데 이 또한, 동작이 느리다.(이건 동작이 왜 느린지 뒤에서 설명하겠다.)
 
 <br>
 
@@ -62,7 +63,6 @@ summary: 'Image 업로드하는 속도를 잡아보자.'
 
 먼저 1번부터 살펴보자.
 핵심은 Suspense로 UploadImageList를 감싸줬고, UploadImageList에는 `placeholder`,`blurDataURL`를 넣어줬다.
-Loading처리도 해주고, Image가 로딩 될 땐
 
 ```TSX
 import { Suspense, useState } from 'react';
@@ -140,6 +140,7 @@ const UploadImageList: React.FC<UploadImageListProps> = ({
     <div className="relative h-[275px] w-[275px] ">
       {imageList.data.slice(0, 1).map((image: Image, idx: number) => {
         return (
+          // Image에 blur와 blurDataURL을 넣어줬다.
           <Image
             key={idx}
             src={image.img.src}
@@ -181,8 +182,8 @@ export default UploadImageList;
 ### 1-2 next/image loading 처리
 
 대체적으로 인터넷에 찾아보면 Image컴포넌트를 사용하는 걸 권한다. 왜냐하면 해주는게 많기 때문이다.
-1-1에서의 문제점은 로딩과 이미지, 메시지가 따로 놀아서 메시지 올라가고, 로딩폴백 뜨더나, blur처리된 이미지가 보이고, 이미지가 적용되었다.
-그리고 1과 2사이의 term 긴 편이었다.
+1-1에서의 문제점은 로딩과 이미지, 메시지가 따로 동작한다. 메시지 올라가고, 로딩폴백 뜨더니, blur처리된 이미지가 보이고, 이미지가 적용되었다.
+그리고 메시지가 올라가서부터 로딩폴백이 뜨기까지 term이 긴 편이었다.
 
 그래서 이미지를 올리자마자 skeleton loading을 보여주고, 이미지가 로딩되면 skeleton loading을 없애주는 방식으로 적용해주려고 했다.
 
@@ -211,3 +212,36 @@ const MessageBox: React.FC<MessageBoxProps> = () => {
   );
 };
 ```
+
+- 위 코드에선 다음과 같은 의도로 코드를 작성했다.
+
+1. Image 사이즈를 고정시켜줘야할 것 같다.
+2. quality는 default 75이지만, 70으로 낮춰줬다.
+3. global.css에 skeleton style를 추가한 뒤, onLoad를 통해 이미지가 로드 되면, skeleton을 없애줬다.
+
+<br>
+
+![skeleton-ui를 적용시켰다. 이미지 상으론 그냥 회색 처리 같지만, keyframe을 통해 애니메이션을 넣었다.](./skeleton-ui.png)
+
+<br>
+
+1. 'Image 사이즈를 고정시켜줘야할 것 같다.'의 의도는 다음과 같다.
+
+- 이미지가 275px \* 275px로 맞춰놓고 UI를 구상했다. 이것보다 height가 큰 이미지는 UI가 깨져버린다.
+- 이를 위해 처음엔 width와 height를 각각 275px로 지정해줬다. width는 275px로 잘 고정되는 반면, height는 275px이 아닌 300px이 넘어가는 경우도 발생했다. (정확히 원인이 왜 그런지 잘 모르겠지만.)
+- 그래서 fill 속성을 사용했다. 하지만 fill 속성은 브라우저에서 이미지를 그릴 때 몇으로 그릴지를 지정해주지 못한다. width와 height props를 사용했다면 가능했겠지만, fill 속성으로 변경했다면 sizes를 추가해줘야한다.
+
+  - 나의 경우엔 mobile-first-ui로 제작했고, max-width가 400px이다. sizes를 275px로 지정해줬다.
+  - 이로써, 브라우저는 최대 400px을 기준으로 275px로 이미지를 그리게 될 것이다.
+  - 이 내용은 [공식문서 sizes내용을 참고했다.](https://nextjs.org/docs/app/api-reference/components/image#sizes)
+
+<br>
+
+- formats: ['image/avif', 'image/webp'],
+- 이미지 압축 다운로드
+
+-
+
+### 참고자료
+
+[]()
