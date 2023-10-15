@@ -169,17 +169,38 @@ export default UploadImageList;
 
 <br>
 
-언듯보기엔 잘 된것 같아보이지만, 이미지와 메시지를 바로 작성한 뒤 업로드가 될 때는
+언뜻보기엔 잘 된것 같아보이지만, 이미지와 메시지를 바로 작성한 뒤 업로드가 될 때는
 
 1. 메시지가 먼저 올라가고,
 2. 이미지가 loading fallback을 보이더니
 3. blur처리가 된다.
 
 즉, layout shift는 여전히 발생한다.
+위와 같이 작성했을 땐 lighthouse 기준 Performance가 오히려 더 낮아졌다.
+
+![최적화 하기 이전](./light-house1.png)
+
+<br>
+
+![위와 같이 수정한 후](./light-house2.png)
+
+<br>
+
+First Contentful Paint와 Largest Contentful Paint는 줄었다.
+
+- First Contentful Paint: 브라우저가 화면에 무언가를 그리기 시작하는 시점 (4.0s → 1.2s)
+- Largest Contentful Paint: 화면에 가장 큰 요소가 그려지는 시점 (34.7s → 28.1s)
+
+하지만 총 Total Blocking Time은 두 배 이상 늘어났다. 즉, Performance 점수는 45에서 28로 크게 줄어들어버렸다.
+
+- 원인은, 이미지와 메시지를 한 번에 불러왔지만 변경 후엔 Image를 각각 서버로 요청해서 불러와야한다는 점(await)
+- 그리고 서버쪽에서 blur처리를 위한 plaiceholder lib를 사용해서 base64를 생성하는데, 이것 또한 Blocking의 원인이 아니었나 싶다.
 
 <br>
 
 ### 1-2 next/image loading 처리
+
+> 다시 원점으로 돌아와서 시작해보기로 했다.
 
 대체적으로 인터넷에 찾아보면 Image컴포넌트를 사용하는 걸 권한다. 왜냐하면 해주는게 많기 때문이다.
 1-1에서의 문제점은 로딩과 이미지, 메시지가 따로 동작한다. 메시지 올라가고, 로딩폴백 뜨더니, blur처리된 이미지가 보이고, 이미지가 적용되었다.
@@ -191,7 +212,7 @@ export default UploadImageList;
 const MessageBox: React.FC<MessageBoxProps> = () => {
 
   return (
-    <div
+<div
       key={index}
       className="relative h-[275px] w-[275px] border-[1px] border-solid border-black"
     >
@@ -237,11 +258,75 @@ const MessageBox: React.FC<MessageBoxProps> = () => {
 
 <br>
 
-- formats: ['image/avif', 'image/webp'],
-- 이미지 압축 다운로드
+이외에 처리해준게 더 있는데, 이는 다음 챕터에서 다루려고 한다.
 
--
+### 실천방안 2. 업로드하는 이미지의 사이즈를 줄여보자.
 
-### 참고자료
+[이미지 최적화를 위한 전략 feat.Nextjs](https://velog.io/@yesbb/Nextjs%EC%97%90%EC%84%9C-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EC%B5%9C%EC%A0%81%ED%99%94%ED%95%98%EA%B8%B0)
 
-[]()
+이미지 최적화를 위한 글을 참고하다가 위 블로그를 발견했다.
+그래서 블로그에서 제시하는 방법을 하나씩 적용해보려고 했다.
+
+### 2-1 이미지 최적화 적용하기
+
+위 블로그에서 이미지 압축률을 높이는 포맷을 추천해준다.
+avif와 webp인데, 기존에 next/image 컴포넌트를 사용하면, webp를 적용해준다.
+next.js 공식문서에선 [avif가 webp에 비해 20% 높은 압축률을 자랑한다고 소개한다.](https://nextjs.org/docs/app/api-reference/components/image#formats) 그래서 나 또한 좋다고 적용해봤다.
+
+```JS
+// next.config.js
+module.exports = withPWA({
+  images: {
+    formats: ['image/avif', 'image/webp'],
+});
+```
+
+- next.config.js에서 images를 만들고 formats를 다음과 같이 작성해준다.
+- 이렇게 했을 때, image/avif를 우선적으로 사용하고, 만약 브라우저 호환이 안되는 경우가 생기면 image/webp를 사용해준다.
+
+![변경 전](./webp.png)
+
+![변경 후](./avif.png)
+
+<br>
+
+그리고 이미지 용량을 압축시켰다.
+위 블로그에서 추천하는 [browser-image-compression](https://github.com/Donaldcwl/browser-image-compression)라이브러리를 적용했다.
+
+```TSX
+import imageCompression from 'browser-image-compression';
+
+  const onImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    // ...
+
+    const options = {
+      maxSizeMB: 0.5,
+      maxWidthOrHeight: 800,
+    };
+
+    const compressedFilesPromises = Array.from(files).map(async (file) => {
+      try {
+        const compressedFile = await imageCompression(file, options);
+        return compressedFile;
+      } catch (error) {
+        console.error('Image compression failed:', error);
+        return file;
+      }
+    });
+
+    const compressedFiles = await Promise.all(compressedFilesPromises);
+
+    // ...
+  };
+```
+
+- 리팩터링하지 않은 상태여서 역할 분리가 잘 안되어있긴한데, onImageChange함수는 이미지를 업로드하면, imageCompression 함수가 이미지를 압축한다.
+- 그리고 preview image를 만들어주고, formData를 만들어서 uploadImageList에 넣어준다.
+- uploadImageList는 submit 할 때 서버로 보내게 된다.
+- 이미지 사진을 찍어주진 못했는데, 1.3mb 이미지 → 99.3kb로 줄어들었다.
+
+<br>
+
+이미지 압축률 / 이미지 사진 화질 변화 없는 이미지 첨부 / sharp / light-house 점수
+
+<br>
