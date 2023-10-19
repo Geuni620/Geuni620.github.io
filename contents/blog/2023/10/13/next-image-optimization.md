@@ -180,11 +180,11 @@ export default UploadImageList;
 또한 input box의 text는 submit으로 전송한 후엔 reset되어야하는데, 이 역시 느리게 동작한다.  
 위와 같이 작성했을 땐 lighthouse 기준 Performance가 오히려 더 낮아졌다.
 
-![최적화 하기 이전](./light-house1.png)
+![모바일 기준, 최적화 하기 이전](./light-house1.png)
 
 <br>
 
-![위와 같이 수정한 후 오히려 더 나빠졌다.](./light-house2.png)
+![모바일 기준, 위와 같이 수정한 후 오히려 더 나빠졌다.](./light-house2.png)
 
 <br>
 
@@ -359,7 +359,7 @@ import imageCompression from 'browser-image-compression';
 
 <br>
 
-![이미지 최적화 이후](./after-image-opt.png)
+![모바일 기준, 이미지 최적화 이후](./after-image-opt.png)
 
 - 최적화 이후 performance 점수는 다음과 같다.
 - 아직, 근본적인 원인인 이미지를 업로드했을 때 로딩처리는 여전히 느리다.  
