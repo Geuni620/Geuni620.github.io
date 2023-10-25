@@ -72,6 +72,7 @@ user.get('/info/:userEmail', async (req: Request, res: Response) => {
 ```TSX
 // 일단 router를 추가해서 다음과 같이 폴더구조를 갖추었다.
 // router/api/user/index.ts
+// 그리고 userService를 만들고, 이를 적용해주었다.
 user.get(
   '/info/:userEmail',
   async (req: Request, res: Response, next: NextFunction) => {
@@ -154,8 +155,11 @@ export const globalErrorHandler = (
 
 - console.error을 통해 log에도 에러를 남기고 싶었다.
 - 그리고 클라이언트에도 에러가 발생했을 때 message를 전달해서 toast로 사용자에게 알릴 필요가 있다면 알리고 싶었다.
+  - 이 부분은 [프론트 에러 핸들링하기](https://geuni620.github.io/blog/2023/9/7/%ED%94%84%EB%A1%A0%ED%8A%B8%20%EC%97%90%EB%9F%AC%20%ED%95%B8%EB%93%A4%EB%A7%81%20%ED%95%98%EA%B8%B0/)에서 확인할 수 있다.
 
 <br>
+
+- 그리고 service 내에서 if문으로 Error를 모두 Throw 하고 싶었으며, controller(router)에선 최대한 에러처리를 추가하고 싶지 않았다.
 
 <br>
 
