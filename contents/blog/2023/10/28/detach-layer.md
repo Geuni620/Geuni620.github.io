@@ -214,4 +214,5 @@ const userService = {
 [HTTP 상태 코드](https://ko.wikipedia.org/wiki/HTTP_%EC%83%81%ED%83%9C_%EC%BD%94%EB%93%9C)  
 [Error Handling](https://expressjs.com/en/guide/error-handling.html)  
 [에러 처리를 위한 익스프레스 가이드](https://jeonghwan-kim.github.io/node/2017/08/17/express-error-handling.html)  
-[Node.js express와 error handling](https://teamdable.github.io/techblog/express-error-handling)
+[Node.js express와 error handling](https://teamdable.github.io/techblog/express-error-handling)  
+[veltrends 개발 후기](https://velog.io/@velopert/veltrends-dev-review)
