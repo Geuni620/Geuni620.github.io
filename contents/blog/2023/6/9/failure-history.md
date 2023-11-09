@@ -1,8 +1,8 @@
 ---
 date: '2023-06-09'
 title: 'Failure History'
-categories: ['일상']
-summary: '-'
+categories: ['개발']
+summary: '에러가 났지만 기분은 좋았다.'
 ---
 
 ### 장애기록
