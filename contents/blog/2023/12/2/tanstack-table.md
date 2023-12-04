@@ -261,6 +261,89 @@ const columns = [
 
 ### 2. 전체, 테이블 row 단위 체크박스
 
+- 이 다음엔 전체/테이블 row 단취 체크박스를 만들어보자.
+
+```TSX
+const columns = [
+  {
+    id: 'select',
+    header: ({ table }) => (
+      <input
+        id="header-checkbox"
+        type="checkbox"
+        checked={table.getIsAllPageRowsSelected()}
+        onChange={table.getToggleAllPageRowsSelectedHandler()}
+      />
+    ),
+    cell: ({ row }) => (
+      <input
+        id={`cell-checkbox-${row.id}`}
+        type="checkbox"
+        checked={row.getIsSelected()}
+        disabled={!row.getCanSelect()}
+        onChange={row.getToggleSelectedHandler()}
+      />
+    ),
+    size: 50,
+  },
+  {
+    accessorKey: 'task',
+    header: 'Task',
+    cell: (props) => <p>{props.getValue()}</p>,
+    size: 250,
+  },
+   //...
+];
+```
+
+- 처음 column을 만들 때 사용했던 column 변수에, select 부분을 추가해주면 된다.
+
+<br/>
+
+- 그럼 체크박스에 row를 체크했을 때, 이 데이터는 어디에 보관되는걸까? id값을 추출하는게 있는걸까?
+- 이는 tanstack-table에서 제공하는 useReactTable hooks내에 state를 추가해주면 된다.
+
+```TSX
+export const Table: React.FC = () => {
+  const [data, setData] = useState(DATA);
+  const [rowSelection, setRowSelection] = useState({});
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    // 여기에 onChange와 state를 저장해주면 된다.
+    onRowSelectionChange: setRowSelection,
+    state: {
+      rowSelection,
+    },
+  });
+
+  return (
+    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+    //...
+    </table>
+  );
+};
+```
+
+![console.log('row 선택하기', rowSelection);](./row-selection.gif)
+
+- 이렇게 하면, row를 선택할 때마다, rowSelection이라는 state에 선택한 row의 id가 저장된다.
+
+<br/>
+
+### 3. Pagination 적용하기
+
+- 이 전에 먼저 데이터를 조금 늘릴 필요가 있었다.
+-
+
+### 4. TypeScript 적용하기
+
+### 5. 스타일 입히기
+
+### 6. 더 알아보기
+
 <!--
 
 1. 내게 필요했던 것을 먼저
