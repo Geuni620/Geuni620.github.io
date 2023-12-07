@@ -335,10 +335,203 @@ export const Table: React.FC = () => {
 
 ### 3. Pagination 적용하기
 
-- 이 전에 먼저 데이터를 조금 늘릴 필요가 있었다.
--
+- 먼저 데이터가 너무 적어서, faker.js를 사용해서 데이터를 늘려주었다. (6개 → 100개)
+
+```TSX
+import {
+  //...
+  getPaginationRowModel,
+} from '@tanstack/react-table';
+
+export const Table: React.FC = () => {
+  //...
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    onRowSelectionChange: setRowSelection,
+    state: {
+      rowSelection,
+    },
+
+    // Pagination
+    getPaginationRowModel: getPaginationRowModel(),
+  });
+
+
+  return (
+    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <thead>
+       //...
+      </thead>
+
+      <tbody>
+       //...
+      </tbody>
+
+      // Pagination
+      <div>
+        {table.getState().pagination.pageIndex + 1} // 현재 페이지
+        {table.getPageCount()} // 총 페이지 수
+      </div>
+    </table>
+  );
+};
+```
+
+- `getPaginationRowModel`을 추가해주면, Pagination을 사용할 수 있다.
+- useReactTable에 `getPaginationRowModel`을 추가해주면, 현재 페이지와 총 페이지 수를 알 수 있다.
+
+버튼도 추가해보면,
+
+```TSX
+  <div className="mt-[10px] flex items-center justify-center gap-2">
+    <button
+      disabled={!table.getCanPreviousPage()} // 이전페이지가 없을 때 버튼 비활성화
+      onClick={() => table.previousPage()} // 이전 페이지
+    >
+      {'‹'}
+    </button>
+
+    <div className="text-base font-bold">
+      Page {table.getState().pagination.pageIndex + 1} of{' '}
+      {table.getPageCount()}
+    </div>
+
+    <button
+      disabled={!table.getCanNextPage()} // 다음페이지가 없을 때 버튼 비활성화
+      onClick={() => table.nextPage()} // 다음 페이지
+    >
+      {'›'}
+    </button>
+  </div>
+```
+
+pagination 챕터 중 마지막으로 pageSize를 선택하고, size를 변경했을 때 pagination의 index값이 적절히 변경되도록 해보자
+
+- 먼저 TableControls를 만들어주었다.
+
+```TSX
+const PAGE_SIZE_OPTIONS = [
+  {
+    value: 20,
+    label: '20개씩 보기',
+  },
+  {
+    value: 50,
+    label: '50개씩 보기',
+  },
+  {
+    value: 100,
+    label: '100개씩 보기',
+  },
+];
+
+  {/* TableControls */}
+  <div>
+    <select
+      className="my-2 rounded-[4px] border-[1px] py-1 pl-2 pr-9 text-sm"
+      value={table.getState().pagination.pageSize} // 현재 페이지 사이즈
+      onChange={(e) => {
+        table.setPageSize(Number(e.target.value)); // 페이지 사이즈 변경
+      }}
+    >
+      {PAGE_SIZE_OPTIONS.map(({ value, label }) => (
+        <option key={label} value={value}>
+          {label}
+        </option>
+      ))}
+    </select>
+  </div>
+```
+
+- 변경시켜주었을 때 잘 적용되는 것을 확인할 수 있다!
+
+근데, 조금 이상하다... 처음 테이블이 랜더링 되면 pageSize는 20개씩 보여야한다.
+
+- 하지만, 20개라고 하기엔 너무 적은 것 같은데.. 🤔 → 직접 세아려보니, 10개씩 랜더링 되었다.  
+  추가로 Controls를 통해 20개를 선택해야 20개씩 보였다.
+- 처음부터 20개씩 보여줄 순 없는걸까..?
+
+```TSX
+const table = useReactTable({
+  data,
+  columns,
+  getCoreRowModel: getCoreRowModel(),
+  onRowSelectionChange: setRowSelection,
+  state: {
+    rowSelection,
+
+    pagination: {
+      pageSize: 20, // 이렇게 추가해주면, 처음부터 20개씩 보여주지만, 컨트롤러에 의해 개수가 변경되지 않는다.
+    },
+  },
+
+  getPaginationRowModel: getPaginationRowModel(),
+});
+```
+
+- 영상에선 useReactTable내에서 state key의 pagination을 추가해서 pageSize와 pageIndex를 custom 할 수 있다고 제시해준다.
+- 하지만 pageSize를 20개로 넣어놓으면, 컨트롤러를 통해 개수가 변경되지 않았다. 즉, state를 통해 값을 변경해야하는 것 같다.
+- 나의 경우엔 state를 추가할 필요 없이, 초기 설정될 때 20개로만 변경해주면 되는데, 이런 기능은 없는걸까?
+- github issues를 찾아보니, 역시 있었다
+
+[How to set default page size? #2029](https://github.com/TanStack/table/discussions/2029#discussioncomment-4860455)
+
+```TSX
+  const table = useReactTable({
+    // initialState에 pagination을 추가해주면 된다. 초기에 20개씩 랜더링 될 것이다.
+    initialState: {
+      pagination: {
+        pageSize: 20,
+      },
+    },
+    data: tableData,
+    columns: tableColumns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onRowSelectionChange: setRowSelection,
+    state: {
+      rowSelection,
+    },
+  });
+
+
+const table = useReactTable({
+  data,
+  columns,
+  getCoreRowModel: getCoreRowModel(),
+  onRowSelectionChange: setRowSelection,
+  state: {
+    rowSelection,
+  },
+
+  // initialState에 pagination을 추가해주면 된다. 초기에 몇 개씩 렌더링할 것인지 정할 수 있다.
+  initialState: {
+    pagination: {
+      pageSize: 20,
+    },
+  },
+
+  getPaginationRowModel: getPaginationRowModel(),
+});
+```
+
+이제 새로고침 했을 때 20개씩 랜더링 된다~!
+
+<br/>
+
+추가로 몇 가지만 더 정리해보자!
 
 ### 4. TypeScript 적용하기
+
+- 영상에선 Javascript로 작업했지만, 타입을 추가해서 사용할 수 있다.
+-
+
+```TSX
+
+```
 
 ### 5. 스타일 입히기
 
@@ -352,3 +545,7 @@ export const Table: React.FC = () => {
 4. shadcn-ui로 스타일 입혀보기
 
 -->
+
+```
+
+```
