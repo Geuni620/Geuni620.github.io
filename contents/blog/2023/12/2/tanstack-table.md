@@ -527,11 +527,140 @@ const table = useReactTable({
 ### 4. TypeScript 적용하기
 
 - 영상에선 Javascript로 작업했지만, 타입을 추가해서 사용할 수 있다.
--
+- 사실 초반부터 작성했으면 가장 베스트했을 것 같은데, 나의 경우엔 영상에서 제시하는 방법보단, `createColumnHelper`로 사용하는걸 더 선호한다.
+  - 이렇게 적용했을 때 타입추론이 잘 되어서 따로 타입을 명시하는 것보다 효과적이라고 생각했다.
+  - [React Table Tutorial (TanStack Table)](https://youtu.be/CjqG277Hmgg?si=q4jbaMvNXM1hEvlH)소개 했던 이 영상의 가장 많은 좋아요를 받은 댓글 역시 `createColumnHelper`를 사용하길 권한다. 그리고 이 사람은 Tanstack-table의 메인테이너이기도 하다.
+
+<br/>
+
+- 그럼 한번 변경해보자
 
 ```TSX
+// column 직접 컬럼 선언
+const columns = [
+  {
+    accessorKey: 'task',
+    header: 'Task',
+    cell: (props) => {
+      console.log('props', props);
+      return <p>{props.getValue()}</p>;
+    },
+    size: 250,
+  },
+  // ...
+];
 
+
+// createColumnHelper를 사용해서 컬럼 선언
+const columnHelper = createColumnHelper<ColumnDataProps>();
+const columns = [ // 보통은 type을 ColumnDef<ColumnDataProps>[]과 같이 명시해주지만, 명시했을 때 오히려 발생하는 에러가 더 많아서 추론되도록 하였다.
+    columnHelper.accessor('task', {
+      header: () => <p>Task</p>,
+      cell: (info) => info.getValue(),
+      size: 250,
+    }),
+    //...
+  ];
 ```
+
+그래서 정리해보면 다음과 같다.
+
+```TSX
+import type { Row as TRow, Table as TTable } from '@tanstack/react-table';
+import {
+  type ColumnDef,
+  //...
+} from '@tanstack/react-table';
+import { useState } from 'react';
+
+import DATA from '@/data';
+
+interface Status {
+  id: number;
+  name: string;
+}
+
+interface ColumnDataProps {
+  task: string;
+  status: Status;
+  due?: Date | null;
+  notes: string;
+}
+
+interface TableProps {
+  table: TTable<ColumnDataProps>;
+}
+
+interface RowProps {
+  row: TRow<ColumnDataProps>;
+}
+
+const PAGE_SIZE_OPTIONS = [
+  //...
+];
+
+export const Table: React.FC = () => {
+  //...
+  const columnHelper = createColumnHelper<ColumnDataProps>();
+  const columns = [
+    {
+      id: 'select',
+      header: ({ table }: TableProps) => (
+        <input
+          id="header-checkbox"
+          type="checkbox"
+          checked={table.getIsAllPageRowsSelected()}
+          onChange={table.getToggleAllPageRowsSelectedHandler()}
+        />
+      ),
+      cell: ({ row }: RowProps) => (
+        <input
+          id={`cell-checkbox-${row.id}`}
+          type="checkbox"
+          checked={row.getIsSelected()}
+          disabled={!row.getCanSelect()}
+          onChange={row.getToggleSelectedHandler()}
+        />
+      ),
+      size: 50,
+    },
+    columnHelper.accessor('task', {
+      header: 'Task',
+      cell: (props) => <p>{props.getValue()}</p>,
+      size: 250,
+    }),
+    columnHelper.accessor('status', {
+      header: 'Status',
+      cell: (props) => <p>{props.getValue().name}</p>,
+      size: 100,
+    }),
+    columnHelper.accessor('due', {
+      header: 'Due',
+      cell: (props) => <p>{props.getValue()?.toLocaleTimeString()}</p>,
+      size: 100,
+    }),
+    columnHelper.accessor('notes', {
+      header: 'Notes',
+      size: 300,
+      cell: (props) => <p>{props.getValue()}</p>,
+    }),
+  ];
+
+  const table = useReactTable({
+    //...,
+  });
+
+  return (
+  //...
+  );
+};
+```
+
+- props의 getValue()를 사용할 때도 이제, 뒤에 무엇이 오는지 타입으로 체크가능하다
+
+![id와 name을 확인할 수 있다.](./getValue-type.png)
+
+<br/>
 
 ### 5. 스타일 입히기
 
@@ -545,6 +674,10 @@ const table = useReactTable({
 4. shadcn-ui로 스타일 입혀보기
 
 -->
+
+```
+
+```
 
 ```
 
