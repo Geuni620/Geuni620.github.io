@@ -26,6 +26,7 @@ const TableOfContents: React.FC<TableOfContentElement> = ({ contents }) => {
 export default TableOfContents
 
 const Layout = styled.aside`
+  width: 150px;
   position: sticky;
   top: 0;
   right: 0;

@@ -7,7 +7,7 @@ import PostHead from 'components/Post/PostHead'
 import PostContent from 'components/Post/PostContent'
 import CommentWidget from 'components/Post/CommentWidget'
 import { PostFrontmatterType } from 'types/PostItem.types'
-import TableOfContents from 'components/Post/TableOfContents'
+// import TableOfContents from 'components/Post/TableOfContents'
 
 type PostTemplateProps = {
   data: {
@@ -37,7 +37,7 @@ const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
   const {
     node: {
       html,
-      tableOfContents,
+      // tableOfContents,
       frontmatter: { title, summary, date, categories },
     },
   } = edges[0]
@@ -49,7 +49,7 @@ const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
           <PostHead title={title} date={date} categories={categories} />
           <PostContent html={html} />
         </Post>
-        <TableOfContents contents={tableOfContents} />
+        {/* <TableOfContents contents={tableOfContents} /> */}
       </Layout>
 
       <CommentWidget />
