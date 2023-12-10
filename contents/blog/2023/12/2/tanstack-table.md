@@ -473,12 +473,12 @@ const PAGE_SIZE_OPTIONS = [
 
 ### 🤔 초기에 pageSize를 20개로 설정하기
 
-근데, 조금 이상하다...; 처음 테이블이 랜더링 되면 pageSize는 20개씩 보여야한다.
+근데, 조금 이상하다..; 처음 테이블이 랜더링 되면 pageSize는 20개씩 보여야한다.
 
 ![20개 아닌거 같은데..](./pageSize-20.png)
 
 - 하지만, 20개라고 하기엔 너무 적은 것 같은데.. 🤔 → 직접 세아려보니, 10개씩 랜더링 되었다.  
-  추가로 Controls를 통해 20개를 선택해야 20개씩 보였다.
+  추가로 TableControls를 통해 20개를 선택해야 20개씩 보였다.
 - 처음부터 20개씩 보여줄 순 없는걸까..?
 
 ```TSX
@@ -543,7 +543,7 @@ const table = useReactTable({
 - 사실 초반부터 이렇게 작성했으면 더 좋았을 것 같은데, 나의 경우엔 영상에서 제시하는 방법보단, `createColumnHelper`로 사용하는걸 더 선호한다.
 
   - 이렇게 적용했을 때 타입추론이 잘 되어서 따로 타입을 명시하는 것보다 효과적이라고 생각했다.
-  - [React Table Tutorial (TanStack Table)](https://youtu.be/CjqG277Hmgg?si=8akT789D-x4p2AD-&t=1)소개 했던 이 영상의 가장 많은 좋아요를 받은 tanstack-table의 메인테이너 [Tanner Linsley](https://github.com/tannerlinsley) 댓글 역시 `createColumnHelper`를 사용하길 권한다.
+  - [소개 했던 이 영상](https://youtu.be/CjqG277Hmgg?si=8akT789D-x4p2AD-&t=1)의 가장 많은 좋아요를 받은 tanstack-table의 메인테이너 [Tanner Linsley](https://github.com/tannerlinsley) 댓글 역시 `createColumnHelper`를 사용하길 권한다.
 
 <br/>
 
@@ -706,7 +706,7 @@ import {
 
 - 추가로 써보고 싶던 기능이 많았는데 글도 너무 길어지고, 같은 내용의 반복이라고 생각되어 초반에 소개했던 [github repo](https://github.com/Geuni620/tanstack-table-v8-tutorials)에 정리해두어야겠다.
 - 처음 Tanstack-table을 사용할 때에 비해 확실히 쉽고, 편하게 기능을 추가할 수 있었다.
-- 당시엔 state를 여러 개 만들어서 하나씩 상태값을 관리했었는데, 그러다보니 Table 컴포넌트가 점점 뚱뚱해지는 기분이 들었었다.
+- 처음 접할 당시엔, state를 여러 개 만들어서 하나씩 상태을 관리했었는데, 그러다보니 Table 컴포넌트가 점점 뚱뚱해지는 기분이 들었었다.
 - 역시, 라이브러리도 철학에 맞게 사용하는 방법이 존재한다. 뭔가 너무 어렵다거나, 복잡해지는 것은 내가 라이브러리에서 제공하는 기능을 제대로 사용하고 있지 못하고 있다는 시그널 일 수도 있겠다는 생각이 들었다.
 - 이제부터 의심해봐야겠다. 뭔가 어렵다거나, 복잡하다거나, 이게 아닌거 같다는 생각이 들면 사용법을 다시 확인해보자. 분명 더 쉬운 방법이 있을 것이다. 🥲
 
