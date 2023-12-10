@@ -540,10 +540,11 @@ const table = useReactTable({
 **추가로 몇 가지만 더 정리해보자!**
 
 - 영상에선 Javascript로 작업했지만, 타입을 추가해서 사용할 수 있다.
-- 사실 초반부터 이렇게 작성했으면 더 좋았을 것 같은데, 나의 경우엔 영상에서 제시하는 방법보단, `createColumnHelper`로 사용하는걸 더 선호한다.
-
-  - 이렇게 적용했을 때 타입추론이 잘 되어서 따로 타입을 명시하는 것보다 효과적이라고 생각했다.
-  - [소개 했던 이 영상](https://youtu.be/CjqG277Hmgg?si=8akT789D-x4p2AD-&t=1)의 가장 많은 좋아요를 받은 tanstack-table의 메인테이너 [Tanner Linsley](https://github.com/tannerlinsley) 댓글 역시 `createColumnHelper`를 사용하길 권한다.
+- 그전에 먼저, 수정하고 싶은게 한 가지 있다.
+- 영상에선 columns 객체를 만들고, useReactTable에 columns를 넣어주었다.
+- 나의 경우엔 영상에서 제시한 방법보단, [createColumnHelper](https://tanstack.com/table/v8/docs/guide/column-defs#column-helpers)로 만드는 걸 더 선호한다.
+  - `createColumnHelper` 타입추론이 잘 되어서 따로 타입을 명시하는 것보다 효과적이라고 생각했다.
+  - [소개 했던 이 영상](https://youtu.be/CjqG277Hmgg?si=8akT789D-x4p2AD-&t=1)의 가장 많은 좋아요를 받은 [Tanner Linsley](https://github.com/tannerlinsley) 댓글도 `createColumnHelper`를 사용하길 권한다.
 
 <br/>
 
