@@ -686,6 +686,13 @@ export const Table: React.FC = () => {
 - 그래던 중 우연히 [유투브에서 뜬 영상](https://youtu.be/j6-ImdZW7aM?si=Ucj2VRk4svCCFLhZ)에서 [shadcn/ui table](https://ui.shadcn.com/docs/components/data-table)과 tanstack-table을 함께 사용하면 시너지가 좋다는 말을 듣게 되었다.
 - 그래서 적용해봤다. 너무 길어질 것 같아서, shadcn/ui 설치는 생략하고 table에만 적용해보려고 한다 🙏
 
+![처음 init시 지정해주었던 폴더에 컴포넌트가 설치된다.](./shadcn-ui-folder.png)
+
+- shadcn/ui는 설치시, 패키징하여 제공하는게 아니라, 컴포넌트파일을 제공한다.
+- 파일의 다운받을 수 있는 위치는, 처음 init할 때 설정해줄 수 있다.
+
+<br/>
+
 ```TSX
 import {
   Table,
@@ -697,15 +704,115 @@ import {
 } from '@/components/ui/table';
 ```
 
-- shadcn/ui table을 설치하면, 처음 init할 때 지정된 components/ui 폴더에 table 파일이 생기고, 위와 같이 import하여 사용하면 된다.
-- 처음엔 table | thead | tbody와 같은 html 태그를 사용했는데, shadcn/ui Table을 import 시킨 후 하나씩 변경하면 됐다.
-- 기본적으로 적용되어있는 간단한 스타일(hover했을 때 효과 등)에 classNames로 원하는대로 커스텀 할 수 있었다.
+- 설치를 마치면, 처음 init할 때 지정된 ui 폴더에 table 파일이 생기고, 위와 같이 import하여 사용하면 된다.
 
 <br/>
 
-### 6. 마치며
+### 🤔 그럼 shadcn/ui를 적용해보자.
 
-- 추가로 써보고 싶던 기능이 많았는데 글도 너무 길어지고, 같은 내용의 반복이라고 생각되어 초반에 소개했던 [github repo](https://github.com/Geuni620/tanstack-table-v8-tutorials)에 정리해두어야겠다.
+- 처음엔 table | thead | tbody와 같은 html 태그를 사용했는데, shadcn/ui Table을 import 시킨 후 하나씩 변경하면 됐다.
+
+![다음과 같이 적용할 수 있었다.](./shadcn-ui.png)
+
+- 기본적으로 적용되어있는 스타일은, 커스텀 할 수도 있었다.
+- 이는 tailwind를 사용할 때처럼, className을 사용해서 스타일을 적용하면 되는 구조다.
+- shadcn/ui 공식문서에서는 [데이터 테이블을 만들 때 따라갈 수 있는 가이드](https://ui.shadcn.com/docs/components/data-table)를 제공한다. 나의 경우엔 이 가이드를 따라서 작업해보았다.
+
+![shadcn/ui를 적용하기 전 테이블](./inactive-shadcn-ui.png)
+
+![shadcn/ui를 적용하고 난 후의 테이블](./active-shadcn-ui.png)
+
+- 제공해주는 스타일에서 크게 변경한 것은 없고, 단순 import 시켜서 tag를 변경한 후, 간격이나, 텍스트크기와 같은 작은 요소를 수정해주었다.
+- 그리고 영상에서 제공했던 기능도, shadcn/ui 가이드에 더 쉽게 적용할 수 있는 방법이 존재했다.  
+  이 부분 역시 수정해주었다.
+- 하나만 예를 들면 필터 기능을 추가할 때 영상에선 다음과 같이 제공했다.
+
+<br/>
+
+\*영상에서 제공하는 방법
+
+```TSX
+// 타입선언
+interface Filter {
+  id: string;
+  value: string;
+}
+
+const [columnFilters, setColumnFilters] = useState<Filter[]>([]);
+
+// filter 기능을 만들어줌
+const taskName =
+  columnFilters.find((column) => column.id === 'task')?.value ?? '';
+
+const onFilterChange = ({ id, value }: Filter) => {
+  setColumnFilters((prev) =>
+    prev.filter((column) => column.id !== id).concat({ id, value }),
+  );
+};
+
+// 컴포넌트에 적용
+  <Input
+    value={taskName}
+    onChange={(e) =>
+      onFilterChange({ id: 'task', value: e.target.value })
+    }
+  />
+```
+
+- 타입선언하고, 함수를 만들고, Input 컴포넌트에 적용했다.
+
+<br/>
+
+\*shadcn/ui에서 제공하는 방법
+
+```TSX
+// tanstack-table에선 ColumnFiltersState type을 제공해준다.
+import { ColumnFiltersState } from '@tanstack/react-table';
+
+const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+const table = useReactTable({
+    //...
+
+    // filter 기능을 만들어줌
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+
+    state: {
+      //...
+
+      // 선언했던 state를 추가
+      columnFilters,
+    },
+  });
+
+// 기존에 만든 건 주석
+// const taskName =
+//   columnFilters.find((column) => column.id === 'task')?.value ?? '';
+
+// const onFilterChange = ({ id, value }: Filter) => {
+//   setColumnFilters((prev) =>
+//     prev.filter((column) => column.id !== id).concat({ id, value }),
+//   );
+// };
+
+// input 컴포넌트에 적용하기
+  <Input
+    value={(table.getColumn('task')?.getFilterValue() as string) ?? ''}
+    onChange={(e) =>
+      table.getColumn('task')?.setFilterValue(e.target.value)
+    }
+  />
+```
+
+- 타입은 `ColumnFiltersState`를 사용했고, useReactTable hooks에 onColumnFiltersChange를 추가해주었다.
+- 그리고 table을 이용해서 간단히 Filtering을 Input 컴포넌트에 적용하면 된다.
+
+<br/>
+
+## 6. 마치며
+
+- 추가로 써보고 싶던 기능이 많았는데 글도 너무 길어지고, 같은 내용의 반복이라고 생각되어 초반에 소개했던 [github repo](https://github.com/Geuni620/tanstack-table-v8-tutorials)에 정리해두었다.
 - 처음 Tanstack-table을 사용할 때에 비해 확실히 쉽고, 편하게 기능을 추가할 수 있었다.
 - 처음 접할 당시엔, state를 여러 개 만들어서 하나씩 상태을 관리했었는데, 그러다보니 Table 컴포넌트가 점점 뚱뚱해지는 기분이 들었었다.
 - 역시, 라이브러리도 철학에 맞게 사용하는 방법이 존재한다. 뭔가 너무 어렵다거나, 복잡해지는 것은 내가 라이브러리에서 제공하는 기능을 제대로 사용하고 있지 못하고 있다는 시그널 일 수도 있겠다는 생각이 들었다.
