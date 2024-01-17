@@ -1,6 +1,6 @@
 ---
 date: '2023-05-10'
-title: '[Tanstack-query] queryKeys InvalildateQueries'
+title: 'Tanstack Query의 invalidateQueries 이해하기'
 categories: ['개발']
 summary: '-'
 ---
