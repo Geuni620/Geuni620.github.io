@@ -5,7 +5,10 @@ categories: ['개발']
 summary: 'next-auth, 대체 어떻게 잘 다룰 수 있는걸까...?'
 ---
 
-[next-auth token 관리하기](https://geuni620.github.io/blog/2023/8/18/next-auth/)
+[next-auth token 관리하기-1](https://geuni620.github.io/blog/2023/8/18/next-auth/)
+
+[next-auth token 관리하기-3](https://geuni620.github.io/blog/2023/8/28/next-auth/)  
+[next-auth token 관리하기-4](https://geuni620.github.io/blog/2023/9/10/next-auth/)
 
 > 일 주일 전쯤에, next-auth token 관리하기 라는 글을 썼는데, 알고보니 잘못된 코드가 많았다.
 

@@ -5,6 +5,10 @@ categories: ['개발']
 summary: '사용자에게 log-out 하게 만드는 상황을 만들지 말아보자!'
 ---
 
+[next-auth token 관리하기-1](https://geuni620.github.io/blog/2023/8/18/next-auth/)  
+[next-auth token 관리하기-2](https://geuni620.github.io/blog/2023/8/24/next-auth/)  
+[next-auth token 관리하기-3](https://geuni620.github.io/blog/2023/8/28/next-auth/)
+
 > 여기선 accessToken, refreshToken, sessionToken에 대해서 다룬다.  
 > 근데, 토큰이 너무 많다..  
 > 각각의 토큰 역할부터 먼저 알아보자

@@ -8,6 +8,8 @@ summary: '우연히 발견한 github issue글을 토대로 해결할 수 있었�
 [next-auth token 관리하기-1](https://geuni620.github.io/blog/2023/8/18/next-auth/)  
 [next-auth token 관리하기-2](https://geuni620.github.io/blog/2023/8/24/next-auth/)
 
+[next-auth token 관리하기-4](https://geuni620.github.io/blog/2023/9/10/next-auth/)
+
 > 그리고 오늘 3번째 글을 작성하게 되었다.
 > 간단히 시도했던 것들을 나열해보면 다음과 같다.
 

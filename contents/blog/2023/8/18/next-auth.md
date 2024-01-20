@@ -9,7 +9,9 @@ summary: 'http 통신할 때, accessToken을 서버에선 어떻게 가지고 �
 읽어보시기 전에 이 글을 보셔도 좋고, 읽고 나서 이 글을 보셔도 좋습니다.
 이 글은 꼭 읽어주셨으면 합니다. **아래는 잘못된 내용이 포함**되어 있으니까요.
 
-[이 글](https://geuni620.github.io/blog/2023/8/24/next-auth/)
+[next-auth token 관리하기-2](https://geuni620.github.io/blog/2023/8/24/next-auth/)  
+[next-auth token 관리하기-3](https://geuni620.github.io/blog/2023/8/28/next-auth/)  
+[next-auth token 관리하기-4](https://geuni620.github.io/blog/2023/9/10/next-auth/)
 
 ---
 
