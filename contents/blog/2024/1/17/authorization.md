@@ -24,7 +24,7 @@ summary: '-'
 
 <br/>
 
-머릿속에 의문점이 떠올랐다.
+머리속에 의문점이 떠올랐다.
 
 > 💬 userId를 다른 사용자가 알고 있다면, postman이나, thunder-client로 DB 데이터를 꺼내오거나,  
 > 수정할 수 있는 거 아닌가? 심지어 삭제까지.
@@ -34,11 +34,12 @@ summary: '-'
 ![큰일이다;](./thuner-client.png)
 
 위 이미지처럼 vercel로 임시 배포한 상태로 thunder-client에 데이터를 요청해봤다.  
-여기서 userId와 recipientId는 사용자가 다른사람에게 공유하기 위해선 노출되는 부분이기 때문에 누구나 쉽게 확인할 수 있다.
+`userId`와 `recipientId`는 사용자가 다른사람에게 공유하기 위해, 노출되는 부분이다.  
+즉, 누구나 쉽게 확인 가능하다.
 
-즉, userId나, recipientId만 알고 있다면 누구나 DB에 데이터를 요청할 수 있고, 삭제도 가능하다는 것이다.
-만약 DB의 데이터를 보호해야한다면, userId만으로 서버 데이터를 반환하기엔 무리가 있다고 생각되었다.  
-이때 Token이 필요하다.
+그렇다면 `userId`나, `recipientId`만 알고 있다면 누구나 DB 데이터를 요청할 수 있고, 삭제도 가능하다는 것이다. 만약 DB의 데이터를 보호해야한다면, `userId`만으로 서버 데이터를 반환하기엔 무리가 있다고 생각되었다.
+
+**이때 Token이 필요하다.**
 
 > 참고로 기획 특성상, 사이드프로젝트에선 Token이 필요하지 않다. 익명으로 누구나 글을 쓸 수 있도록 했고, Delete API는 존재하지 않기 때문이다.
 
@@ -50,15 +51,15 @@ next-auth의 token을 관리하는 방법에 대해서 알아보자.
 next-auth에선 크게 Token을 관리하는 방법을 [2가지](https://next-auth.js.org/getting-started/upgrade-v4#session-strategy) 소개한다.  
 첫번째는, **jwt로 관리하는 방법**이고, 두 번째는 **DB에서 관리하는 방법**이다.
 
-이전 글을 쓸 당시엔, **DB에 token 정보를 담고 싶지 않았다.** 그래서 jwt를 사용했다.
+이전 글을 쓸 당시엔, **DB에 token 정보를 담고 싶지 않았다.** 그래서 jwt를 사용했다.  
 jwt가 아닌, DB에서 Token을 관리하려면 next-auth에선 편하게 [adapter](https://next-auth.js.org/adapters)를 제공해준다.
 
-jwt로 Token을 관리할 때 크게 session, access, refresh token을 사용했다.
+jwt로 Token을 관리할 때 크게 session, access, refresh token을 사용했다.  
 여기서 session은 인증을, access와 refresh는 인가에 사용했다.
 
 <br/>
 
-# 2-1. 인증과 인가가 뭘까?
+## 2-1. 인증과 인가가 뭘까?
 
 초반엔 둘의 개념이 너무 헷갈렸다.
 이를 가장 잘 설명해준 [영상](https://youtu.be/y0xMXlOAfss?si=6oSS8O34KMrJhaS3&t=62)을 찾았다.
@@ -72,23 +73,24 @@ jwt로 Token을 관리할 때 크게 session, access, refresh token을 사용했
 
 <br/>
 
-복귀하고 일 주일 후, 훈련에 참여하게 된 나, 내일 있을 사격훈련을 위해 미리 연습한다는 선임;
-나에게 총기를 가져오라고 시킨다. 나는, 총기소지함에 뚜벅뚜벅 걸어가지만, 그 앞에 서있는 경계병들.
-그 들은 나에게 신원을 확인하지만, 총기소지함에 들어갈 권한이 없는 나는 그대로 돌아오게 된다.
+복귀하고 일 주일 후, 훈련에 참여하게 된 나, 내일 있을 사격훈련을 위해 미리 연습한다는 선임;  
+나에게 총기를 가져오라고 시킨다. 나는, 총기보관함에 뚜벅뚜벅 걸어가지만, 그 앞에 서있는 경계병들.  
+그들은 나에게 신원을 확인하지만, 총기보관함에 들어갈 권한이 없는 나는 그대로 돌아오게 된다.  
 이게 인가라고 이해했다.
 
 <br/>
 
-즉 다시 정리해보면 다음과 같다.  
-`인증: 서비스에 등록된 유저의 신원을 입증하는 과정(=로그인)`  
-`인가: 인증된 사용자에 대한 자원 접근 권한 확인(=API 요청에 따른 해당 유저의 데이터 반환)`
+즉 다시 정리해보면 다음과 같다.
+
+> 인증: 서비스에 등록된 유저의 신원을 입증하는 과정 (=로그인)  
+> 인가: 인증된 사용자에 대한 자원 접근 권한 확인 (=API 요청에 따른 해당 유저의 데이터 반환)
 
 <br/>
 
 # 3. next-auth는 인증을 어떻게 유지할까?
 
 next-auth로 간단히 login을 구현해보자  
-저번에 쓴 글을 참고해서, 이번에도 DB에 Token을 저장하지 않고, jwt를 사용했다.  
+저번에 쓴 글을 참고해서, 이번에도 DB에 Token을 저장하지 않고, **jwt를 사용했다.**  
 그리고 이를 위해, google oauth를 사용했다.
 
 ```TSX
@@ -141,7 +143,7 @@ Session Storage에는 아무것도 존재하지 않는다.
 ### Local Storage에 저장되는 정보
 
 먼저, LocalStorage에는 정보가 저장될거라 예상못했는데, 확인해보자  
-자세히 보니, getSession이라는 단어가 가장 먼저 눈에 띄었다.  
+자세히 보니, `getSession`이라는 단어가 가장 먼저 눈에 띄었다.  
 next-auth에서 [getSession](https://next-auth.js.org/getting-started/client#getsession)이라는 API를 제공하는데 그 역할이 무엇인지 확인해봤다.
 
 ```
@@ -152,7 +154,7 @@ and returns a promise with a session object, or null if no session exists.
 세션 객체가 있는 프로미스를 반환하거나 세션이 존재하지 않는 경우 null을 반환합니다.
 ```
 
-session 정보를 요청하고, 세션객체가 있다면 세션에 담긴 정보를, 세션이 없다면 null을 반환하는 걸로 보인다.
+세션정보를 요청하고, 세션객체가 있다면 세션에 담긴 정보를, 세션이 없다면 null을 반환하는 걸로 보인다.
 
 <br/>
 
@@ -298,13 +300,13 @@ callbackUrl을 지정하고 로그인이 완료되면, 쿠키에 다음과 같�
 <br/>
 
 **💬 그럼 마지막으로 `next-auth.session-token`은 무엇일까?**  
-next-auth로 로그인을 하면, JSON 웹 토큰(JWT)을 사용하여 세션을 만들 수 있다.  
+next-auth로 로그인을 하면, JWT을 사용하여 세션을 만들 수 있다.  
 즉, 사용자가 로그인하면 HttpOnly 쿠키에 JWT가 생성된다.
 
 ![생성된 JWT 토큰](./next-auth-session-tokne.png)
 
 이 쿠키는 HttpOnly로 만들어져 클라이언트에서 JS로 접근할 수 없다.  
-또한, 이 JWT는 Secret키로 한 번 암호화되어있다.
+또한, 이 JWT는 Secret키로 암호화되어있다.
 
 ```TS
 // app/api/auth/[...nextauth].ts
@@ -318,7 +320,7 @@ const handler = NextAuth({
   ],
   session: {
     strategy: 'jwt',
-    maxAge: 30,
+    maxAge: 60 * 60 * 24 * 30, // 30 days
   },
 });
 ```
@@ -329,17 +331,20 @@ const handler = NextAuth({
 
 **💬 근데, 아까부터 나오던 session이란건 뭘까?**
 
-next-auth에서 제시하는 session이란 한 문장으로 다음과 같다.  
-`사용자가 애플리케이션에 로그인하면 일정시간 동안 로그인할 필요가 없도록 사용자 정보를 저장하는 방법`  
-next-auth에선 세션으로 크게 [두 가지 전략](https://authjs.dev/concepts/session-strategies)을 제시하고 있다. (위에서 언급했던 jwt, Database)
+next-auth에서 제시하는 session이란 한 문장으로 다음과 같다.
+
+> 사용자가 애플리케이션에 로그인하면 일정시간동안 로그인할 필요가 없도록 사용자 정보 저장방법  
+> next-auth에선 세션으로 크게 [두 가지 전략](https://authjs.dev/concepts/session-strategies)을 제시하고 있다.  
+> (위에서 언급했던 jwt, Database)
 
 <br/>
 
 ## 3-2. next-auth 인증을 유지하는 방법
 
-정리해보면, next-auth에서 인증을 유지하는 방법은, 두 가지가 있다. (jwt, DB)
-이 중, jwt로 인증을 유지하는 방법은, cookie에 저장된 정보(=`next-auth.session-token`)를 통해 유지한다.  
-그리고 이건 secret key로 암호화되어있기 때문에, 클라이언트에서는 접근할 수 없다.
+정리해보면, next-auth에서 인증을 유지하는 방법은, 두 가지가 있다. (jwt, DB)  
+이 중, jwt로 인증을 유지하는 방법은, cookie에 저장된 정보(=`next-auth.session-token`)를 통해 유지한다.
+
+그리고 secret key로 암호화되어있기 때문에, 클라이언트에서는 접근할 수 없다.  
 만약 만료시간이 끝났을 경우, 다시 로그인을 해야한다.
 
 ```TSX
@@ -358,13 +363,142 @@ const handler = NextAuth({
 });
 ```
 
-위와 같이, jwt maxAge를 10s로 변경했을 경우, 로그인 이후 10초 뒤 로그아웃되고, cookie에 next-auth.session-token이 삭제된다.
+위와 같이, jwt maxAge를 10초로 변경했을 경우, 로그인 이후 10초 뒤 로그아웃되고,  
+cookie에 next-auth.session-token이 삭제된다.
 
 <br/>
 
 # 4. next-auth의 인가는 어떻게 이루어질까?
 
+이제 인가에 대해서 알아보자.
+간단하게, api를 하나 만들어보자
+
+```TS
+// app/api/posts.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
+
+const posts = [
+  //mocking...
+];
+
+export async function GET(request: NextRequest) {
+  const token = await getToken({ req: request, secret: process.env.SECRET });
+  console.log('token', token); // log를 확인
+
+  if (token) {
+    return NextResponse.json(posts);
+  }
+
+  return NextResponse.json(
+    { message: 'Token을 확인해주세요.' },
+    { status: 401 },
+  );
+}
+```
+
+로그인을 해서 cookie에 정보가 잘 저장됐다면,  
+next-auth에서 제공하는 [getToken](https://next-auth.js.org/tutorials/securing-pages-and-api-routes#using-gettoken) API를 사용해, 암호화된 쿠키 내 유저정보를 복호화할 수 있다.
+
+<br/>
+
+```TSX
+// app/pages.tsx
+'use client';
+
+import { signIn, signOut, useSession } from 'next-auth/react';
+import { useState } from 'react';
+
+export default function Home() {
+  const { data: session } = useSession();
+  const [posts, setPosts] = useState(null);
+
+  const fetchPosts = async () => {
+    try {
+      const res = await fetch('/api/posts');
+
+      if (!res.ok) {
+        throw new Error('posts를 불러오는데 실패했어요!');
+      }
+
+      const data = await res.json();
+      setPosts(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const renderSessionInfo = () => {
+    return (
+      <pre className="overflow-auto bg-gray-100 p-4">
+        {JSON.stringify(session, null, 2)}
+      </pre>
+    );
+  };
+
+  return (
+    <div className="p-4">
+      {session ? (
+        <>
+          <h1>환영합니다, {session.user?.name}!</h1>
+          <button onClick={() => signOut()}>로그아웃</button>
+          <div className="mt-4 border border-black">{renderSessionInfo()}</div>
+
+          <button onClick={fetchPosts}>Fetch Posts</button> // 로그인 했을 때, posts를 불러오면?
+          {posts && <div>{JSON.stringify(posts, null, 2)}</div>}
+        </>
+      ) : (
+        <>
+          <h1>로그인을 해주세요.</h1>
+          <button onClick={() => signIn('google')}>Google로 로그인하기</button>
+
+          <button onClick={fetchPosts}>Fetch Posts</button> // 로그인 안했을 때, posts를 불러오면?
+        </>
+      )}
+    </div>
+  );
+}
+```
+
+![당연하겠지만, 로그인 하지 않은 상태에선 요청이 실패한다.](./fail-fetch.png)  
+cookie에 저장된 token이 없으니, 요청을 보내도 데이터를 반환하지 않고 Error를 던진다.
+
+<br/>
+
+![getToken에 인자로 포함된 secret와 cookie를 통해 유저 정보를 복호화할 수 있다.](./success-token.png)
+
+`console.log('token', token);`  
+로그인 후엔, 쿠키를 복호화해 유저의 정보를 얻을 수 있다.
+
+<br/>
+
+### 4-1. 주의할 점
+
+> 몇 달전, 위와 같이 잘 되는걸 확인하고 즐거운 마음으로 퇴근했었다.  
+> 하지만, 다음 날 절망했다.. 😩
+
+만약 클라이언트와 서버가 도메인이 각각 다르다면 추가적인 설정이 필요하다.  
+관련 내용은 [이 글](https://seob.dev/posts/%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80-%EC%BF%A0%ED%82%A4%EC%99%80-SameSite-%EC%86%8D%EC%84%B1/)에서 잘 설명해주신다.
+
+간략히 정리해보자면,
+
+> 쿠키로 인증을 하는 경우, csrf 공격에 취약하다.  
+> 그래서 이를 방지하기 위해 [SameSite](https://seob.dev/posts/%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80-%EC%BF%A0%ED%82%A4%EC%99%80-SameSite-%EC%86%8D%EC%84%B1/#samesite-%EC%BF%A0%ED%82%A4)가 만들어졌다.
+>
+> next-auth를 사용하는데, 클라이언트와 서버의 도메인이 각각 다르다면,  
+> [추가적인 설정](https://next-auth.js.org/configuration/options#cookies)이 필요하다.
+
+이번의 예시에선, next-auth를 next.js에서만 사용했고,  
+배포를 해도 동일한 도메인이기에 문제없이 잘 동작했다. 🍀
+
+<br/>
+
 ### 참고자료
 
 [Broadcast Channel API](https://developer.mozilla.org/en-US/docs/Web/API/Broadcast_Channel_API)  
-[next-auth Session strategies](https://authjs.dev/concepts/session-strategies)
+[next-auth Session strategies](https://authjs.dev/concepts/session-strategies)  
+[브라우저 쿠키와 SameSite 속성](https://seob.dev/posts/%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80-%EC%BF%A0%ED%82%A4%EC%99%80-SameSite-%EC%86%8D%EC%84%B1/)
+
+TODO:
+
+- csrf 관련 글 찾아서 공유
