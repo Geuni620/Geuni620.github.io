@@ -16,15 +16,19 @@ summary: '-'
 # 1. Token의 필요성
 
 현재 사이드프로젝트를 진행하고 있다.  
-여기서 조금 의아한게 있는데, next-auth를 통해 로그인을 했는데(=인증했는데), **API요청시 Token을 header에 포함시켜서 요청을 보내지 않는다.**(=인가)
+여기서 조금 의아한게 있는데, next-auth를 통해 로그인을 했는데(=인증),  
+**API요청시 Token을 header에 포함시켜서 요청을 보내지 않는다.**(=인가)
 
 조금 더 풀어서 설명해보면, 요청을 보낼 때 유저를 구분하는 기준이 `userId`이다.  
 즉, Token을 전혀 사용하고 있지 않다.
 
 <br/>
 
-머릿속에 의문점이 떠올랐다.  
-💬 `userId를 다른 사용자가 알고 있다면, postman이나, thunder-client로 DB 데이터를 꺼내오거나, 수정할 수 있는 거 아닌가? 심지어 삭제까지.`  
+머릿속에 의문점이 떠올랐다.
+
+> 💬 userId를 다른 사용자가 알고 있다면, postman이나, thunder-client로 DB 데이터를 꺼내오거나,  
+> 수정할 수 있는 거 아닌가? 심지어 삭제까지.
+
 그래서 확인해보고 싶어졌다. 과연, userId를 알고 있다면 DB에 데이터를 보낼 수 있을까?
 
 ![큰일이다;](./thuner-client.png)
@@ -54,7 +58,7 @@ jwt로 Token을 관리할 때 크게 session, access, refresh token을 사용했
 
 <br/>
 
-# 3. 인증과 인가가 뭘까?
+# 2-1. 인증과 인가가 뭘까?
 
 초반엔 둘의 개념이 너무 헷갈렸다.
 이를 가장 잘 설명해준 [영상](https://youtu.be/y0xMXlOAfss?si=6oSS8O34KMrJhaS3&t=62)을 찾았다.
@@ -75,18 +79,16 @@ jwt로 Token을 관리할 때 크게 session, access, refresh token을 사용했
 
 <br/>
 
-즉 다시 정리해보면  
-`인증: 서비스에 등록된 유저의 신원을 입증하는 과정(=로그인)`
-`인가: 인증된 사용자에 대한 자원 접근 권한 확인(=API 요청에 따른 해당 유저의 데이터 반환)` 이다.
-
-그래서 나는 session Token은 로그인 / access, refresh Token은 API 요청에 따른 데이터 반환에 사용했다.
+즉 다시 정리해보면 다음과 같다.  
+`인증: 서비스에 등록된 유저의 신원을 입증하는 과정(=로그인)`  
+`인가: 인증된 사용자에 대한 자원 접근 권한 확인(=API 요청에 따른 해당 유저의 데이터 반환)`
 
 <br/>
 
-# 4. next-auth는 인증을 어떻게 유지할까?
+# 3. next-auth는 인증을 어떻게 유지할까?
 
-next-auth로 간단히 login을 구현해보자
-(이번에도) DB에 token을 저장하지 않고, jwt를 사용했다.
+next-auth로 간단히 login을 구현해보자  
+저번에 쓴 글을 참고해서, 이번에도 DB에 Token을 저장하지 않고, jwt를 사용했다.  
 그리고 이를 위해, google oauth를 사용했다.
 
 ```TSX
@@ -124,7 +126,7 @@ export { handler as GET, handler as POST };
 
 <br/>
 
-## 4-1. 로그인 했을 때 브라우저에 저장되는 정보
+## 3-1. 로그인 했을 때 브라우저에 저장되는 정보
 
 크게 로그인 정보는 `localStorage`나 `SessionStorage`, 또는 `cookie`에 저장할 수 있다.  
 구글 시크릿모드로 열어서, 로그인 하기전에 localStorage와 SessionStorage, cookie를 확인해보자.
@@ -133,7 +135,10 @@ export { handler as GET, handler as POST };
 ![Session Storage](./session-storage.png)  
 ![Cookie](./cookie.png)
 
-Session Storage에는 아무것도 존재하지 않는다. 하지만 Local Storage와 Cookie에는 next-auth의 정보가 저장된다.
+Session Storage에는 아무것도 존재하지 않는다.  
+하지만 Local Storage와 Cookie에는 next-auth의 정보가 저장된다.
+
+### Local Storage에 저장되는 정보
 
 먼저, LocalStorage에는 정보가 저장될거라 예상못했는데, 확인해보자  
 자세히 보니, getSession이라는 단어가 가장 먼저 눈에 띄었다.  
@@ -194,10 +199,11 @@ export async function getSession(params?: GetSessionParams) {
 }
 ```
 
-SessionProvider 내부에 getSession이 존재하고, getSession에서 broadcast가 존재한다.
+SessionProvider 내부에 getSession이 존재하고, getSession에서 broadcast가 존재한다.  
 이 broadcast를 찾아보니, localStorage에 저장하는 로직을 발견했다.
 
 ```TSX
+// node_modules/next-auth/src/client/_utils.ts
 export function BroadcastChannel(name = "nextauth.message") {
   return {
     /** Get notified by other tabs/windows. */
@@ -232,11 +238,133 @@ export function BroadcastChannel(name = "nextauth.message") {
 }
 ```
 
-즉, 정리해보면 localStorage에 저장되는 정보는, session의 상태가 변경될 때마다, broadcast를 통해 localStorage에 저장되는 것 같다.
-그리고 다른 탭이나, 윈도우에서도 localStorage에 저장된 정보를 받아서, 세션 정보를 업데이트하는 것 같다.
+즉, 정리해보면
+
+> localStorage에 저장되는 정보는, session의 상태가 변경될 때마다, broadcast를 통해 localStorage에 저장한다.  
+> 그리고 다른 탭이나, 윈도우에서도 localStorage에 저장된 정보를 받아서, 세션 정보를 업데이트한다.
 
 <br/>
 
-그럼 이제 cookie를 살펴보자.
+### Cookie에 저장되는 정보
+
+다음으로, Cookie에 저장되는 정보를 확인해보자.
+
+![cookie에 저장된 정보들](./saved-cookie.png)
+
+**💬 `next-auth.callback-url`은 인증을 완료한 뒤, 리다이렉트할 url이다.**  
+예를들어, 로그인을 하고, `/posts`로 리다이렉트하고 싶다면, 다음과 같이 설정하면 된다.
+
+```TSX
+// app/page.tsx
+export default function Home() {
+  //...
+
+  return (
+    <div className="p-4">
+      {session ? (
+        <>
+          <h1>환영합니다, {session.user?.name}!</h1>
+          //...
+        </>
+      ) : (
+        <>
+          <h1>로그인을 해주세요.</h1>
+          <button
+            onClick={() =>
+              signIn('google', {
+                callbackUrl: 'http://localhost:3000/posts', // callbackUrl 설정
+              })
+            }
+          >
+            Google로 로그인하기
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+```
+
+callbackUrl을 지정하고 로그인이 완료되면, 쿠키에 다음과 같이 저장된다.
+
+![encode → decode해보면, localhost:3000/posts가 저장되어 있음](./cookie-callback-url.png)
+
+<br/>
+
+**💬 그럼, `next-auth.csrf-token`는 무엇일까?**  
+이 부분은 설명이 너무 길어질 것 같아서, 다른 글로 대체하려 한다.  
+간략히, 보안을 강화하기 위해 하나의 검증수단으로 token을 더 두는 것이다.
+
+<br/>
+
+**💬 그럼 마지막으로 `next-auth.session-token`은 무엇일까?**  
+next-auth로 로그인을 하면, JSON 웹 토큰(JWT)을 사용하여 세션을 만들 수 있다.  
+즉, 사용자가 로그인하면 HttpOnly 쿠키에 JWT가 생성된다.
+
+![생성된 JWT 토큰](./next-auth-session-tokne.png)
+
+이 쿠키는 HttpOnly로 만들어져 클라이언트에서 JS로 접근할 수 없다.  
+또한, 이 JWT는 Secret키로 한 번 암호화되어있다.
+
+```TS
+// app/api/auth/[...nextauth].ts
+const handler = NextAuth({
+  secret: process.env.NEXTAUTH_SECRET, // 여기 Secret Key
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    }),
+  ],
+  session: {
+    strategy: 'jwt',
+    maxAge: 30,
+  },
+});
+```
+
+사용자가 로그아웃하면 쿠키에서 JWT가 삭제되고, 세션을 없애준다.
+
+<br/>
+
+**💬 근데, 아까부터 나오던 session이란건 뭘까?**
+
+next-auth에서 제시하는 session이란 한 문장으로 다음과 같다.  
+`사용자가 애플리케이션에 로그인하면 일정시간 동안 로그인할 필요가 없도록 사용자 정보를 저장하는 방법`  
+next-auth에선 세션으로 크게 [두 가지 전략](https://authjs.dev/concepts/session-strategies)을 제시하고 있다. (위에서 언급했던 jwt, Database)
+
+<br/>
+
+## 3-2. next-auth 인증을 유지하는 방법
+
+정리해보면, next-auth에서 인증을 유지하는 방법은, 두 가지가 있다. (jwt, DB)
+이 중, jwt로 인증을 유지하는 방법은, cookie에 저장된 정보(=`next-auth.session-token`)를 통해 유지한다.  
+그리고 이건 secret key로 암호화되어있기 때문에, 클라이언트에서는 접근할 수 없다.
+만약 만료시간이 끝났을 경우, 다시 로그인을 해야한다.
+
+```TSX
+const handler = NextAuth({
+  secret: process.env.NEXTAUTH_SECRET,
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    }),
+  ],
+  session: {
+    strategy: 'jwt',
+    maxAge: 10, // default 30일 -> 10초로 변경
+  },
+});
+```
+
+위와 같이, jwt maxAge를 10s로 변경했을 경우, 로그인 이후 10초 뒤 로그아웃되고, cookie에 next-auth.session-token이 삭제된다.
+
+<br/>
 
 # 4. next-auth의 인가는 어떻게 이루어질까?
+
+### 참고자료
+
+[Broadcast Channel API](https://developer.mozilla.org/en-US/docs/Web/API/Broadcast_Channel_API)  
+[next-auth Session strategies](https://authjs.dev/concepts/session-strategies)
