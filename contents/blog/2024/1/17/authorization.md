@@ -49,15 +49,15 @@ next-auth를 사용해 로그인을 했는데(=인증),
 
 next-auth의 token을 관리하는 방법에 대해서 알아보자.  
 next-auth에선 크게 Token을 관리하는 방법을 [2가지](https://next-auth.js.org/getting-started/upgrade-v4#session-strategy) 소개한다.  
-첫번째는, **jwt로 관리하는 방법**이고, 두 번째는 **DB에서 관리하는 방법**이다.
+첫번째는, **JWT로 관리하는 방법**이고, 두 번째는 **DB에서 관리하는 방법**이다.
 
 이전 글을 쓸 당시엔, **DB에 token 정보를 담고 싶지 않았다.**  
-(당시엔 임시로그인 성향이 강했다. 변경될 여지가 많았기 때문에, DB에 저장하기엔 무리가 있었다.)
+(당시엔 임시로그인 성향이 강했다. 변경될 여지가 많았기 때문에, DB에서 관리하고 싶지 않았다.)
 
-그래서 jwt를 사용했다.
-jwt가 아닌, DB에서 Token을 관리하려면 next-auth에선 편하게 [adapter](https://next-auth.js.org/adapters)를 제공해준다.
+그래서 JWT를 사용했다.  
+JWT가 아닌, DB에서 Token을 관리하려면 next-auth에선 편하게 [adapter](https://next-auth.js.org/adapters)를 제공해준다.
 
-jwt로 Token을 관리할 때 크게 session, access, refresh token을 사용했다.  
+JWT로 Token을 관리할 때 크게 session, access, refresh token을 사용했다.  
 여기서 session은 인증을, access와 refresh는 인가에 사용했다.
 
 <br/>
@@ -93,8 +93,8 @@ jwt로 Token을 관리할 때 크게 session, access, refresh token을 사용했
 
 # 3. next-auth는 인증을 어떻게 유지할까?
 
-next-auth로 간단히 login을 구현해보자  
-저번에 쓴 글을 참고해서, 이번에도 DB에 Token을 저장하지 않고, **jwt를 사용했다.**  
+next-auth로 간단히 login을 구현해보자.  
+이번에도 DB에 Token을 저장하지 않고, **JWT를 사용했다.**  
 그리고 이를 위해, google oauth를 사용했다.
 
 ```TSX
@@ -146,7 +146,7 @@ Session Storage에는 아무것도 존재하지 않는다.
 
 ### Local Storage에 저장되는 정보
 
-먼저, LocalStorage에는 정보가 저장될거라 예상못했는데, 확인해보자  
+먼저, LocalStorage에는 정보가 저장될거라 예상못했는데, 확인해보자.  
 자세히 보니, `getSession`이라는 단어가 가장 먼저 눈에 띄었다.  
 next-auth에서 [getSession](https://next-auth.js.org/getting-started/client#getsession)이라는 API를 제공하는데 그 역할이 무엇인지 확인해봤다.
 
@@ -254,7 +254,7 @@ export function BroadcastChannel(name = "nextauth.message") {
 ### Cookie에 저장되는 정보
 
 다음으로, Cookie에 저장되는 정보를 확인해보자.  
-이번엔 로그인을 한 후에 확인해보자.
+이번엔 **로그인을 한 후에** 확인해보자.
 
 ![cookie에 저장된 정보들](./saved-cookie.png)
 
@@ -300,9 +300,11 @@ callbackUrl을 지정하고 로그인이 완료되면, 쿠키에 다음과 같�
 
 **💬 그럼, `next-auth.csrf-token`는 무엇일까?**  
 이 부분은 설명이 너무 길어질 것 같아서, [다른 영상](https://youtu.be/cUmIB2sjjdw?si=btICVO6EFSewEf5M)로 대체하려 한다.  
-간략히, 보안을 강화하기 위해 하나의 검증수단으로 token을 더 두는 것이다.  
+간략히, 보안을 강화하기 위해 하나의 검증수단으로 token을 더 두는 것이다.
+
 참고로, 나는 따로 설정을 해주진 않았다.  
-`4-1. 주의할 점`에서도 설명하겠지만, 이 예시에선 서버와 클라이언트 도메인이 일치하기에 sameSite로 인해 CSRF를 방지할 수 있다고 판단했다.
+`4-1. 주의할 점`에서도 설명하겠지만, 이 예시에선 서버와 클라이언트 도메인이 일치하기에 sameSite로 인해  
+CSRF를 방지할 수 있다고 판단했다.
 
 <br/>
 
@@ -339,16 +341,16 @@ const handler = NextAuth({
 **💬 근데, 아까부터 나오던 session이란건 뭘까?**  
 next-auth에서 제시하는 session이란 한 문장으로 다음과 같다.
 
-> 사용자가 애플리케이션에 로그인하면 일정시간동안 로그인할 필요가 없도록 사용자 정보 저장방법  
+> '사용자가 애플리케이션에 로그인하면 일정시간동안 로그인할 필요가 없도록 사용자 정보 저장방법'  
 > next-auth에선 세션으로 크게 [두 가지 전략](https://authjs.dev/concepts/session-strategies)을 제시하고 있다.  
-> (위에서 언급했던 jwt, Database)
+> (위에서 언급했던 JWT, Database)
 
 <br/>
 
 ## 3-2. next-auth 인증을 유지하는 방법
 
-정리해보면, next-auth에서 인증을 유지하는 방법은, 두 가지가 있다. (jwt, DB)  
-이 중, jwt로 인증을 유지하는 방법은, cookie에 저장된 정보(=`next-auth.session-token`)를 통해 유지한다.
+정리해보면, next-auth에서 인증을 유지하는 방법은, 두 가지가 있다. (JWT, DB)  
+이 중, JWT로 인증을 유지하는 방법은, cookie에 저장된 정보(=`next-auth.session-token`)를 통해 유지한다.
 
 그리고 secret key로 암호화되어있기 때문에, 클라이언트에서는 접근할 수 없다.  
 만약 만료시간이 끝났을 경우, 다시 로그인을 해야한다.
@@ -369,8 +371,8 @@ const handler = NextAuth({
 });
 ```
 
-위와 같이, jwt maxAge를 10초로 변경했을 경우, 로그인 이후 10초 뒤 로그아웃되고,  
-cookie에 next-auth.session-token이 삭제된다.
+위와 같이, JWT maxAge를 10초로 변경했을 경우, 로그인 이후 10초 뒤 로그아웃되고,  
+cookie에 `next-auth.session-token`는 삭제된다.
 
 <br/>
 
@@ -471,10 +473,14 @@ cookie에 저장된 token이 없으니, 요청을 보내도 데이터를 반환�
 
 <br/>
 
-![getToken에 인자로 포함된 secret와 cookie를 통해 유저 정보를 복호화할 수 있다.](./success-token.png)
+![쿠키를 복호화해 유저의 정보를 얻을 수 있다.](./success-token.png)
 
-`console.log('token', token);`  
-로그인 후엔, 쿠키를 복호화해 유저의 정보를 얻을 수 있다.
+```TSX
+  const token = await getToken({ req: request, secret: process.env.SECRET });
+  console.log('token', token); // log를 확인
+```
+
+getToken에 인자로 포함된 secret와 cookie를 통해 유저 정보를 복호화할 수 있다.
 
 <br/>
 
