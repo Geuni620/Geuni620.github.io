@@ -1,8 +1,8 @@
 ---
-date: '2024-01-17'
-title: 'next-auth의 인증/인가 동작방식 이해하기'
+date: '2024-01-21'
+title: 'next-auth를 활용한 인증 및 인가 이해하기'
 categories: ['개발']
-summary: '-'
+summary: '토큰을 데이터베이스에 저장하지 않고 인증 및 인가 처리 구현하기'
 ---
 
 - 작성했던 관련 글  
@@ -62,9 +62,9 @@ JWT로 Token을 관리할 때 크게 session, access, refresh token을 사용했
 
 <br/>
 
-## 2-1. 인증과 인가가 뭘까?
+## 2-1. 인증(Authentication)과 인가(Authorization)가 뭘까?
 
-초반엔 둘의 개념이 너무 헷갈렸다.
+초반에는 둘의 개념이 너무 헷갈렸다.
 이를 가장 잘 설명해준 [영상](https://youtu.be/y0xMXlOAfss?si=6oSS8O34KMrJhaS3&t=62)을 찾았다.
 
 해당 영상의 설명을 조금 빌려서 이야기해보자면,  
@@ -86,8 +86,8 @@ JWT로 Token을 관리할 때 크게 session, access, refresh token을 사용했
 
 즉 다시 정리해보면 다음과 같다.
 
-> 인증: 서비스에 등록된 유저의 신원을 입증하는 과정 (=로그인)  
-> 인가: 인증된 사용자에 대한 자원 접근 권한 확인 (=API 요청에 따른 해당 유저의 데이터 반환)
+> 인증(Authentication): 서비스에 등록된 유저의 신원을 입증하는 과정 (=로그인)  
+> 인가(Authorization): 인증된 사용자에 대한 자원 접근 권한 확인 (=API 요청에 따른 해당 유저의 데이터 반환)
 
 <br/>
 
