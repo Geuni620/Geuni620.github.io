@@ -15,12 +15,12 @@ summary: '-'
 
 # 1. Token의 필요성
 
-현재 사이드프로젝트를 진행하고 있다.  
-여기서 조금 의아한게 있는데, next-auth를 통해 로그인을 했는데(=인증),  
+사이드프로젝트를 진행하다가 의문점이 하나 생겼다.  
+next-auth를 사용해 로그인을 했는데(=인증),  
 **API요청시 Token을 header에 포함시켜서 요청을 보내지 않는다.**(=인가)
 
-조금 더 풀어서 설명해보면, 요청을 보낼 때 유저를 구분하는 기준이 `userId`이다.  
-즉, Token을 전혀 사용하고 있지 않다.
+요청을 보낼 때 유저를 구분하는 기준이 `userId`이다.  
+**즉, Token을 전혀 사용하고 있지 않다.**
 
 <br/>
 
@@ -51,7 +51,10 @@ next-auth의 token을 관리하는 방법에 대해서 알아보자.
 next-auth에선 크게 Token을 관리하는 방법을 [2가지](https://next-auth.js.org/getting-started/upgrade-v4#session-strategy) 소개한다.  
 첫번째는, **jwt로 관리하는 방법**이고, 두 번째는 **DB에서 관리하는 방법**이다.
 
-이전 글을 쓸 당시엔, **DB에 token 정보를 담고 싶지 않았다.** 그래서 jwt를 사용했다.  
+이전 글을 쓸 당시엔, **DB에 token 정보를 담고 싶지 않았다.**  
+(당시엔 임시로그인 성향이 강했다. 변경될 여지가 많았기 때문에, DB에 저장하기엔 무리가 있었다.)
+
+그래서 jwt를 사용했다.
 jwt가 아닌, DB에서 Token을 관리하려면 next-auth에선 편하게 [adapter](https://next-auth.js.org/adapters)를 제공해준다.
 
 jwt로 Token을 관리할 때 크게 session, access, refresh token을 사용했다.  
@@ -65,7 +68,7 @@ jwt로 Token을 관리할 때 크게 session, access, refresh token을 사용했
 이를 가장 잘 설명해준 [영상](https://youtu.be/y0xMXlOAfss?si=6oSS8O34KMrJhaS3&t=62)을 찾았다.
 
 해당 영상의 설명을 조금 빌려서 이야기해보자면,  
-(나는... 이상하게 군대밖에 생각나지 않는다.)
+(나는.. 이상하게 군대밖에 생각나지 않는다.)
 
 휴가를 다녀온 21살의 나, 첫 휴가 복귀할 때 위병소에서 휴가증을 보여주며 복귀를 알린다.
 이때 나의 신원을 조회하는 헌병들, 휴가복귀자임을 확인한 후 위병소를 통과시켜준다.
@@ -73,9 +76,10 @@ jwt로 Token을 관리할 때 크게 session, access, refresh token을 사용했
 
 <br/>
 
-복귀하고 일 주일 후, 훈련에 참여하게 된 나, 내일 있을 사격훈련을 위해 미리 연습한다는 선임;  
+복귀하고 일 주일 후, 훈련에 참여하게 된 나.  
+내일 있을 사격훈련을 위해 미리 연습한다는 선임  
 나에게 총기를 가져오라고 시킨다. 나는, 총기보관함에 뚜벅뚜벅 걸어가지만, 그 앞에 서있는 경계병들.  
-그들은 나에게 신원을 확인하지만, 총기보관함에 들어갈 권한이 없는 나는 그대로 돌아오게 된다.  
+그들은 나에게 신원을 확인하지만, 총기보관함에서 총기를 가져갈 권한이 없는 나는 그대로 돌아오게 된다.  
 이게 인가라고 이해했다.
 
 <br/>
@@ -109,7 +113,7 @@ const handler = NextAuth({
   session: {
     strategy: 'jwt',
     // Seconds - How long until an idle ses
-    maxAge: 30, // 30 days
+    maxAge: 60 * 60 * 24 * 30, // 30 days
   },
 });
 
@@ -124,14 +128,14 @@ export { handler as GET, handler as POST };
 페이지를 닫았다가, 열어도 로그인이 유지된다.
 
 단, 다른 브라우저로 열거나 크롬의 시크릿모드로 열었을 땐, 로그인이 유지되지 않는다.  
-즉, 브라우저 어딘가에서 유저 정보를 저장하고 있을 것 이다.
+즉, 브라우저 어딘가에서 유저 정보를 저장하고 있는 것 같다.
 
 <br/>
 
 ## 3-1. 로그인 했을 때 브라우저에 저장되는 정보
 
 크게 로그인 정보는 `localStorage`나 `SessionStorage`, 또는 `cookie`에 저장할 수 있다.  
-구글 시크릿모드로 열어서, 로그인 하기전에 localStorage와 SessionStorage, cookie를 확인해보자.
+구글 시크릿모드로 열어서, **로그인 하기전에** localStorage와 SessionStorage, cookie를 확인해보자.
 
 ![Local Storage](./local-storage.png)  
 ![Session Storage](./session-storage.png)  
@@ -175,7 +179,7 @@ export const AuthContext: React.FC<Props> = ({ children }) => {
 };
 ```
 
-그래야 useSession hook을 클라이언트 환경에서 사용할 수 있기 때문이다.  
+SessionProvider로 감싸줘야, useSession hook을 클라이언트 환경에서 사용할 수 있기 때문이다.  
 (참고로, 서버에서 사용하려면, [getServerSession](https://next-auth.js.org/configuration/nextjs#getserversession)을 사용한다.)
 
 <br/>
@@ -249,7 +253,8 @@ export function BroadcastChannel(name = "nextauth.message") {
 
 ### Cookie에 저장되는 정보
 
-다음으로, Cookie에 저장되는 정보를 확인해보자.
+다음으로, Cookie에 저장되는 정보를 확인해보자.  
+이번엔 로그인을 한 후에 확인해보자.
 
 ![cookie에 저장된 정보들](./saved-cookie.png)
 
@@ -294,8 +299,10 @@ callbackUrl을 지정하고 로그인이 완료되면, 쿠키에 다음과 같�
 <br/>
 
 **💬 그럼, `next-auth.csrf-token`는 무엇일까?**  
-이 부분은 설명이 너무 길어질 것 같아서, 다른 글로 대체하려 한다.  
-간략히, 보안을 강화하기 위해 하나의 검증수단으로 token을 더 두는 것이다.
+이 부분은 설명이 너무 길어질 것 같아서, [다른 영상](https://youtu.be/cUmIB2sjjdw?si=btICVO6EFSewEf5M)로 대체하려 한다.  
+간략히, 보안을 강화하기 위해 하나의 검증수단으로 token을 더 두는 것이다.  
+참고로, 나는 따로 설정을 해주진 않았다.  
+`4-1. 주의할 점`에서도 설명하겠지만, 이 예시에선 서버와 클라이언트 도메인이 일치하기에 sameSite로 인해 CSRF를 방지할 수 있다고 판단했다.
 
 <br/>
 
@@ -329,8 +336,7 @@ const handler = NextAuth({
 
 <br/>
 
-**💬 근데, 아까부터 나오던 session이란건 뭘까?**
-
+**💬 근데, 아까부터 나오던 session이란건 뭘까?**  
 next-auth에서 제시하는 session이란 한 문장으로 다음과 같다.
 
 > 사용자가 애플리케이션에 로그인하면 일정시간동안 로그인할 필요가 없도록 사용자 정보 저장방법  
@@ -495,10 +501,13 @@ cookie에 저장된 token이 없으니, 요청을 보내도 데이터를 반환�
 
 ### 참고자료
 
-[Broadcast Channel API](https://developer.mozilla.org/en-US/docs/Web/API/Broadcast_Channel_API)  
-[next-auth Session strategies](https://authjs.dev/concepts/session-strategies)  
-[브라우저 쿠키와 SameSite 속성](https://seob.dev/posts/%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80-%EC%BF%A0%ED%82%A4%EC%99%80-SameSite-%EC%86%8D%EC%84%B1/)
+- next-auth  
+  [Broadcast Channel API](https://developer.mozilla.org/en-US/docs/Web/API/Broadcast_Channel_API)  
+  [next-auth Session strategies](https://authjs.dev/concepts/session-strategies)
 
-TODO:
+- cookie  
+  [브라우저 쿠키와 SameSite 속성](https://seob.dev/posts/%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80-%EC%BF%A0%ED%82%A4%EC%99%80-SameSite-%EC%86%8D%EC%84%B1/)
 
-- csrf 관련 글 찾아서 공유
+- csrf  
+  [Protecting Next.js apps from CSRF attacks](https://blog.logrocket.com/protecting-next-js-apps-csrf-attacks/)  
+  [링크만 클릭했는데 이게 된다고? | 웹 해킹 CSRF 공격 | CSRF 공격 이렇게 한다!](https://www.youtube.com/watch?v=cUmIB2sjjdw)
