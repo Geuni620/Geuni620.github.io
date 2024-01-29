@@ -216,7 +216,143 @@ span {
 
 <br/>
 
-### relative와 absolute의 차이는 뭘까?
+# 3. relative와 absolute의 차이는?
+
+> 매번 헷갈리는 absolute와 relative, 더 나아가 position...
+
+## 3-1. position: relative
+
+```HTML
+<body>
+  <div>
+    <div class="green"></div>
+  </div>
+</body>
+```
+
+```CSS
+div {
+  width: 300px;
+  height: 300px;
+  color: white;
+  background-color: wheat;
+}
+
+.green {
+  background-color: teal;
+  width: 100px;
+  height: 100px;
+}
+```
+
+![relative 속성을 주기 전](./relative-before.png)
+
+<br/>
+
+```CSS
+.green {
+  background-color: teal;
+  width: 100px;
+  height: 100px;
+  position: relative; // relative를 주었을 때
+  right: 20px; // right를 주었을 때
+  left: 30px; // left를 주었을 때
+}
+```
+
+- 모두 동일하게 유지한 상태에서 position | right | left를 주었을 떄 다음과 같은 결과를 보인다.
+
+![relative 속성을 주고 난 뒤](./relative-after.png)
+
+- 즉 relative는 elemnt가 처음 위치한 곳을 기준으로 움직인다는 것을 알 수 있다.
+- right로 20px을 주면, 왼쪽으로 움직이는데, **반대방향으로 움직인다고 생각하지말자**
+  - `top` | `bottom` | `left` | `right`는 웹페이지 상에서 element의 오프셋(offset)을 지정하기 위해 사용된다.
+  - 즉, `top`은 위에서 얼마나, `left`는 좌측에서 얼마나, `bottom`은 아래에서 얼마나, `right`는 우측에서 얼마나 떨어져야하는지를 결정한다.
+  - [해당 내용은 여기를 참고해서 작성했다. 지금까지 내가 헷갈렸던 내용을 명확히 이해할 수 있게 해주었다.](https://www.daleseo.com/css-position-absolute/#html-%EC%9A%94%EC%86%8C-%EB%B0%B0%EC%B9%98-%EA%B4%80%EB%A0%A8-css-%EC%86%8D%EC%84%B1)
+
+<br/>
+
+## 3-2. position: absolute
+
+```CSS
+.green {
+  background-color: teal;
+  width: 100px;
+  height: 100px;
+  position: absolute; // absolute를 주었을 때
+  right: 0px; // left를 주었을 때
+}
+```
+
+- relative와 모든 게 동일한 환경에서 position과 right만 변경해주었다.
+
+![부모인 div를 벗어나, 화면에서 가장 오른쪽으로 이동했다.](./absolute-before.png)
+
+- 현재의 absolute는 부모인 div를 벗어나, body를 기준으로 움직인다.
+- default인 body를 div로 변경해보자.
+
+```CSS
+div {
+  width: 300px;
+  height: 300px;
+  color: white;
+  background-color: wheat;
+  position: relative;  // div에 relative를 주었다.
+}
+
+.green {
+  background-color: teal;
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  right: 0px;
+}
+```
+
+![부모인 div를 기준으로 가장 오른쪽으로 이동했다.](./absolute-after.png)
+
+- 이렇게 이동할 수 있는 기준이 무엇일까? 다음을 확인해보자
+
+```HTML
+<div>
+  <div class="sibling"></div>
+  <div class="green"></div>
+</div>
+```
+
+```CSS
+div {
+  width: 300px;
+  height: 300px;
+  color: white;
+  background-color: wheat;
+}
+
+.sibling {
+  width: 100px;
+  height: 100px;
+  background-color: red;
+  position: relative; // sibling에 relative를 주었다.
+}
+
+.green {
+  background-color: teal;
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  right: 0px;
+}
+
+```
+
+- class가 green인 div박스에 형제 div인 sibling class를 추가해주었다.
+- 그리고 sibling에 css로 position relative를 추가해주었다.
+
+![green class를 줬던 div박스는 다시 부모를 벗어나, 화면에서 가장 오른쪽으로 이동했다.](./add-sibling.png)
+
+- 즉, 부모 요소 중에서 position 속성이 relative인 요소가 있다면 이 부모를 기준으로, absolute를 줬던 자식요소를 자유롭게 배치할 수 있다.
+
+<br/>
 
 ### 같은 형제 구조에서 absolute를 강제할 수 있는 방법은 없을까?
 
@@ -229,3 +365,6 @@ span {
 - 2. inline-block, inline, inline-flex 참고  
      [CSS의 display 속성: inline, block, inline-block](https://www.daleseo.com/css-display-inline-block/)  
      [CSS Flex 완벽 가이드](https://www.heropy.dev/p/Ha29GI)
+
+- 3. relative와 absolute 참고  
+     [CSS의 absolute position 작동 메커니즘 이해](https://www.daleseo.com/css-position-absolute/)
