@@ -354,9 +354,121 @@ div {
 
 <br/>
 
-### 같은 형제 구조에서 absolute를 강제할 수 있는 방법은 없을까?
+# 4. user-select, pointer-events 차이가 뭘까?
 
-### user-select, pointer-events 차이가 뭘까?
+## 4-1. user-select
+
+![강아지 이미지를 드래그하면 이미지가 선택되어버린다.](./example-images.png)
+
+- 위와 같은 상황이라고 가정해보자
+- 이럴 경우 선택되지 않도록 막아주는 방법은 없을까...?
+
+> 왜냐하면, 모바일에서 웹뷰로 제작을 했을 때 유저가 이미지를 드래그하면 이미지가 선택되어버린다.
+
+- 이를 해결하기 위해선 다음과 같은 방법이 있다.
+
+```HTML
+// 위 이미지는 다음과 같은 HTML로 구성되어 있다.
+<section>
+  <div
+    style="
+      //...
+      user-select: none;   /* user-select: none을 주었다. */
+    "
+  >
+    <img style="//..." src="./images.png" />
+    <input
+      style="
+        //...
+      "
+      readonly
+      value="귀여운 강아지"
+    />
+  </div>
+</section>
+```
+
+- 이렇게 하면 더 이상 이미지가 선택되지 않는다.
+- user-select 속성은 유저가 텍스트를 선택할 수 있는지를 지정해주는 속성이다.
+- 위와 같이 div에 user-select: none을 주면, div 내부의 모든 텍스트가 선택되지 않는다.
+- 하지만 **input의 readOnly로 준 value는 여전히 선택이 가능하다.**
+
+![여전히 input의 value는 선택가능하다.](./example-images-pointer.png)
+
+<br/>
+
+## 4-2. pointer-events
+
+- 위와 같은 현상을 막아주기 위해, pointer-events를 사용할 수 있다.
+
+```HTML
+// 위와 같은 HTML로 구성되어 있다.
+<input
+  style="
+    //...
+    pointer-events: none; /* pointer-events: none을 주었다. */
+  "
+  readonly
+  value="귀여운 강아지"
+/>
+```
+
+- pointer-events는 사실 클릭 이벤트를 막아주는 속성이다. 즉, 위와 같이 선택을 막아주는 요소는 아니다.
+- 그래서, 만약 readOnly가 아니라면, 사용해선 안된다. input 박스를 클릭했는데, value를 변경할 수 없게 되니 말이다.
+
+> 나의 경우엔, input / textarea가 readOnly인 경우에만 pointer-events를 사용했다.
+
+<br/>
+
+# 5. 같은 형제 구조에서 absolute를 강제할 수 있는 방법은 없을까?
+
+> 지금까지 글을 썼던 가장 큰 이유다.  
+> absolute를 형제 구조를 기준으로 위치를 다시 잡을 순 없을까?
+
+- 다음과 같은 코드가 있다.
+- 요구사항은 다음과 같았다.
+  1. 자식 1의 북동쪽 꼭지점을 기준으로 5px 위에 자식 2를 위치시킨다.
+
+![이런 구조를 가지길 바랐다.](./example-modal.png)
+
+- 아래와 같이 간략한 코드를 구성해봤다.
+
+```HTML
+  <section id="modal" class="layout">
+    <div id="swiper" class="parent">
+      <div id="contents" class="child-1">자식 1</div>
+      <div id="close-button" class="child-2">자식 2</div>
+    </div>
+  </section>
+```
+
+- 여기서 이제 `close-button`을 어떻게 contents의 위체 놓을 수 있을까?
+- 고정된 값을 사용할 수가 없다. 그 이유는 모바일 웹뷰로 제작했기에, 모바일의 크기가 다양하기 때문이다.
+
+<br/>
+
+## 5-1. contents 안으로 close-button을 넣어주기
+
+```HTML
+
+
+```
+
+- 하지만 이렇게 했을 때는, 문제가 있다.
+  - 캐러셀이라는 특성상, 화살표를 통해 컨텐츠를 변경하면 close-button이 같이 움직인다.
+  - 캐러셀 swiper에 close-button이 묶여있기 때문이다.
+
+<br/>
+
+## 5-2. layer 층을 하나 더 두기
+
+<br/>
+
+## 5-3. anchor를 사용하기 ()
+
+<br/>
+
+### touch-action?
 
 <br/>
 
@@ -368,3 +480,11 @@ div {
 
 - 3. relative와 absolute 참고  
      [CSS의 absolute position 작동 메커니즘 이해](https://www.daleseo.com/css-position-absolute/)
+
+- 4. user-select, pointer-events 참고  
+     [MDN user-select](https://developer.mozilla.org/ko/docs/Web/CSS/user-select)  
+     [MDN pointer-select](https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events)
+
+<br/>
+
+[잘 알려지지 않은 유용한 CSS 속성들](https://ahnheejong.name/articles/less-famous-css-properties/)
