@@ -1,21 +1,23 @@
 ---
-date: '2024-01-27'
+date: '2024-02-04'
 title: '미뤄두었던 CSS를 공부하자.'
 categories: ['개발']
 summary: 'Flex만 남발한 과거를 반성하며, CSS를 공부해보자.'
 ---
 
-> 작년 12월부터 개발을 할 때, 시간이 오래걸리는 내 모습을 보면서 '어떤 부분이 부족한 걸까' 고민하기 시작했다.  
-> 모든 부분에서 한 없이 부족하지만, 현실적으로 개발을 하는 '실무'에선 **Typescript**와 **CSS**가 가장 부족하다는 생각이 들었다.  
-> Typescript는 이펙티브 타입스크립트를 구입해서 공부하고 있다.  
-> CSS는 사이드프로젝트를 하면서 알게 된 부분을 정리해보려고 한다.
+> 개발을 할 때 시간이 오래걸리는 내 모습을 보면서 '어떤 부분이 부족한 걸까' 고민하기 시작했다.
+>
+> 모든 부분에서 한 없이 부족하지만, 가장 부족한건 **Typescript**와 **CSS**였다.  
+> 이번에 사이드프로젝트를 진행하며, CSS에 대해 복습과 새롭게 내용을 정리해보자
 
 # 1. aspect-radio
 
-- 원본 이미지 비율을 유지하면서, 크기를 조절하고 싶을 때 aspect-radio를 사용하면 된다.
+- 원본 이미지 비율을 유지하면서, 크기를 조절하고 싶을 때 [aspect-ratio](https://developer.mozilla.org/en-US/docs/Web/CSS/aspect-ratio)를 사용하면 된다.
+- 특히 모바일 뷰를 개발할 때 모바일의 크기가 모두 제각각이다.  
+  이를 대응하려면 `aspect-radio`를 사용하는 것이 좋다.
 
 ```CSS
-// 실제 편지지 이미지를 모달창으로 구현할 때 모바일 width / height를 고려해서 aspect-ratio를 사용했다.
+// 실제 이미지를 모달창으로 구현할 때 모바일 width / height를 고려해서 aspect-ratio를 사용했다.
 .letter-bg {
   width: 100%;
   height: auto;
@@ -28,25 +30,28 @@ summary: 'Flex만 남발한 과거를 반성하며, CSS를 공부해보자.'
 }
 ```
 
-- 특히 모바일 뷰를 개발할 때 모바일의 크기가 모두 제각각이다. 이를 모두 대응하려면 aspect-radio를 사용하는 것이 좋다.
-
-# 1-1. 예외상황
+## 1-1. 예외상황
 
 - aspect-radio가 적용되지 않는 3가지 예외상황이 있다.
-- 특히, CSS는 예외상황을 알지 못할 경우 에러를 발생시키지 않는다. 그래서 예외상황을 알아야 한다.
+- 특히, CSS는 예외상황을 알지 못할 경우에도 에러로 알려주지 않으니 주의해야한다.
 
 1. width, height가 고정으로 지정되었을 경우.
-2. 마찬가지고 min-height, min-width와 같이 고정으로 지정되었을 경우.
+2. 마찬가지로 min-height, min-width와 같이 고정으로 지정되었을 경우.
 3. 내용이 element의 크기를 넘어갈 경우.
 
 <br/>
 
 # 2. inline-block, inline, inline-flex
 
-> 이건 진짜 매번 헷갈린다. inline-flex는 사실 처음 알았다;  
-> 이전에 정리해놓은 내용이 있다. 인용해서 다시 정리해보려고 한다.
+> 진짜진짜 매번 헷갈린다. `inline-flex`는 사실 처음 알았다;  
+> 이전에 정리해놓은 내용이 있다. 인용해서 다시 복습해보자
+
+<br/>
 
 ## 2-1. inline
+
+참고로 inline은 in the same line이라고 이해하자  
+즉, 같은 줄에 위치할 수 있다.
 
 ```HTML
  <div>나는 Div-1이다</div>
@@ -74,22 +79,22 @@ span {
 }
 ```
 
-> in the same line 이라는 뜻 (같은 줄에 위치할 수 있음)
+<small>구분이 명확하지 않아, 키워드별 경계선을 추가했습니다. 🙇‍♂️</small>
 
-<br/>
+---
 
 - 하나의 요소(inline) 옆에 다른 요소(inline)이 올 수 있음  
    ![block인 div와 다르게 inline인 span은 옆에 다른 요소가 올 수 있다.](./inline-block-batch.png)
 
-<br/>
+---
 
 - inline는 **너비와 높이가 없음**
   ![inline은 width와 height값을 지정하면 다음과 같이 warning이 뜬다.](./inline-not-width-height.png)
 
-  - background-color하면 **색이 안칠해짐.**
-  - 하지만 문자, 또는 어떤 내용이 들어 있을 경우 색이 보임
+  - background-color하면 **색이 적용되지 않음.**
+  - 하지만 문자, 또는 어떤 내용이 들어 있을 경우 색이 적용된다.
 
-<br/>
+---
 
 - inline는 margin과 padding을 줄 수 있음
 
@@ -100,9 +105,9 @@ span {
     ![padding을 상하좌우로 5px씩 주었을 때, 모두 적용 됨](./inline-padding.png)  
     단, [이 블로그](https://hoya-kim.github.io/2021/08/25/padding-on-inline-element/)에서 제시하듯이, inline은 height값이 없기 때문에, position이 block인 element와 수직으로 놓을 경우, 겹치는 부분이 생긴다. **이를 해결하기 위해선 inline-block을 사용해야 한다.**
 
-<br/>
-
 - inline의 종류는 `span`, `a`, `img`가 있음 (나머진 대부분 Block)
+
+---
 
 <br/>
 
@@ -143,7 +148,7 @@ span {
 
 <br/>
 
-## 2-4. inline-flex
+## 2-3. inline-flex
 
 - 다음과 같은 코드가 있다.
 
@@ -218,7 +223,7 @@ span {
 
 # 3. relative와 absolute의 차이는?
 
-> 매번 헷갈리는 absolute와 relative, 더 나아가 position...
+> 매번 헷갈리는 absolute와 relative, 더 나아가 position..
 
 ## 3-1. position: relative
 
@@ -260,12 +265,13 @@ div {
 }
 ```
 
-- 모두 동일하게 유지한 상태에서 position | right | left를 주었을 떄 다음과 같은 결과를 보인다.
+- 모두 동일하게 유지한 상태에서 `position` | `right` | `left`를 주었을 때 다음과 같은 결과를 보인다.
 
 ![relative 속성을 주고 난 뒤](./relative-after.png)
 
 - 즉 relative는 elemnt가 처음 위치한 곳을 기준으로 움직인다는 것을 알 수 있다.
 - right로 20px을 주면, 왼쪽으로 움직이는데, **반대방향으로 움직인다고 생각하지말자**
+
   - `top` | `bottom` | `left` | `right`는 웹페이지 상에서 element의 오프셋(offset)을 지정하기 위해 사용된다.
   - 즉, `top`은 위에서 얼마나, `left`는 좌측에서 얼마나, `bottom`은 아래에서 얼마나, `right`는 우측에서 얼마나 떨어져야하는지를 결정한다.
   - [해당 내용은 여기를 참고해서 작성했다. 지금까지 내가 헷갈렸던 내용을 명확히 이해할 수 있게 해주었다.](https://www.daleseo.com/css-position-absolute/#html-%EC%9A%94%EC%86%8C-%EB%B0%B0%EC%B9%98-%EA%B4%80%EB%A0%A8-css-%EC%86%8D%EC%84%B1)
@@ -350,7 +356,8 @@ div {
 
 ![green class를 줬던 div박스는 다시 부모를 벗어나, 화면에서 가장 오른쪽으로 이동했다.](./add-sibling.png)
 
-- 즉, 부모 요소 중에서 position 속성이 relative인 요소가 있다면 이 부모를 기준으로, absolute를 줬던 자식요소를 자유롭게 배치할 수 있다.
+- 즉, 부모 요소 중에서 position 속성이 relative인 요소가 있다면  
+  이 부모를 기준으로, absolute를 줬던 자식요소를 자유롭게 배치할 수 있다.
 
 <br/>
 
@@ -361,9 +368,9 @@ div {
 ![강아지 이미지를 드래그하면 이미지가 선택되어버린다.](./example-images.png)
 
 - 위와 같은 상황이라고 가정해보자
-- 이럴 경우 선택되지 않도록 막아주는 방법은 없을까...?
+- 이럴 경우 이미지나 요소들이 선택되지 않도록 막아주는 방법은 없을까..?
 
-> 왜냐하면, 모바일에서 웹뷰로 제작을 했을 때 유저가 이미지를 드래그하면 이미지가 선택되어버린다.
+> 모바일에서 웹뷰로 제작할 시, 유저가 이미지를 드래그하면 이미지가 선택되어버린다.
 
 - 이를 해결하기 위해선 다음과 같은 방법이 있다.
 
@@ -422,7 +429,6 @@ div {
 
 # 5. 같은 형제 구조에서 absolute를 강제할 수 있는 방법은 없을까?
 
-> 지금까지 글을 썼던 가장 큰 이유다.  
 > absolute를 형제 구조를 기준으로 위치를 다시 잡을 순 없을까?
 
 - 다음과 같은 코드가 있다.
@@ -437,38 +443,102 @@ div {
   <section id="modal" class="layout">
     <div id="swiper" class="parent">
       <div id="contents" class="child-1">자식 1</div>
-      <div id="close-button" class="child-2">자식 2</div>
+      <div id="close-button" class="child-2">x</div>
     </div>
   </section>
 ```
 
-- 여기서 이제 `close-button`을 어떻게 contents의 위체 놓을 수 있을까?
-- 고정된 값을 사용할 수가 없다. 그 이유는 모바일 웹뷰로 제작했기에, 모바일의 크기가 다양하기 때문이다.
+- 여기서 이제 `close-button`을 어떻게 contents의 위에 놓을 수 있을까?
 
 <br/>
 
-## 5-1. contents 안으로 close-button을 넣어주기
+## 5-1. layer 층을 하나 더 두기
+
+- 가장 먼저 생각난 건, relative와 absolute를 사용하는 것인데, 이를 위해 layer층을 하나 더 두는 것이다.
 
 ```HTML
+  <section id="modal" class="layout">
+    <div id="swiper" class="parent">
+      <div id="add-layer" class="add-layer">  <!-- layer를 추가햇다. -->
+        <div id="contents" class="child-1">자식 1</div>
+        <div id="close-button" class="child-2">x</div>
+      </div>
+    </div>
+  </section>
+```
 
+```CSS
+//..
+
+.add-layer {
+  position: relative;
+}
+
+.child-1 {
+  //...
+  width: 150px;
+  height: 150px;
+}
+
+.child-2 {
+  // ...
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  right: 0;
+  bottom: calc(150px + 20px + 5px);
+}
+```
+
+- 결국 add-layer를 기준으로 두기 위해 relative를 주고, child-2에 absolute를 주었다.
+- 그리고 오른쪽 가장 끝에 위치시키기 위해 right: 0을 주었다.
+- 마지막으로 bottom을 주었는데, 이는 child-1의 높이 + child-2의 높이 + 5px를 주었다.
+
+![완성은 했지만 찝찝하다.](./relative+absolute.png)
+
+<br/>
+
+만약 이런 경우가 생기면 어떻게 될까?  
+모바일 환경은 동일하다.
+하지만,
+
+- child-1의 높이가 고정이 아니라면?
+- child-2의 높이가 고정이 아니라면?
+
+유동적으로 변경되어야할 경우엔, 결국 javascript를 써야하는 상황이 오는데, 개인적으로 스타일은 최대한 CSS로만 처리하고 싶다.
+
+<br/>
+
+## 5-3. anchor를 사용하기
+
+> anchor는 현재 정식 반영된 기능이 아니라, 실험적인 기능이다.
+
+```HTML
+  <head>
+    //...
+    <!-- polyfill을 추가해주었다. -->
+    <!-- https://github.com/oddbird/css-anchor-positioning?tab=readme-ov-file -->
+    <script type="module">
+      if (!("anchorName" in document.documentElement.style)) {
+        import("https://unpkg.com/@oddbird/css-anchor-positioning");
+      }
+    </script>
+  </head>
+  <body>
+    <section id="modal" class="layout">
+      <div id="swiper" class="parent">
+        <div id="contents" class="child-1">자식 1</div>
+        <div anchor="contents" id="close-button" class="child-2">x</div> <!-- anchor를 추가했다. -->
+      </div>
+    </section>
+  </body>
+```
+
+```CSS
 
 ```
 
-- 하지만 이렇게 했을 때는, 문제가 있다.
-  - 캐러셀이라는 특성상, 화살표를 통해 컨텐츠를 변경하면 close-button이 같이 움직인다.
-  - 캐러셀 swiper에 close-button이 묶여있기 때문이다.
-
 <br/>
-
-## 5-2. layer 층을 하나 더 두기
-
-<br/>
-
-## 5-3. anchor를 사용하기 ()
-
-<br/>
-
-### touch-action?
 
 <br/>
 
@@ -485,6 +555,6 @@ div {
      [MDN user-select](https://developer.mozilla.org/ko/docs/Web/CSS/user-select)  
      [MDN pointer-select](https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events)
 
-<br/>
-
-[잘 알려지지 않은 유용한 CSS 속성들](https://ahnheejong.name/articles/less-famous-css-properties/)
+- 5. 같은 형제 구조에서 absolute를 강제할 수 있는 방법은 없을까?
+     [CSS Anchor Is The Best New CSS Feature Since Flexbox](https://youtu.be/B4Y9Ed4lLAI?si=wEWOnlDbSZhMOiLN)
+     [css-anchor-positioning](https://github.com/oddbird/css-anchor-positioning?tab=readme-ov-file)
