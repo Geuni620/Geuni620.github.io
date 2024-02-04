@@ -5,10 +5,9 @@ categories: ['개발']
 summary: 'Flex만 남발한 과거를 반성하며, CSS를 공부해보자.'
 ---
 
-> 개발을 할 때 시간이 오래걸리는 내 모습을 보면서 '어떤 부분이 부족한 걸까' 고민하기 시작했다.
->
+> 개발을 할 때 시간이 오래걸리는 내 모습을 보면서 '어떤 부분이 부족한 걸까' 고민하기 시작했다.  
 > 모든 부분에서 한 없이 부족하지만, 가장 부족한건 **Typescript**와 **CSS**였다.  
-> 이번에 사이드프로젝트를 진행하며, CSS에 대해 복습과 새롭게 내용을 정리해보자
+> 이번에 사이드프로젝트를 진행하며, CSS에 대해 복습하고 새롭게 내용을 정리해보자
 
 # 1. aspect-radio
 
@@ -44,13 +43,13 @@ summary: 'Flex만 남발한 과거를 반성하며, CSS를 공부해보자.'
 # 2. inline-block, inline, inline-flex
 
 > 진짜진짜 매번 헷갈린다. `inline-flex`는 사실 처음 알았다;  
-> 이전에 정리해놓은 내용이 있다. 인용해서 다시 복습해보자
+> 다른 요소는 이전에 정리해놓은 내용이 있다. 인용해서 다시 복습해보자
 
 <br/>
 
 ## 2-1. inline
 
-참고로 inline은 in the same line이라고 이해하자  
+참고로 inline은 in the same line이라고 이해했다.  
 즉, 같은 줄에 위치할 수 있다.
 
 ```HTML
@@ -137,14 +136,14 @@ span {
 }
 ```
 
-- 위에서 언급했듯이, span은 inline이 default이고, div는 block가 default이다. 이를 inline-block로 변경했다
+- 위에서 언급했듯이, span은 inline이 default이고, div는 block가 default이다. 이를 inline-block로 변경했다.
 
 ![변경 후, 이와 같은 이미지를 띄는데, 하나씩 살펴보자](./inline-block.png)
 
-- 먼저 위 이미지를 보고, block은 inline-block으로 변경되면서 inline처럼 같은 줄에 위치할 수 있게 되었다는 것을 알 수 있다.
-- 그리고 inline이었던 span은 너비와 높이를 가질 수 있게 되었다는 것을 알 수 있다.
-- 즉 내부는 block 속성을, 외부는 inline 속성을 가지게 된 하이브리드 형태이다.
-- inline-block는 대표적으로 `button`, `input`, `select`가 있다.
+1. 먼저 위 이미지를 보고, block은 inline-block으로 변경되면서 inline처럼 같은 줄에 위치할 수 있게 되었다는 것을 알 수 있다.
+2. 그리고 inline이었던 span은 너비와 높이를 가질 수 있게 되었다는 것을 알 수 있다.
+3. 즉 내부는 block 속성을, 외부는 inline 속성을 가지게 된 하이브리드 형태이다.
+4. inline-block는 대표적으로 `button`, `input`, `select`가 있다.
 
 <br/>
 
@@ -221,7 +220,7 @@ span {
 
 <br/>
 
-# 3. relative와 absolute의 차이는?
+# 3. relative와 absolute
 
 > 매번 헷갈리는 absolute와 relative, 더 나아가 position..
 
@@ -361,7 +360,7 @@ div {
 
 <br/>
 
-# 4. user-select, pointer-events 차이가 뭘까?
+# 4. user-select, pointer-events
 
 ## 4-1. user-select
 
@@ -494,24 +493,26 @@ div {
 - 그리고 오른쪽 가장 끝에 위치시키기 위해 right: 0을 주었다.
 - 마지막으로 bottom을 주었는데, 이는 child-1의 높이 + child-2의 높이 + 5px를 주었다.
 
-![완성은 했지만 찝찝하다.](./relative+absolute.png)
+![완성은 했는데, 다른 방법은 없을까?](./relative+absolute.png)
 
 <br/>
 
-만약 이런 경우가 생기면 어떻게 될까?  
-모바일 환경은 동일하다.
-하지만,
-
-- child-1의 높이가 고정이 아니라면?
-- child-2의 높이가 고정이 아니라면?
-
-유동적으로 변경되어야할 경우엔, 결국 javascript를 써야하는 상황이 오는데, 개인적으로 스타일은 최대한 CSS로만 처리하고 싶다.
+완성은 했지만, 꼭 layer를 하나 더 추가해줘야하는걸까.. 다른 방법은 없을까?  
+그렇다고, Javascript를 쓰고 싶지도 않았다.  
+개인적으로 스타일은 최대한 CSS로만 처리하고 싶다.
 
 <br/>
 
-## 5-3. anchor를 사용하기
+## 5-2. anchor를 사용하기
 
 > anchor는 현재 정식 반영된 기능이 아니라, 실험적인 기능이다.
+
+먼저 chrome에서 `chrome://flags`로 들어가서 `#enable-experimental-web-platform-features`를 활성화해주자.  
+<small>💬 크롬을 열고 `chrome://flags/#enable-experimental-web-platform-features`를 url에 붙여넣으면 됩니다!</small>
+
+<br/>
+
+그 후엔 아래와 같이 polyfill과 class를 추가해주자.
 
 ```HTML
   <head>
@@ -531,14 +532,49 @@ div {
         <div anchor="contents" id="close-button" class="child-2">x</div> <!-- anchor를 추가했다. -->
       </div>
     </section>
+    <section id="modal" class="layout">
+      <div id="swiper" class="parent">
+        <div id="contents" class="child-1 anchor">자식 1</div> <!--class에 anchor를 추가했다. -->
+        <div anchor="my-anchor" id="close-button" class="child-2 mover">x</div> <!--  anchor="my-anchor"와 class에 boat를 추가했다. -->
+      </div>
+    </section>
   </body>
 ```
 
 ```CSS
+  //...
+    .child-1 {
+      //...
+    }
 
+    .child-2 {
+      //...
+    }
+
+    .anchor {
+      anchor-name: --my-anchor;
+    }
+
+    .mover {
+      anchor-default: --my-anchor;
+      bottom: calc(anchor(top) + 5px);
+      left: calc(anchor(right) - 20px);
+    }
 ```
 
+- 기존의 absolute, relative는 모두 제거했다!
+- 그리고 anchor를 사용하기 위해선, anchor-name을 사용해야한다.
+- 이제 자식 1을 기준으로, 자식 2를 움직이기 위해 class mover를 추가했다.
+  - 이렇게 했을 때, anchor-default(자식1)을 기준으로 자식2를 움직일 수 있다.
+
 <br/>
+
+![동일하게 적용할 수 있다.](./adjust-anchor.png)
+
+<br/>
+
+정리해보면, anchor를 이용하면, javascript를 사용하지 않아도 되고, 래퍼요소를 추가할 필요도 없다.  
+얼른.. 정식으로 반영되었으면 좋겠다. 🥲
 
 <br/>
 
@@ -556,5 +592,6 @@ div {
      [MDN pointer-select](https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events)
 
 - 5. 같은 형제 구조에서 absolute를 강제할 수 있는 방법은 없을까?
-     [CSS Anchor Is The Best New CSS Feature Since Flexbox](https://youtu.be/B4Y9Ed4lLAI?si=wEWOnlDbSZhMOiLN)
-     [css-anchor-positioning](https://github.com/oddbird/css-anchor-positioning?tab=readme-ov-file)
+     [CSS Anchor Is The Best New CSS Feature Since Flexbox](https://youtu.be/B4Y9Ed4lLAI?si=wEWOnlDbSZhMOiLN)  
+     [css-anchor-positioning](https://github.com/oddbird/css-anchor-positioning?tab=readme-ov-file)  
+     [CSS 앵커 배치로 요소를 서로 테더링 ](https://developer.chrome.com/blog/tether-elements-to-each-other-with-css-anchor-positioning?hl=ko)
