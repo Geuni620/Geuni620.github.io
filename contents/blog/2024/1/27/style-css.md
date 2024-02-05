@@ -528,12 +528,6 @@ div {
   <body>
     <section id="modal" class="layout">
       <div id="swiper" class="parent">
-        <div id="contents" class="child-1">자식 1</div>
-        <div anchor="contents" id="close-button" class="child-2">x</div> <!-- anchor를 추가했다. -->
-      </div>
-    </section>
-    <section id="modal" class="layout">
-      <div id="swiper" class="parent">
         <div id="contents" class="child-1 anchor">자식 1</div> <!--class에 anchor를 추가했다. -->
         <div anchor="my-anchor" id="close-button" class="child-2 mover">x</div> <!--  anchor="my-anchor"와 class에 boat를 추가했다. -->
       </div>
