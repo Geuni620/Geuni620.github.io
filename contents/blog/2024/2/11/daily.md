@@ -5,7 +5,7 @@ categories: ['일상']
 summary: '어떻게 하면 효율적으로 공부할 수 있을까?'
 ---
 
-<img src="./the-journey.webp" width="300" height="300" alt="여정의 이미지">
+![](./the-journey.webp)
 
 > 허덕이다.
 
