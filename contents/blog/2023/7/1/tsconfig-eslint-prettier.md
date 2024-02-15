@@ -5,6 +5,8 @@ categories: ['개발']
 summary: '뭐가 이리 많지...'
 ---
 
+**[Update 2024.02.15]**
+
 > 언젠가 한번쯤 정리하고 싶다는 생각을 했는데 오늘 날 잡았다!
 
 <br>
@@ -40,16 +42,16 @@ tsconfig.json
     },
 
     "target": "ES2020", // ECMAScript 대상 버전 지정, 'ES3' (기본), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', 'ESNEXT'
-    "useDefineForClassFields": true,
+    "useDefineForClassFields": true, // 클래스 필드에 대한 정의를 사용할지 여부
     "lib": ["ES2020", "DOM", "DOM.Iterable"], // 컴파일에 포함될 파일목록
     "module": "ESNext", // 모듈을 위한 코드 생성 설정: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'
     "skipLibCheck": true, // 모든 선언 파일(*.d.ts)의 타입 검사를 건너뜁니다.
 
     /* Bundler mode */
     "moduleResolution": "bundler", // 모듈 해석 방법 결정. Node.js/io.js 스타일 해석의 경우, "Node" 또는 "Classic" 중 하나.
-    "allowImportingTsExtensions": true,
+    "allowImportingTsExtensions": true, // .ts 파일을 import할 수 있게 해줌
     "resolveJsonModule": true, // .json 확장자로 import된 모듈을 포함합니다.
-    "isolatedModules": true,  // false	추가 검사를 수행하여 별도의 컴파일 (예를 들어 트랜스파일된 모듈 혹은 @babel/plugin-transform-typescript) 이 안전한지 확인합니다.
+    "isolatedModules": true,  // 추가 검사를 수행하여 별도의 컴파일 (예를 들어 트랜스파일된 모듈 혹은 @babel/plugin-transform-typescript)이 안전한지 확인.
     "noEmit": true, // 결과 파일 내보낼지 여부
     "jsx": "react-jsx", // .tsx 파일에서 JSX 지원: "React", "Preserve", "react-native". JSX를 확인
 
@@ -57,12 +59,12 @@ tsconfig.json
     "strict": true, // 모든 엄격한 타입 검사 옵션을 활성화합니다.
     "noUnusedLocals": true, // 사용하지 않는 지역변수 에러보고 여부
     "noUnusedParameters": true, // 사용되지 않은 파라미터에 대한 에러보고 여부
-    "noFallthroughCasesInSwitch": true,
+    "noFallthroughCasesInSwitch": true, // switch문을 사용할 때 발생할 수 있는 휴먼에러를 typescript가 잡아줌
 
     /* Additional options */
     "allowJs": true, // JS파일의 컴파일을 허용
-    "forceConsistentCasingInFileNames": true, // 동일 파일 참조에 대해 일관성 없는 대소문자를 비활성화합니다.
-    "incremental": true,
+    "forceConsistentCasingInFileNames": true, // 프로젝트 내의 파일 이름이 대소문자를 일관되게 사용하도록 강제
+    "incremental": true, // Typescript가 변경된 파일만 type 검사하고, 변경되지 않은 파일은 .tsbuildinfo에 저장해둠(재검사 x) → 컴파일 속도 ↑
     "esModuleInterop": true, /* 모든 imports에 대한 namespace 생성을 통해 CommonJS와 ES Modules 간의 상호 운용성이 생기게할 지 여부,  'allowSyntheticDefaultImports'를 암시적으로 승인합니다. */
     "noImplicitAny": true, // any 타입으로 암시한 표현식과 선언에 오류를 발생시킴
     "alwaysStrict": true, // strict mode에서 파싱하고 각 소스 파일에 대해 "use strict"를 내보냅니다.
@@ -286,6 +288,8 @@ export default defineConfig({
   "arrowParens": "always", // 화살표 함수 괄호 사용 방식
   "bracketSpacing": true, // 객체 리터럴에서 괄호에 공백 삽입 여부 { foo : 'bar' }
   "jsxBracketSameLine": false, // JSX의 마지막 `>`를 다음 줄로 내릴지 여부
+  // Update 24.02.16 → 현 시점기준으로 해당 부분은 bracketSameLine으로 변경되었다.
+  // https://prettier.io/docs/en/options.html#bracket-line
   "quoteProps": "as-needed" // 필요에 따라 객체 key값에 'a-a-a'와 같이 앞 뒤 콤마 붙여줌.
 }
 ```
