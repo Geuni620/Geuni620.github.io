@@ -310,7 +310,7 @@ export default defineConfig({
 ### 참고자료
 
 [tsconfig.json 컴파일 옵션 정리](https://geonlee.tistory.com/214)  
-[컴파일러 옵션 (Compiler Options)](https://typescript-kr.github.io/pages/compiler-options.html)
+[컴파일러 옵션 (Compiler Options)](https://typescript-kr.github.io/pages/compiler-options.html)  
 [ESLint 사용 시 React import문 생략하기](https://velog.io/@100pearlcent/ESLint-%EC%82%AC%EC%9A%A9-%EC%8B%9C-React-import%EB%AC%B8-%EC%83%9D%EB%9E%B5%ED%95%98%EA%B8%B0)  
 [ESLint의 no-unused-vars 규칙과 typescript 인터페이스 충돌 해결!](https://blog.pumpkin-raccoon.com/79)  
 [[Typescript & React & Eslint 환경설정 1편] tsconfig 설정을 해보자](https://velog.io/@xortm854/Typescript-React-Webpack-%ED%99%98%EA%B2%BD%EC%84%A4%EC%A0%95-2%ED%8E%B8-tsconfig-%EC%84%A4%EC%A0%95%EC%9D%84-%ED%95%B4%EB%B3%B4%EC%9E%90)
