@@ -1,9 +1,12 @@
 ---
-date: '2024-02-29'
+date: '2024-03-03'
 title: 'React의 automatic batching'
 categories: ['개발']
 summary: 'React 18의 automatic batching에 대해 알아보자'
 ---
+
+[react-batching repo](https://github.com/Geuni620/react-batching)  
+<small>글을 작성하며, 테스트한 코드는 위 링크에에 확인하실 수 있습니다. 🙇‍♂️</small>
 
 > 현 회사에서 React 16버전을 쓰고 있다.
 > 인수인계를 위한 문서를 확인하던 도중, 약 1~2년전 회사내 발표자료를 보게 됐다.  
