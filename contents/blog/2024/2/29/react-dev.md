@@ -1,8 +1,8 @@
 ---
 date: '2024-02-29'
-title: '리액트 공식문서를 읽으며 궁금한 사항들'
+title: 'React의 automatic batching'
 categories: ['개발']
-summary: ''
+summary: 'React 18의 automatic batching에 대해 알아보자'
 ---
 
 > 현 회사에서 React 16버전을 쓰고 있다.
