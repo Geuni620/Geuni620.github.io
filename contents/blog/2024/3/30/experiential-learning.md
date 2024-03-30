@@ -10,13 +10,13 @@ summary: '검색기능을 위해 POST Method를 사용했던 이유'
 보통의 검색 조회를 할 땐, API Method로 GET을 사용한다.  
 하지만 이번엔 POST로 조회를 해야하는 경우가 생겼다.  
 검색조건으로 보내야하는 query의 길이가 길어서, 허용되는 최대 URL 길이를 넘어갈 것으로 예상되었기 때문이다.
-[참고](https://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers)
 
+[참고](https://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers)  
 <small>위 참고링크를 확인해보면, 대체로 2000자 이내를 권장하는 듯하다.</small>
 
 <br/>
 
-## MutateAsync
+### MutateAsync
 
 처음 나의 생각은 다음과 같았다.
 
@@ -76,6 +76,16 @@ export default function Home() {
 하지만, 곧 문제가 발생했다.
 
 위 mutateAsync의 가장 큰 단점은 구독상태가 아니라는 점이다.
+보통 useQuery를 사용하면, mutate로 invalidate를 호출하면 자동으로 다시 fetch를 하게 된다.  
+하지만 mutateAsync는 그렇지 않다.
+
+![mutateAsync로 요청시 dev tool에 아무것도 구독되지 않는다.](./query-dev-tool.png)
+
+<br/>
+
+여기서 만약 이런 요구사항이 있다고 가정해보자.
+
+> Task가 완료되면, 체크박스를 클릭하여 완료처리를 하고, 체크된 Task의 날짜가 기록되어야한다.
 
 <br/>
 
