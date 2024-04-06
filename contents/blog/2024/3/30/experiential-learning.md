@@ -89,6 +89,15 @@ export default function Home() {
 
 <br/>
 
+### 일이 커진다.
+
+일이 커져버렸다. JSON파일로만 fs를 이용해 파일을 읽고 구현하려고 했는데, 욕심이 커져서 데이터를 저장할 공간이 필요해졌다.
+이전이라면 prisma를 이용해서 mysql이나, sqllite를 사용하려고 했을 것 같다.
+
+하지만, 최근에 supabase를 알고 난 뒤부턴 DB나, 저장할 공간의 필요성이 느껴지면 supabase부터 뒤적거리곤 한다.
+
+<br/>
+
 ### 참고자료
 
 [What is the maximum length of a URL in different browsers?](https://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers)
