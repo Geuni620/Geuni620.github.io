@@ -1,5 +1,5 @@
 ---
-date: '2024-03-30'
+date: '2024-04-07'
 title: 'useQuery는 POST Method에 사용하면 안되는걸까?'
 categories: ['개발']
 summary: '검색기능을 위해 POST Method를 사용했던 이유'
