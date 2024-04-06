@@ -317,4 +317,6 @@ useQuery로 변경했을 땐, 구독상태가 된다. queryKey가 변경될 때�
 
 ### 참고자료
 
-[What is the maximum length of a URL in different browsers?](https://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers)
+[What is the maximum length of a URL in different browsers?](https://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers)  
+[react-query with axios post #801](https://github.com/TanStack/query/discussions/801)  
+[React-Query on post methods #2751](https://github.com/TanStack/query/discussions/2751)
