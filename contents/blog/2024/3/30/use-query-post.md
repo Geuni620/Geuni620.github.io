@@ -313,7 +313,11 @@ useQuery로 변경했을 땐, 구독상태가 된다. queryKey가 변경될 때�
 
 <br/>
 
-<br/>
+### 정리
+
+useQuery는 GET Method에만 사용해야한다는 것은 내 고정관념이었다.  
+useQuery는 데이터를 읽어오기 위한 것이고, useMutation은 데이터를 변경, 삭제, 수정하기 위한 것이다.  
+즉, useQuery의 queryFn의 반환이 Promise이면 사용할 수 있다.
 
 ### 참고자료
 
