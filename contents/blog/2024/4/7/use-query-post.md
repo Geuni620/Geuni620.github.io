@@ -5,6 +5,8 @@ categories: ['개발']
 summary: '검색기능을 위해 POST Method를 사용했던 이유'
 ---
 
+![](./img.webp)
+
 ### 배경
 
 보통의 검색/조회를 할 땐, API Method로 GET을 사용한다.  
