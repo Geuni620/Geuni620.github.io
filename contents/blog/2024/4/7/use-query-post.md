@@ -7,7 +7,7 @@ summary: '검색기능을 위해 POST Method를 사용했던 이유'
 
 ### 배경
 
-보통의 검색 조회를 할 땐, API Method로 GET을 사용한다.  
+보통의 검색/조회를 할 땐, API Method로 GET을 사용한다.  
 하지만 이번엔 POST로 조회를 해야하는 경우가 생겼다.  
 검색조건으로 보내야하는 query의 길이가 길어서,  
 허용되는 최대 URL 길이를 넘어갈 것으로 예상되었기 때문이다.
@@ -67,7 +67,7 @@ export default function Home() {
 ```
 
 - 위와 같이 작성했을 때 검색 결과에 대한, 해당 테이블 데이터는 잘 출력된다.
-- 이때까진 큰 문제되는 사항이 없다고 생각했다.
+- 이때까진 큰 문제없다고 생각했다.
 
 <br/>
 
@@ -77,7 +77,8 @@ export default function Home() {
 하지만, 곧 문제가 발생했다.
 
 위 mutateAsync의 가장 큰 단점은 **구독상태가 아니라는 점이다.**  
-보통 useQuery를 사용하면, mutate로 invalidateQueries를 호출하면 자동으로 다시 re-fetch를 하게 된다.  
+보통 useQuery를 사용하면, queryKey를 기반으로 구독상태가 되어,  
+queryKey가 변경될 때마다, 데이터를 다시 가져온다.  
 하지만 mutateAsync는 그렇지 않다.
 
 ![mutateAsync로 요청시 dev tool에 아무것도 구독되지 않는다.](./query-dev-tool.png)
@@ -99,7 +100,7 @@ export default function Home() {
 
 <br/>
 
-잠깐의 셋업을 거친 뒤 다음과 같은 기능을 완성했다.
+잠깐의 셋업을 거친 뒤 다음과 같은 기능을 추가했다.
 
 1. 페이지에 접속하면, mutateAsync에 의해, 전체 데이터를 가져옴
 2. 검색조건을 입력하면 mutateAsync에 의해, 검색된 데이터를 가져옴
@@ -120,13 +121,21 @@ export default function Home() {
 
 > 내가 직면한 문제를 해결하기 위해 POST Method에는 useQuery를 사용하면 안되는걸까?
 
-react-query를 처음 배울 때, useQuery는 GET Method에서 사용하고,  
-useMutation은 POST와 PATCH, PUT, DELETE 등에 사용하라고 배웠다.
+react-query를 처음 배울 때, useQuery는 대체로 GET Method에 사용하고,  
+useMutation은 POST와 PATCH, PUB, DELETE 등에 사용한다고 배웠던 것 같다.
 
-react-query의 메인테이너인 [Tanner Linsley](https://github.com/tannerlinsley) 역시 다음과 같은 [댓글](https://github.com/TanStack/query/discussions/801#discussioncomment-87385)을 남겼다.
+react-query의 메인테이너인 [Tanner Linsley](https://github.com/tannerlinsley)는 다음과 같은 [댓글](https://github.com/TanStack/query/discussions/801#discussioncomment-87385)을 남겼다.
 
-하지만 생각해보면 GET만 데이터를 읽을 수 있을까..? **POST 역시 데이터를 읽을 수 있다.**  
-즉, HTTP Method에 따라 useQuery와 useMutation을 나누는 것은 옳지 않다고 생각한다.
+> useQuery for reading data  
+> \- 데이터를 읽기 위해선, useQuery를
+>
+> useMutation for creating, changing, or deleting data  
+> \- 데이터를 생성, 변경, 삭제하기 위해선, useMutation을
+
+하지만, 생각해보면, 그 누구도 useQuery는 **GET Method에만 사용해야한다고 말하지 않았다.**
+
+즉, HTTP Method에 따라 useQuery와 useMutation을 나누는 것은 옳지 않다고 생각이 들었다.  
+참고로 **POST 역시 데이터를 읽을 수 있다.**
 
 <br/>
 
@@ -298,7 +307,7 @@ export default function Home() {
 }
 ```
 
-위와 같이 변경하면, onSubmit이 발생했을 때만, 데이터를 가져온다.
+위와 같이 변경하면, onSubmit이 발생했을 때만, 데이터를 가져온다.  
 그럼 이제 가장 초반에 언급한 문제를 다시 살펴보자.
 
 > Task가 완료되면, 체크박스를 클릭하여 완료처리를 하고, 체크된 Task의 날짜가 기록되어야한다.
@@ -315,9 +324,11 @@ useQuery로 변경했을 땐, 구독상태가 된다. queryKey가 변경될 때�
 
 ### 정리
 
-useQuery는 GET Method에만 사용해야한다는 것은 내 고정관념이었다.  
+useQuery는 GET Method에만 사용해야한다는 것은 **사실 내 고정관념이었다.**  
 useQuery는 데이터를 읽어오기 위한 것이고, useMutation은 데이터를 변경, 삭제, 수정하기 위한 것이다.  
 즉, useQuery의 queryFn의 반환이 Promise이면 사용할 수 있다.
+
+<br/>
 
 ### 참고자료
 
