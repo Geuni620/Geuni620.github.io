@@ -1,9 +1,11 @@
 ---
 date: '2024-04-21'
-title: '낙관적 업데이트(optimistic updates) 2가지 방법'
+title: '예시로 살펴보는 낙관적 업데이트(optimistic updates) 2가지 방법'
 categories: ['개발']
 summary: '낙관적이네..'
 ---
+
+[github repo](https://github.com/Geuni620/tanstack-query-optimistic-updates)
 
 > [공식문서](https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates)에 적혀 있는 두 가지 예시를 모두 구현해보자.
 
