@@ -1,6 +1,6 @@
 ---
 date: '2024-04-21'
-title: 'tanstack-query 제공하는 낙관적 업데이트(optimistic updates) 2가지 방법'
+title: '낙관적 업데이트(optimistic updates) 2가지 방법'
 categories: ['개발']
 summary: '낙관적이네..'
 ---
