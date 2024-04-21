@@ -16,7 +16,7 @@ summary: ''
 
 <br/>
 
-나는 다음과 같은 상황에 쓰려고 했다.
+다음과 같은 상황에 쓰려고 했다.
 
 - 체크박스가 존재한다.
 - 체크박스를 클릭하자마자 DB에 해당 체크박스의 변경된 정보를 저장한다.
@@ -36,8 +36,7 @@ summary: ''
 
 테스트해보니, 생각보다.. 업데이트 반응이 느리지 않았다.  
 하지만 이는 데스크탑 상황이다.  
-데스크탑보다 모바일 성능은 당연히 떨어지며, 반응 역시 느려진다.  
-(실제, 이미지 업로드 같은 경우는 업로드 시키고 다시 불러오는데까지 데스크탑보다 훨씬 느렸다.)
+데스크탑보다 모바일 성능은 당연히 떨어지며, 반응 역시 느려진다.
 
 모바일 환경이라고 가정해보고 테스트를 해보면 다음과 같다.  
 (네트워크탭에서 no throtting를 **Fast 3G**로 변경했다.)
@@ -74,7 +73,7 @@ export const useToggleOptimistic = () => {
     },
     onSettled: () => {
       // 반드시 return 시켜줘야함
-      // 쿼리를 무효화할 때 프로미스를 반환해야한다.
+      // 쿼리를 무효화할 때 프로미스를 반환한다.
       // 무효화가 완료되기 전까지 pening가 유지되도록 함
       return queryClient.invalidateQueries({
         queryKey: ['detail'],
@@ -190,11 +189,12 @@ const DetailPage = () => {
 
 <small>prettier이 왜 깨지는지 모르겠네..</small>
 
-- checkbox에서 pending이 true일 경우, pending.done을 없을 경우라면, query에서 가져온 데이터로 checkbox 상태를 관리한다.
+- checkbox에서 pending이 true일 경우, pending.done을,  
+  pending이 flase일 경우, query에서 가져온 데이터로 checkbox 상태를 관리한다.
 
 ![체크박스가 훨씬 부드럽게 동작한다.](./optimistic-update.gif)
 
-- UI로 명확히 확인하고자, **pending 상태일 때** Mark as Complete 문구에 opacity를 주었고,  
+- UI로 명확히 확인하고자, **pending 상태일 때** Mark as Complete 문구에 **opacity를 주었고**,  
   **Fast 3G**로 테스트했다.
 
 <br/>
@@ -351,37 +351,132 @@ UI를 직접 업데이트하는 곳이 두 곳 이상일 경우 → via the cach
 
 <br/>
 
-개인적으로는 이렇게 정의가 되었다.  
-위에서 나는 다음과 같이 언급했었다.
+현재의 예시에선 detail 페이지만 존재한다.  
+detail 페이지 내의 checkbox 상태만 서버로 전송하고, 서버에선 checkbox 상태를 업데이트할 때의 date도 생성해서 같이 DB에 저장한다.
 
-> 여기서 `Mark as Complete`의 체크박스를 클릭하면, DB에 데이터가 반영되는 구조다.  
-> **날짜 정보 역시 업데이트 시킨다.**
+그래서 이 경우엔 via the UI를 사용하면 될 듯하다.  
+왜냐하면, 직접 업데이트 되는 곳이 detail 페이지 한 곳이기 때문이다.
 
-현재 날짜 정보는 서버에서 만들어서 DB에 저장하고 있다.
+만약, detail 페이지가 엄청 세분화 되어있어서, 다른 컴포넌트의 query로 mount되어있는 상태라고 가정해보자.  
+그리고, 그 컴포넌트는 체크박스 리스트 중, 상태가 변경된 체크박스의 date를 업데이트 한다고 가정해보자.  
+한 걸음 더 나아가, 이 경우도 낙관적 업데이트를 적용해보자.
 
-```TS
-export async function POST(request: Request) {
-  try {
-    const { id, done } = await request.json();
-    const now = format(new Date(), 'yyyy-MM-dd HH:mm:ss', { locale: ko });
-    //...
+<br/>
 
-    return NextResponse.json({ message: 'Update successful' });
-  } catch (error) {
-    return handleErrorResponse(error);
-  }
-}
+이런 경우라면, vai the cache를 통해 수동적으로 cache를 각각 업데이트 시켜줘야한다.  
+예시를 쥐어 짜내고 짜내서, 생각해냈는데, 사실 이런 경우는 흔치 않는 것 같다.
+
+대부분 전자인 via the UI를 사용하지 않을까 싶다.
+
+<br/>
+
+### 번외
+
+3번의 예시를 하나하나 다 만들기엔 시간이 부족해서.. 🥲 최대한 만든 것을 토대로 작성해봤다.
+
+1. detail페이지와 list 페이지가 존재한다.
+2. detail페이지에서 체크박스의 상태와 날짜를 낙관적 업데이트한다.
+3. 이때, list에 해당하는 날짜도 낙관적 업데이트 시켜보자
+
+```TSX
+export const useToggleOptimisticCache = () => {
+  const queryClient = useQueryClient();
+  const toggleMutation = useMutation({
+    mutationFn: changeToggle,
+    onMutate: async (newData) => {
+      const newDataId = newData.id.toString();
+
+      await queryClient.cancelQueries({ queryKey: ['detail', newDataId] });
+      await queryClient.cancelQueries({ queryKey: ['table'] });
+
+      const previousDetail = queryClient.getQueryData<DetailData>([
+        'detail',
+        newDataId,
+      ]);
+
+      const updatedDetail = {
+        ...previousDetail,
+        done: newData.done,
+        date: newData.date,
+      };
+
+      queryClient.setQueryData(['detail', newDataId], updatedDetail);
+
+      // table에 해당하는 데이터 중, detail과 동일한 id찾아 체크박스와 date를 업데이트 한다.
+      queryClient.setQueryData(['table', ""], (oldData: DetailData[]) => {
+        return oldData.map((item) => {
+          if (item.id === newData.id) {
+            return { ...item, done: newData.done, date: newData.date };
+          }
+
+          return item;
+        });
+      });
+
+      return {
+        previousDetail,
+        newData,
+      };
+    },
+
+    onError: (error, newData, context) => {
+      queryClient.setQueryData(
+        ['detail', context?.newData.id.toString()],
+        context?.previousDetail,
+      );
+
+      queryClient.setQueryData(['table'], (oldTable: DetailData[]) => {
+        return oldTable.map((item) => {
+          return item.id === context?.newData.id
+            ? context?.previousDetail
+            : item;
+        });
+      });
+    },
+
+    onSuccess: () => {
+      toast.success('성공적으로 업데이트 하였습니다!');
+    },
+
+    onSettled: () => {
+      // detail과 table 모두 무효화 시키기
+      queryClient.invalidateQueries({
+        queryKey: ['detail'],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ['table'],
+      });
+    },
+  });
+
+  return toggleMutation;
+};
 ```
 
-그래서 위 gif 파일들을 보면, 체크박스는 바로 업데이트 되는 반면,  
-날짜가 업데이트 되는 시점은, Mark a Complete 문구에 opacity가 사라지는 순간임을 알 수 있다.
+마지막으로 잘 되는지 테스트해보자.  
+참고로 DB에 저장할 땐 UTC기준으로 사용했고, UI로 보여주는 시간은 한국시간 기준으로 적용되어있다.  
+즉, 9시간 차이가 난다.
+
+![](./optimistic-table-detail.png)
+
+table 내 detail id와 동일한 table의 date가 잘 반영된다.
 
 <br/>
 
-하지만 날짜데이터를 detail 페이지뿐만아니라,  
-list 페이지에서도 날짜를 업데이트 시켜야하는 요구조건이 추가됐다고 가정해보자.
+### 정리
 
-그리고 이 또한 낙관적 업데이트를 적용해보자.  
-(사실.. 일반적인 상황이라면 적용하지 않아도 된다고 판단되지만, 테스트를 위해 적용해보자..!)
+1.  앞으로 낙관적 업데이트를 적용할 일이 어떤 경우가 있을지 모르겠다.  
+    하지만, 적용하게 된다면 **via the UI를 가장 우선 고려할 것 같다.**  
+    수동으로 cache를 조작하는 것보다 방법이 편하고 되돌리기도 용이하다.  
+    심지어 코드량도 적게 사용할 수 있다.
 
-<br/>
+2.  예시를 만들면서 detail페이지의 UI는 [v0](https://v0.dev/)가 만들어줬다.  
+    쉽고 간단하게 코드만 복붙해서 내가 원하는대로 커스텀하기 편했다.  
+    프리미엄은.. 결제해보고 싶었다.
+
+3.  tanstack 라이브러리는 배울게 많다.  
+    소스코드를 확인해보지 않아서 모르겠지만, core를 두고  
+    react에 주입하면 react용으로 사용되고,  
+    vue에 주입하면 vue용으로 사용되는 것 같다.  
+    이 부분은 차츰차츰 알아가보자!
