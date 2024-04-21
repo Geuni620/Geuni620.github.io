@@ -28,7 +28,7 @@ summary: ''
 <br/>
 
 여기서 `Mark as Complete`의 체크박스를 클릭하면, DB에 데이터가 반영되는 구조다.  
-날짜 정보 역시 업데이트 시킨다.
+**날짜 정보 역시 업데이트 시킨다.**
 
 <br/>
 
@@ -200,3 +200,188 @@ const DetailPage = () => {
 <br/>
 
 ### 2. Via the cache
+
+이제 직접적인 두 번째 방법인 cache를 수동으로 변경시켜보자.  
+낙관적 업데이트의 핵심은 동일하다.  
+(응답을 기다리기 전 미리 UI를 업데이트 시키는 것)
+
+```TSX
+// useToggleOptimisticCache.ts
+export const useToggleOptimisticCache = () => {
+  const queryClient = useQueryClient();
+  const toggleMutation = useMutation({
+    mutationFn: changeToggle,
+
+    onMutate: async (newData) => {
+      const newDataId = newData.id.toString();
+
+     // queryKey에 해당하는 데이터 업데이트를 취소시킨다.
+      await queryClient.cancelQueries({ queryKey: ['detail', newDataId] });
+
+     // 그리고 기존의 queryKey에 해당하는 데이터를 가져온다.
+      const previousData = queryClient.getQueryData<DetailData>([
+        'detail',
+        newDataId,
+      ]);
+
+     // 새로운 데이터 객체를 생성하여, 기존 데이터에 변경사항을 적용한다.
+      const updatedData = {
+        ...previousData,
+        done: newData.done,
+      };
+
+     // 새로운 데이터를 cache에 적용한다.
+      queryClient.setQueryData(['detail', newDataId], updatedData);
+
+      return {
+        previousData,
+        newData,
+      };
+    },
+
+    onError: (error, newData, context) => {
+      // mutation이 실패했을 때, 이전 데이터를 다시 반영한다.
+      queryClient.setQueryData(
+        ['detail', context?.newData.id],
+        context?.previousData,
+      );
+    },
+
+    onSuccess: () => {
+      toast.success('성공적으로 업데이트 하였습니다!');
+    },
+
+    onSettled: () => {
+      return queryClient.invalidateQueries({
+        queryKey: ['detail'],
+      });
+    },
+  });
+
+  return toggleMutation;
+};
+```
+
+공식문서에도 잘 작성되어있지만 하나씩 살펴보자.
+
+**1. onMutate**
+
+- 먼저, onMutate를 작성해줘야한다. 이는 mutate가 call될 때 동작한다.
+- newData는 mutate에서 인자로 넘긴 value가 포함된다.
+
+```TSX
+  <Checkbox
+    //...
+    onCheckedChange={(checked: boolean) => {
+      toggleMutation.mutate({
+        id: detail.data.id,
+        done: checked,
+      });
+    }}
+  />
+```
+
+- 위 함수에서, id와 done을 넘겼으니, newData는 id와 done을 받게 된다.
+
+<br/>
+
+소스코드에도 작성되어있지만, 간략히 다시 설명하자면 다음과 같다.
+
+- onMutate에서 queryKey에 해당하는 mutate를 취소한다. (cancelQueries)
+- 그리고 변경되기 전 데이터를 가져온다. (getQueryData)
+- 업데이트된 객체를 생성한 뒤, 수동으로 cache를 업데이트 시킨다. (setQueryData)
+
+<br/>
+
+**2. onError**
+
+에러가 발생했을 땐 어떻게 동작할까?
+
+```TS
+// api/toggle/[id]/route.ts
+export async function POST(request: Request) {
+  try {
+    // 일시적인 오류를 발생시켜보았다.
+    throw new Error('일시적 오류 발생!!!');
+    // ...
+  } catch (error) {
+    return handleErrorResponse(error);
+  }
+}
+
+//
+export const useToggleOptimisticCache = () => {
+  const toggleMutation = useMutation({
+    //...
+    onError: (error, newData, context) => {
+      console.log('error', error);
+      console.log('newData', newData);
+      console.log('context', context);
+
+      queryClient.setQueryData(
+        ['detail', context?.newData.id.toString()],
+        context?.previousData,
+      );
+    },
+    onSettled: () => {
+      console.log("onSettled 실행")
+      return queryClient.invalidateQueries({
+        queryKey: ['detail'],
+      });
+    },
+  });
+  return toggleMutation;
+};
+```
+
+![](./error-log.png)  
+소스코드의 log처럼 차례로, error, newData, context이다.  
+위에서 언급한대로, onSettled는 mutation이 성공하든 실패하든 모두 실행된다.
+
+<br/>
+
+### 3. 어떤 상황에 쓰면 될까?
+
+마지막으로 두 가지 방법을 어떤 상황에 각각 쓰면 되는걸까?  
+공식문서에선 [다음과 같이](https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates#when-to-use-what) 제시한다.
+
+정리해보자면,  
+UI를 직접 업데이트하는 곳이 한 곳만 있는 경우 → via the UI  
+UI를 직접 업데이트하는 곳이 두 곳 이상일 경우 → via the cache
+
+<br/>
+
+개인적으로는 이렇게 정의가 되었다.  
+위에서 나는 다음과 같이 언급했었다.
+
+> 여기서 `Mark as Complete`의 체크박스를 클릭하면, DB에 데이터가 반영되는 구조다.  
+> **날짜 정보 역시 업데이트 시킨다.**
+
+현재 날짜 정보는 서버에서 만들어서 DB에 저장하고 있다.
+
+```TS
+export async function POST(request: Request) {
+  try {
+    const { id, done } = await request.json();
+    const now = format(new Date(), 'yyyy-MM-dd HH:mm:ss', { locale: ko });
+    //...
+
+    return NextResponse.json({ message: 'Update successful' });
+  } catch (error) {
+    return handleErrorResponse(error);
+  }
+}
+```
+
+그래서 위 gif 파일들을 보면, 체크박스는 바로 업데이트 되는 반면,  
+날짜가 업데이트 되는 시점은, Mark a Complete 문구에 opacity가 사라지는 순간임을 알 수 있다.
+
+<br/>
+
+하지만 날짜데이터를 detail 페이지뿐만아니라,  
+list 페이지에서도 날짜를 업데이트 시켜야하는 요구조건이 추가됐다고 가정해보자.
+
+그리고 이 또한 낙관적 업데이트를 적용해보자.  
+(사실.. 일반적인 상황이라면 적용하지 않아도 된다고 판단되지만, 테스트를 위해 적용해보자..!)
+
+<br/>
