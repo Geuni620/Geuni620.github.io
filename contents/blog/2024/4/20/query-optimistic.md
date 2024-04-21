@@ -1,8 +1,8 @@
 ---
 date: '2024-04-21'
-title: 'tanstack-query v5에서 제공하는 낙관적 업데이트(optimistic updates) 2가지 방법'
+title: 'tanstack-query 제공하는 낙관적 업데이트(optimistic updates) 2가지 방법'
 categories: ['개발']
-summary: ''
+summary: '낙관적이네..'
 ---
 
 > [공식문서](https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates)에 적혀 있는 두 가지 예시를 모두 구현해보자.
@@ -97,8 +97,8 @@ export const useToggleOptimistic = () => {
   - `onSuccess`는 mutation이 **성공하고 결과를 전달할 때 실행**
   - `onSettled`는 mutation이 **성공하든 실패하든 모두 실행**
 
-- 주의할 점은, onSettled에서 invalidateQueries로 캐시를 무효화할 땐, **꼭 return을 붙여줘야한다.**
-  - 이는 promise를 반환할 때, pending상태임을 인지하기 위해서이다.
+- 주의할 점은, onSettled에서 invalidateQueries로 캐시를 무효화할 땐, **[꼭 return을 붙여줘야한다.](https://tkdodo.eu/blog/mastering-mutations-in-react-query#awaited-promises)**
+  - 이는 promise를 반환할 때, pending상태임을 인지하기 위해서다.
 
 <br/>
 
@@ -138,7 +138,7 @@ return (
 
 어떤 것을 사용해도 상관없다는 의미다.  
 하지만, query와 mutation이 한 컴포넌트에 존재하지 않을 땐,  
-pendingData를 통해서 mutation pending 상태를 적용하면 된다.
+useMutationState를 사용해서 pending 상태인지를 확인할 수 있다.
 
 <br/>
 
@@ -190,7 +190,7 @@ const DetailPage = () => {
 <small>prettier이 왜 깨지는지 모르겠네..</small>
 
 - checkbox에서 pending이 true일 경우, pending.done을,  
-  pending이 flase일 경우, query에서 가져온 데이터로 checkbox 상태를 관리한다.
+  pending이 false일 경우, query에서 가져온 데이터로 checkbox 상태를 관리한다.
 
 ![체크박스가 훨씬 부드럽게 동작한다.](./optimistic-update.gif)
 
@@ -309,7 +309,7 @@ export async function POST(request: Request) {
   }
 }
 
-//
+// useToggleOptimisticCache.ts
 export const useToggleOptimisticCache = () => {
   const toggleMutation = useMutation({
     //...
@@ -345,38 +345,58 @@ export const useToggleOptimisticCache = () => {
 마지막으로 두 가지 방법을 어떤 상황에 각각 쓰면 되는걸까?  
 공식문서에선 [다음과 같이](https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates#when-to-use-what) 제시한다.
 
-정리해보자면,  
-UI를 직접 업데이트하는 곳이 한 곳만 있는 경우 → via the UI  
-UI를 직접 업데이트하는 곳이 두 곳 이상일 경우 → via the cache
+- UI를 직접 업데이트하는 곳이 **한 곳만 있는 경우** → via the UI
+- UI를 직접 업데이트하는 곳이 **두 곳 이상일 경우** → via the cache
 
 <br/>
 
 현재의 예시에선 detail 페이지만 존재한다.  
-detail 페이지 내의 checkbox 상태만 서버로 전송하고, 서버에선 checkbox 상태를 업데이트할 때의 date도 생성해서 같이 DB에 저장한다.
+detail 페이지 내의 checkbox 상태만 서버로 전송하고,  
+서버에선 checkbox 상태를 업데이트할 때 현재의 date도 같이 DB에 저장한다.
+
+```TS
+export async function POST(request: Request) {
+  try {
+    const { id, done } = await request.json();
+    const now = new Date() // date 만들어서
+
+     const { data, error } = await supabase
+      .from('tasks')
+      .update({ done, date: now }) // 같이 보낸다.
+      .eq('id', id)
+      .select()
+      .single();
+
+    //...
+    return NextResponse.json({ message: 'Update successful' });
+  } catch (error) {
+    return handleErrorResponse(error);
+  }
+}
+```
 
 그래서 이 경우엔 via the UI를 사용하면 될 듯하다.  
 왜냐하면, 직접 업데이트 되는 곳이 detail 페이지 한 곳이기 때문이다.
 
-만약, detail 페이지가 엄청 세분화 되어있어서, 다른 컴포넌트의 query로 mount되어있는 상태라고 가정해보자.  
-그리고, 그 컴포넌트는 체크박스 리스트 중, 상태가 변경된 체크박스의 date를 업데이트 한다고 가정해보자.  
-한 걸음 더 나아가, 이 경우도 낙관적 업데이트를 적용해보자.
+만약 detail 페이지 내 리스트를 가져와서 뿌려주는 table이 있다고 가정해보자.  
+각 query는 분리되어있다. (detail과 table query)
+
+이때 체크박스를 업데이트 하면, 날짜가 table내 한 컬럼에도 표시되어야하고, 업데이트도 되어야한다.
+한 걸음 더 나아가, 낙관적 업데이트를 적용했다고 가정해보자.
 
 <br/>
 
-이런 경우라면, vai the cache를 통해 수동적으로 cache를 각각 업데이트 시켜줘야한다.  
-예시를 쥐어 짜내고 짜내서, 생각해냈는데, 사실 이런 경우는 흔치 않는 것 같다.
-
-대부분 전자인 via the UI를 사용하지 않을까 싶다.
+이런 경우라면, via the cache방법으로 cache를 수동적으로 각각 업데이트 시켜줘야한다.
 
 <br/>
 
 ### 번외
 
-3번의 예시를 하나하나 다 만들기엔 시간이 부족해서.. 🥲 최대한 만든 것을 토대로 작성해봤다.
+3번의 예시를 하나하나 다 만들기엔 시간이 부족해서.. 🥲 최대한 만들었던 것을 재활용해서 작성해봤다.
 
-1. detail페이지와 list 페이지가 존재한다.
+1. detail페이지 내 table이 추가되었다.
 2. detail페이지에서 체크박스의 상태와 날짜를 낙관적 업데이트한다.
-3. 이때, list에 해당하는 날짜도 낙관적 업데이트 시켜보자
+3. 이때, table 내 한 컬럼의 날짜업데이트도 cache를 수동적으로 변경해서 적용해보자.
 
 ```TSX
 export const useToggleOptimisticCache = () => {
