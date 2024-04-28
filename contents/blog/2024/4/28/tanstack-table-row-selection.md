@@ -98,3 +98,9 @@ useEffect의 목적은 내부가 아닌 외부 상태와 현재 리액트의 상
 ### 1. 간단한 조건문을 사용하는 방법
 
 ### 2. if문을 사용하는 방법
+
+https://github.com/KevinVandy/material-react-table
+
+https://github.com/TanStack/table/issues/4293#issuecomment-1256151833
+
+https://github.com/TanStack/table/blob/main/packages/table-core/src/features/RowSelection.ts
