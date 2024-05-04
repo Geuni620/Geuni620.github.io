@@ -104,3 +104,7 @@ https://github.com/KevinVandy/material-react-table
 https://github.com/TanStack/table/issues/4293#issuecomment-1256151833
 
 https://github.com/TanStack/table/blob/main/packages/table-core/src/features/RowSelection.ts
+
+useRef는 리렌더링 되어도 value 가 변경되지 않음
+즉, 컴포넌트가 리렌더링 되어도 변경되지 않는다.
+단, constants는 리렌더링 되면 value가 변경됨
