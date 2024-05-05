@@ -9,7 +9,7 @@ summary: ''
 
 테이블 내, 체크박스가 존재한다.  
 체크박스에 체크를 한 뒤, Done 버튼을 클릭하면, DB에 해당 체크박스 데이터가 저장된다.  
-단, 체크박스의 상태가 변경된 것만 서버로 전달해야한다.
+단, 체크박스 중 **상태가 변경된 체크박스만** 서버로 전달해야한다.
 
 예를 들어, 다음과 같은 Log가 있다.
 
@@ -34,8 +34,8 @@ summary: ''
 
 <br/>
 
-여기서 문제는, '초기 initial 상태를 어디에 저장할 것인가?' 이다.  
-나는 useRef를 선택했다.  
+여기서 문제는, '초기 initial 상태를 어디에 저장할 것인가?'이다.  
+나는 초기값이 변경되면 안된다고 생각해서, useRef를 사용하려고 했다.  
 그래서 다음과 같이 코드를 생각했다.
 
 ```TSX
@@ -87,7 +87,7 @@ export const TableComponents: React.FC<TableComponentsProps> = ({ data }) => {
 };
 ```
 
-Tanstack-table에서 체크박스를 어떻게 적용하는지는 [다른 글](https://geuni620.github.io/blog/2023/12/2/tanstack-table/#2-%EC%A0%84%EC%B2%B4-%ED%85%8C%EC%9D%B4%EB%B8%94-row-%EB%8B%A8%EC%9C%84-%EC%B2%B4%ED%81%AC%EB%B0%95%EC%8A%A4)에서 다루었다.
+Tanstack-table에서 체크박스에 대한 설명은 [다른 글](https://geuni620.github.io/blog/2023/12/2/tanstack-table/#2-%EC%A0%84%EC%B2%B4-%ED%85%8C%EC%9D%B4%EB%B8%94-row-%EB%8B%A8%EC%9C%84-%EC%B2%B4%ED%81%AC%EB%B0%95%EC%8A%A4)에서 다루었다. 🍀
 
 <br/>
 
@@ -98,11 +98,11 @@ Tanstack-table에서 체크박스를 어떻게 적용하는지는 [다른 글](h
 3. `rowSelection`에 `createRowSelection(data)`를 저장한다.  
    (이 때, `rowSelection`은 `initialRowSelectionRef`와 동일한 값을 가진다.)
 4. 체크박스를 클릭하면, `rowSelection`이 변경된다.
-5. Done 버튼을 클릭하면, `rowSelection`과 `initialRowSelectionRef`를 비교하고, 변경된 row.id를 서버로 전달한다.
+5. Done 버튼을 클릭하면, `rowSelection`과 `initialRowSelectionRef`를 비교하고, 변경된 `row.id`를 서버로 전달한다.
 
-그리고, invalidateQueries가 동작한 뒤, refresh 된 데이터를 받아온다. 이후엔 1번부터 다시 반복된다.
+그리고, invalidateQueries가 동작한 뒤, refresh된 데이터를 받아온다. 이후엔 1번부터 다시 반복된다.  
 하지만, 원하는대로 동작하지 않았다.  
-문제는, initialRowSelectionRef가 업데이트 되지 않는다는 점이다.
+문제는, `initialRowSelectionRef`가 업데이트 되지 않는다는 점이다.
 
 <br/>
 
@@ -117,15 +117,36 @@ export const TableComponents: React.FC<TableComponentsProps> = ({ data }) => {
 }
 ```
 
-이렇게 하면, data가 업데이트 될 때마다, 컴포넌트가 리렌더링 되고, initialRowSelection도 업데이트 되어, 초기 값을 항상 유지할 수 있다.
+이렇게 하면, data가 업데이트 될 때마다, 컴포넌트가 리렌더링 되고, initialRowSelection도 업데이트 된다.  
+즉, 데이터를 불러와서 ~ 사용자가 `Done`을 누를 때까지 초기값을 저장해놓을 수 있다.
+
+<br/>
+
+### useRef는 왜 업데이트 되지 않은 것일까?
+
+내가 react를 사용하면서 ref를 사용한 사례는 크게 두 가지가 있다.
+
+1. React가 관리하는 DOM을 직접조작할 때.
+2. 컴포넌트가 일부 값을 저장해야 하지만 렌더링 로직에 영향을 미치지 않는 경우
+
+<br/>
+
+대체로 1번의 사례만 사용해서, 잊고 있었다..  
+ref는 컴포넌트 내부에서 일부 값을 저장해놓았을 떄,
+리렌더링을 유발하지도 않고, 리렌더링 되어도 값이 변경되지도 않는다.  
+즉, 렌더링 로직에 영향을 받지 않는다.
+
+그래서 업데이트하기 위해선,
 
 <br/>
 
 ### 그럼, useRef와 변수의 차이는 무엇일까?
 
-차이를 먼저 살펴보기 전에, useRef는 왜 업데이트 되지 않는 것일까?
+차이를 먼저 살펴보기 전에, useRef는 왜 업데이트 되지 않는 것일까?  
 일단, useRef를 어떻게 하면 업데이트 시킬 수 있을까?  
-이 또한, 간단하다. useEffect를 사용하면 된다.
+두 가지 방법이 존재한다.
+
+첫 번째는, `useEffect`를 사용하는 것이다.
 
 ```TSX
 useEffect(() => {
@@ -133,18 +154,21 @@ useEffect(() => {
 }, [data]);
 ```
 
-data가 업데이트 될 때마다, initialRowSelectionRef.current를 업데이트 시켜주면 된다.  
-하지만, 좋지 않은 방법이다. ref는 컴포넌트가 리렌더링 되어도, 값을 초기화하지 않기 위해 사용하는 것인데, 이렇게 하면 ref의 의미가 없어진다.
+data가 업데이트 될 때마다, initialRowSelectionRef.current를 업데이트 시켜주면 된다.
 
 <br/>
 
-그리고 한 가지 방법이 더 있다.  
-위 1~5번의 동작이후에 하나를 더 추가하면 된다.
+두 번째는, 새로고침을 하는 것이다.
 
-6. 새로고침을 한다.
+```
+command + R
+```
 
-그럼, useRef와 변수의 차이는 무엇일까?
-바로 리렌더링, 그리고 마운트 차이였다.
+이제 다시 본론으로 돌아와서, useRef와 변수의 차이는 무엇일까?  
+핵심은 리렌더링이다.
+
+만약, 이런 경우를 생각해보자.  
+리렌더링 되어도 초기화되면 안되는 값이 있다.
 
 <br/>
 
