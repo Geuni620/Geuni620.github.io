@@ -35,8 +35,7 @@ summary: ''
 <br/>
 
 여기서 문제는, '초기 initial 상태를 어디에 저장할 것인가?'이다.  
-나는 초기값이 변경되면 안된다고 생각해서, useRef를 사용하려고 했다.  
-그래서 다음과 같이 코드를 생각했다.
+나는 초기값이 변경되면 안된다고 생각해서, useRef를 사용했다.
 
 ```TSX
 // app/page.tsx
@@ -106,7 +105,8 @@ Tanstack-table에서 체크박스에 대한 설명은 [다른 글](https://geuni
 
 <br/>
 
-해결방법은 간단하다. initialRowSelectionRef를 initialRowSelection 변수로 변경하는 것이다.
+해결방법은 간단하다.  
+initialRowSelectionRef를 initialRowSelection 변수로 변경하는 것이다.
 
 ```TSX
 export const TableComponents: React.FC<TableComponentsProps> = ({ data }) => {
@@ -131,22 +131,14 @@ export const TableComponents: React.FC<TableComponentsProps> = ({ data }) => {
 
 <br/>
 
-대체로 1번의 사례만 사용해서, 잊고 있었다..  
+대체로 1번의 사례만 사용해서, 2번은 완전히 잊고 있었다..  
 ref는 컴포넌트 내부에서 일부 값을 저장해놓았을 떄,
 리렌더링을 유발하지도 않고, 리렌더링 되어도 값이 변경되지도 않는다.  
-즉, 렌더링 로직에 영향을 받지 않는다.
+**즉, 렌더링 로직에 영향을 받지 않는다.**
 
 그래서 업데이트하기 위해선,
 
-<br/>
-
-### 그럼, useRef와 변수의 차이는 무엇일까?
-
-차이를 먼저 살펴보기 전에, useRef는 왜 업데이트 되지 않는 것일까?  
-일단, useRef를 어떻게 하면 업데이트 시킬 수 있을까?  
-두 가지 방법이 존재한다.
-
-첫 번째는, `useEffect`를 사용하는 것이다.
+1. useEffect를 사용하거나
 
 ```TSX
 useEffect(() => {
@@ -154,92 +146,32 @@ useEffect(() => {
 }, [data]);
 ```
 
-data가 업데이트 될 때마다, initialRowSelectionRef.current를 업데이트 시켜주면 된다.
+2. 명령적으로 업데이트 시켜준다.
+
+```TSX
+  const syncRowSelection = (
+    ref: React.MutableRefObject<RowSelectionState | null>,
+    rowSelection: RowSelectionState,
+  ) => {
+    if (ref && ref.current) {
+      ref.current = { ...rowSelection };
+    }
+  };
+```
 
 <br/>
 
-두 번째는, 새로고침을 하는 것이다.
+### 그럼, useRef와 변수의 차이는 무엇일까?
 
-```
-command + R
-```
+결국 차이는 렌더링 로직의 영향을 받느냐, 받지 않느냐의 차이였다.
 
-이제 다시 본론으로 돌아와서, useRef와 변수의 차이는 무엇일까?  
-핵심은 리렌더링이다.
+**Ref**
 
-만약, 이런 경우를 생각해보자.  
-리렌더링 되어도 초기화되면 안되는 값이 있다.
+- 컴포넌트가 렌더링 되어도 **초기화되지 않고, 변수를 저장해야하는 경우**
 
-<br/>
+**변수**
 
-예를 들어 이런 경우를 생각해보자.
-
-```TSX
-const components = () => {
-  const styles = {
-    width: '100px',
-    height: '100px',
-    backgroundColor: 'red',
-  }
-
-  return (
-    <div style={styles}>
-      //...
-    </div>
-  )
-}
-```
-
-여기서 styles는 components가 리렌더링 될 때마다 항상 새롭게 생성된다.  
-이런 경우는 한 번만 초기화하고, components가 리렌더링 될 때마다, 새로 생성되지 않길 원한다.  
-다음과 같이 수정할 수 있을 것이다.
-
-```TSX
-const styles = {
-    width: '100px',
-    height: '100px',
-    backgroundColor: 'red',
-  }
-
-const components = () => {
-  return (
-    <div style={styles}>
-      //...
-    </div>
-  )
-}
-```
-
-이렇게 하면, styles는 한 번만 초기화되고, 리렌더링 될 때마다 새로 생성되지 않는다.  
-또는, useRef를 사용할 수 있다.
-
-```TSX
-const Component = () => {
-  const styles = React.useRef({
-    width: '100px',
-    height: '100px',
-    backgroundColor: 'red',
-  })
-
-  return (
-    <div style={styles.current}>
-      //...
-    </div>
-  )
-}
-```
-
-ref를 사용하면, 리렌더링 될 때마다, 초기화되지 않는다.
-
-<br/>
-
-결론은, useRef는 컴포넌트가 리렌더링 될 때마다, 초기화되지 않는다는 점이다.
-하지만 변수는 컴포넌트가 리렌더링 될 때마다, 초기화된다.
-
-그래서 나의 경우엔, data가 업데이트 될 때마다, initialRowSelection도 업데이트 되어야 했기 때문에, 변수를 사용하는 것이 맞았다.
-
-- 컴포넌트가 마운트 됐을 때, 초기화되어야 하는 값이 있다면, useRef를 사용하자.
-- 컴포넌트가 리렌더링 됐을 때, 초기화되어야 하는 값이 있다면, 변수를 사용하자.
+- 컴포넌트가 렌더링될 때마다 **초기화 되어야하는 경우**
 
 <br/>
 
