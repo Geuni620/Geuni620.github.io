@@ -2,7 +2,7 @@
 date: '2024-05-05'
 title: 'React, 변수와 Ref'
 categories: ['개발']
-summary: ''
+summary: 'React에서 변수와 Ref의 차이'
 ---
 
 ### 문제의 상황
