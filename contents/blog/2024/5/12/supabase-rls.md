@@ -11,7 +11,7 @@ API 핸들링은 Next.js API 폴더 내에서, Supabase는 ORM처럼 사용하�
 
 <br/>
 
-### Row Level Security가 왜 필요할까?
+## Row Level Security가 왜 필요할까?
 
 예를 들어 이런 상황을 생각해보자.
 
@@ -56,13 +56,13 @@ env로 설정했던 URL과 KEY가 모두 드러나는 것을 확인할 수 있�
 
 <br/>
 
-### Row Level Security 설정하기
+## Row Level Security 설정하기
 
 이를 예방하기 위해 RLS를 설정해보자.  
 해당 내용은 [생활코딩 Supabase 인증과 Serverless App](https://www.youtube.com/watch?v=yZ89etxVBKs) 영상을 참고했다.  
 먼저 나는 supabase에서 프로젝트를 만들어놓은 상태에서 시작했다.
 
-1. Github으로 로그인
+### 1. Github으로 로그인
 
 먼저 만들어놓은 프로젝트의 왼쪽 메뉴에서 `Authentication`을 클릭한다.
 
@@ -93,6 +93,129 @@ Github 창을 확인해보면 `Callback URL (for Auth)`라고 적힌게 있다.
 
 확인 버튼을 누르고 난 뒤, 새롭게 뜨는 페이지에서, Client ID와 secrets를 복사해서,  
 `Supabase Authentication`로 이동한 뒤, 각각 붙여넣고 저장을 눌러주면 된다.
+
+<br/>
+
+### 2. 간단한 로그인 구현하기
+
+이제 간단히 로그인을 추가해주자  
+그 전에, supabase에게 나의 웹사이트가 신뢰할 수 있다는 사이트임을 알리는 '화이트리스트'처리를 해줘야한다.
+
+![](./supabase-authentication-redirect.png)
+
+supabase의 Authentication → URL Configuration → Redirect URLS로 들어가자  
+그리고 Add URL을 클릭한 뒤, 본인의 사이트 링크를 추가해주면 된다.
+
+<br/>
+
+그리고 간단한 Login UI를 추가해주자.
+
+```TSX
+// utils/supabase
+import { createClient } from '@supabase/supabase-js';
+
+export const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPBASE_KEY,
+);
+
+
+// hooks/useLogin.ts
+import { Session } from '@supabase/supabase-js';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/utils/supabase';
+
+const PROVIDER = 'github';
+
+export const useLogin = () => {
+  const [session, setSession] = useState<Session | null>(null);
+
+  const onSessionChange = (session: Session | null) => {
+    setSession(session);
+  };
+
+  const onLoginClick = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: PROVIDER,
+      options: {
+        redirectTo: import.meta.env.VITE_ORIGIN_URL,
+      },
+    });
+  };
+
+  const onLogoutClick = async () => {
+    await supabase.auth.signOut();
+  };
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      onSessionChange(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      onSessionChange(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  return {
+    session,
+    onLoginClick,
+    onLogoutClick,
+    onSessionChange,
+    setSession,
+  };
+};
+
+// src/app.tsx
+import { Dashboard } from '@/components/dashboard';
+import { Login } from '@/components/login';
+import { useLogin } from '@/hooks/useLogin';
+import { useTaskGetQuery } from '@/hooks/useTaskGetQuery';
+
+export const App = () => {
+  const { session, onLoginClick } = useLogin();
+  //...
+
+  if (!session)
+    return (
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <Login onClick={onLoginClick} />
+      </div>
+    );
+
+  return <Dashboard />;
+};
+```
+
+코드를 작성하다보니, `VITE_SUPABASE_URL`와 `VITE_SUPBASE_KEY`, `VITE_ORIGIN_URL`가 눈에 띈다.  
+먼저, `VITE_SUPABASE_URL`과 `VITE_SUPBASE_KEY`는 supabase 페이지에서 Settings의 API를 확인해보면,  
+Project API Keys를 확인할 수 있다.
+
+![](./supabase-settings-api.png)
+
+여기서 각각의 URL(Project URL)과 KEY(PRoject API Keys, public)를 추가해주면 된다.
+
+<br/>
+
+자, 그럼 화면에서 로그인 버튼을 클릭해서 로그인 해보자!
+
+![](./login.gif)
+
+Github의 인증을 거쳐서 로그인이 완료된 것을 확인할 수 있다.  
+(session state에 log를 찍어보면, Token 및 유저 정보가 담긴 것도 확인할 수 있다.[사진 미첨부])
+
+![](./supabase-authentication-user.png)
+
+그리고 supabase 페이지내에서, 스크린샷과 같은 위치로 이동해보자.  
+supabase 내에서도 로그인이 성공한 것을 스크린샷 이미지를 통해 확인할 수 있다.
+
+<br/>
+
+### 3. Row Level Security 추가하기
 
 <br/>
 
