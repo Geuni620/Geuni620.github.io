@@ -11,7 +11,7 @@ API 핸들링은 Next.js API 폴더 내에서, Supabase는 ORM처럼 사용하�
 
 <br/>
 
-## Row Level Security가 왜 필요할까?
+# Row Level Security가 왜 필요할까?
 
 예를 들어 이런 상황을 생각해보자.
 
@@ -56,13 +56,13 @@ env로 설정했던 URL과 KEY가 모두 드러나는 것을 확인할 수 있�
 
 <br/>
 
-## Row Level Security 설정하기
+# Row Level Security 설정하기
 
 이를 예방하기 위해 RLS를 설정해보자.  
 해당 내용은 [생활코딩 Supabase 인증과 Serverless App](https://www.youtube.com/watch?v=yZ89etxVBKs) 영상을 참고했다.  
 먼저 나는 supabase에서 프로젝트를 만들어놓은 상태에서 시작했다.
 
-### 1. Github으로 로그인
+## 1. Github으로 로그인
 
 먼저 만들어놓은 프로젝트의 왼쪽 메뉴에서 `Authentication`을 클릭한다.
 
@@ -96,7 +96,7 @@ Github 창을 확인해보면 `Callback URL (for Auth)`라고 적힌게 있다.
 
 <br/>
 
-### 2. 간단한 로그인 구현하기
+## 2. 간단한 로그인 구현하기
 
 이제 간단히 로그인을 추가해주자  
 그 전에, supabase에게 나의 웹사이트가 신뢰할 수 있다는 사이트임을 알리는 '화이트리스트'처리를 해줘야한다.
@@ -215,8 +215,47 @@ supabase 내에서도 로그인이 성공한 것을 스크린샷 이미지를 �
 
 <br/>
 
-### 3. Row Level Security 추가하기
+## 3. Row Level Security 적용하기
+
+미리 supabase 내 테이블을 만들고, 데이터를 넣어두었다.  
+하지만, RLS 설정은 하지 않은 테이블이다.
+
+![](./supabase-table-rls-disabled.png)
+
+이 테이블을 복사한 뒤 RLS를 설정해보려고 한다.
+
+```SQL
+create table
+  tasks_rls as
+select
+  *
+from
+  tasks
+```
+
+동일한 테이블을 생성했다.  
+그리고 위 스크린샷에 나와있는 `RLS disabled` 버튼을 클릭해주자.  
+이후 몇 번의 클릭을 유도하는 모달창들이 뜨는데, 모두 버튼을 클릭하고 나면,  
+`RLS disabled` 버튼이 `Add RLS policy`로 변경된다.  
+`Add RLS policy`를 클릭해주자.
+
+![](./supabase-rls-create-policy.png)
+
+Create policy를 클릭!
+
+![](./supabase-rls-athenticated.png)
+
+SELECT를 클릭하면, 기본 Tmplates로 왼쪽이 채워진다.  
+여기서 `Target Roles`에 로그인 된 사용자만 데이터를 제공하기 위해,  
+authenticated를 설정해주었다.
+
+![](./supabase-rls-athenticated-login.png)
+
+위 스크린샷에서 빨간박스는 로그인하기 전, 파란박스는 로그인한 이후이다.  
+즉, RLS를 통해 로그인한 유저에게만 Table 데이터를 제공한다.
 
 <br/>
+
+### 3-1. Case별로 다양한 RLS 설정하기
 
 ### 참고자료
