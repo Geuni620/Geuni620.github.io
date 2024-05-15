@@ -279,3 +279,6 @@ owner는 글을 쓰고, 읽고, 수정하고, 삭제하는 것 모두 가능하�
 단, owner가 생성했던 글이어야 한다.
 
 ### 참고자료
+
+[Supabase - 인증과 Serverless App 구현하기](https://youtu.be/yZ89etxVBKs?si=72ZKjDEJDUNDp7Ou)  
+[supabase 폼 미쳤다](https://velog.io/@racoon/supabase-%ED%8F%BC-%EB%AF%B8%EC%B3%A4%EB%8B%A4)
