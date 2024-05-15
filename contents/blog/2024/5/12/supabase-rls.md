@@ -258,4 +258,24 @@ authenticated를 설정해주었다.
 
 ### 3-1. Case별로 다양한 RLS 설정하기
 
+![](./supabase-rls-authenticated-list.png)
+
+위 리스트를 보고, 리스트에 맞게 RLS를 설정해보자.  
+select, insert, upate, delete라고 적었지만, API의 GET, POST, PATCH, DELETE와 동일하다.
+
+그럼 owner, authencated, every는 무엇일까?
+
+owner는 글쓴이이다.  
+authencated는 로그인한 사용자  
+every는 모든 사용자이다.
+
+every는 모든 것이 제한된다.  
+즉, 로그인을 하지 않으면 쓰는 것은 물론이고, 읽는 것도 불가능하다.
+
+authencated는 로그인했을 때, 글을 읽을 수 있다.  
+그 외 다른 것은 모두 제한된다.
+
+owner는 글을 쓰고, 읽고, 수정하고, 삭제하는 것 모두 가능하다.  
+단, owner가 생성했던 글이어야 한다.
+
 ### 참고자료
