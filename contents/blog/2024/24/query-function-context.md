@@ -5,6 +5,8 @@ categories: ['개발']
 summary: 'queryKey를 params에 태우자'
 ---
 
+![](./img.webp)
+
 오랜만에 [Tkdodo](https://tkdodo.eu/blog/leveraging-the-query-function-context)의 글을 봤다.  
 '이 글을 읽고, 비슷한 글을 썼던 것 같은데..' 기억이나 찾아본 결과,  
 [이전에 작성한 글](https://geuni620.github.io/blog/2023/5/15/[Tanstack-query]%20QueryFunctionContext/)을 발견했다.  
