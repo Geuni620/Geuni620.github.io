@@ -18,7 +18,7 @@ summary: 'queryKey를 params에 태우자'
 ### QueryFunctionContext를 적용하게 된 계기
 
 어떨 때 사용하는걸까?  
-간단한 예시를 만들어봤다.
+간단한 예시를 만들어봤다.  
 대시보드가 있다.
 
 ![](./dashboard.png)
@@ -172,12 +172,12 @@ export const useTaskGetQuery = ({ page, size, search }: props) => {
 ![](./type-error.png)
 
 뭔가 복잡하게 적혀있지만, queryKey의 타입이 잘못된 것 같다는 생각을 했다.  
-그래서 검색해본 결과, [다음 글을 발견했다.](https://stackoverflow.com/questions/73343133/what-is-the-react-query-querykey-typescript-type)
+검색해본 결과, [stackoverflow에서 이 글을 발견했다.](https://stackoverflow.com/questions/73343133/what-is-the-react-query-querykey-typescript-type)
 
-여기서 `QueryFunctionContext`타입을 제공해준다는 사실을 알게됐다.  
-그리고 [Tkdodo 블로그](https://tkdodo.eu/blog/leveraging-the-query-function-context#how-to-type-the-queryfunctioncontext)에도 이 타입을 사용했다.
+주목해야할 점은 query내에서 `QueryFunctionContext`타입을 제공해준다는 사실이다.  
+[Tkdodo 블로그](https://tkdodo.eu/blog/leveraging-the-query-function-context#how-to-type-the-queryfunctioncontext)에도 이 타입을 사용했다.
 
-그래서 다음과 같이 반영했었다.
+나는 다음과 같이 반영했다.
 
 ```TSX
 import { QueryFunctionContext } from '@tanstack/react-query';
@@ -200,8 +200,8 @@ export const useTaskGetQuery = ({ page, size, search }: props) => {
 
 ### 결론 (+ queryFactory)
 
-앞으로 params를 추가해줘야할 일이 있다면, QueryFunctionContext를 적극 사용할 것 같다.  
-그리고 나는 반영할 당시, 배열기준으로 사용해서, 다음과 같이 적용되어있다.
+앞으로 params를 추가해줘야할 일이 있다면, `QueryFunctionContext`를 적극 사용할 것이다.  
+추가로, 처음 queryKey를 배열기준으로 사용해서, 다음과 같이 적용했었다.
 
 ```TSX
 const fetchTask = async ({
@@ -213,11 +213,11 @@ const fetchTask = async ({
 };
 ```
 
-하지만, Tkdodo의 블로그 내용을 참고해보면, 이렇게 수정할 수도 있다.  
-queryFactory를 사용하는 것이다.
+하지만, Tkdodo의 블로그 내용을 참고해보면, 아래와 같이 수정할 수도 있다.  
+[query key factory](https://tkdodo.eu/blog/leveraging-the-query-function-context#query-key-factories)를 사용하는 것이다.
 
 ```TSX
-// queryFactory
+// queryKeyFactory
 const taskKeys = {
   all: [{ task: TASK }] as const,
   task: ({ page, size, search }: props) =>
@@ -263,4 +263,5 @@ export const useTaskGetQuery = ({ page, size, search }: props) => {
 ### 참고자료
 
 [Query Functions](https://tanstack.com/query/latest/docs/framework/react/guides/query-functions)  
-[Leveraging the Query Function Context](https://tkdodo.eu/blog/leveraging-the-query-function-context)
+[Leveraging the Query Function Context](https://tkdodo.eu/blog/leveraging-the-query-function-context)  
+[What is the react query "queryKey" typescript type](https://stackoverflow.com/questions/73343133/what-is-the-react-query-querykey-typescript-type)
