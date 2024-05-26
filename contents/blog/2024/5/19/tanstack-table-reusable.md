@@ -336,4 +336,77 @@ export const TableComponents: React.FC = () => {
 
 <br/>
 
-### 3. selection
+### 3. data-table
+
+이제 TableComponents를 변경시켜보자.  
+재사용하기 위해선, 크게 **columns과 data만** 내려받으면 된다.  
+나머지는 [useReactTable hooks](https://tanstack.com/table/latest/docs/framework/react/react-table#usereacttable)을 통해 리턴받은 [table 인스턴스](https://tanstack.com/table/latest/docs/guide/tables)로 처리할 수 있다.
+
+```TSX
+// App.tsx
+import { useState } from 'react';
+import DATA from '@/data';
+import { columns } from '@/components/table/columns';
+import { TableComponents } from '@/components/table';
+import { TableCaption } from '@/components/ui/table';
+
+function App() {
+  const [data] = useState(DATA);
+
+  return (
+    <div className="h-screen w-screen">
+      <div className="mx-auto w-[900px] pb-20 pt-10">
+        <TableCaption className="mb-10 text-3xl font-bold">
+          Tanstack Table
+        </TableCaption>
+        <TableComponents data={data} columns={columns} />
+      </div>
+    </div>
+  );
+}
+
+export default App;
+```
+
+TableComponents 내부에 존재하던, data와 columns를 부모컴포넌트로 옮겨주었다.  
+그리고 data와 columns를 props로 내려준다.
+
+```TSX
+import { type ColumnDef } from '@tanstack/react-table';
+
+
+type TableProps<TData, TValue> = {
+  data: TData[];
+  columns: ColumnDef<TData, TValue>[];
+};
+
+export const TableComponents = <TData, TValue>({
+  data,
+  columns,
+}: TableProps<TData, TValue>) => {
+  const table = useReactTable({
+    data,
+    columns,
+    //...
+  });
+
+  return (
+    <Selection table={table}>
+      <Table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      //...
+      </Table>
+      <Pagination table={table} />
+    </Selection>
+  );
+};
+```
+
+주목해야할 부분은 역시 타입인 것 같다.
+
+<br/>
+
+## 최적화 시켜주기
+
+### 참고자료
+
+[Significance of "extends {}"](https://stackoverflow.com/questions/62552915/significance-of-extends)
