@@ -110,9 +110,9 @@ data-table의 제네릭으로 내려주는 게 있는데, columns에서 타입�
 +      },
 +    },
 +    {
-+      accessorKey: 'statusName',
++      accessorKey: 'status',
 +      header: 'Status',
-+      cell: ({ row }) => <p>{row.getValue('statusName')}</p>,
++      cell: ({ row }) => <p>{row.getValue('status')}</p>,
 +      enableSorting: false,
 +    },
 +    {
@@ -138,7 +138,6 @@ data-table의 제네릭으로 내려주는 게 있는데, columns에서 타입�
 <br/>
 
 columns를 분리하고 난 뒤, 다음과 같은 타입에러가 뜬다.
-
 ![](./columns-type-error.png)
 
 ```TS
@@ -152,7 +151,7 @@ columns를 분리하고 난 뒤, 다음과 같은 타입에러가 뜬다.
 ```
 
 원인을 찾아보니, 타입에는 done 프로퍼티 추가해줬는데, mocking 데이터에 done이 반영되지 않았기 떄문이었다.  
-여기서 done은 행(row)의 체크여부를 관리하기 위한 데이터이다.
+여기서 done은 행(row)의 체크상태를 관리하기 위한 데이터이다.
 
 ```JS
 // data.js
@@ -172,6 +171,78 @@ export default DATA
 ```
 
 <br/>
+
+이 상태로 페이지를 띄워보자.  
+화면이 흰색이라, 개발자도구를 확인해봤다.
+
+![](./runtime-error.png)
+
+columns 내에서 에러가 발생한 것 같다.  
+대략 예상으론, cell의 \<p>태그 내, value가 잘 주입되어야하는데, 문제가 발생한 것 같다.
+
+확인해보니, 두 가지 문제가 발생했는데, 첫 번째는 `Date format` 설정이 되어있지 않았다.  
+[date-fns 라이브러리](https://github.com/date-fns/date-fns)를 통해, format을 지정해주었다.
+
+```TSX
+import { format } from 'date-fns';
+
+export const columns: ColumnDef<ColumnDataProps>[] = [
+  //...
+  {
+    accessorKey: 'due',
+    header: 'Due',
+    cell: ({ row }) => <p>{format(row.getValue('due'), 'yyyy/MM/dd')}</p>, //
+    enableSorting: false,
+  },
+];
+```
+
+나머지 하나는 새롭게 알게된 점이다.  
+Status 타입을 살펴보면, id와 name이 존재한다.  
+그리고 ColumnDateProps의 status 프로퍼티에 Status 타입을 지정해주었다.  
+즉, value를 가져오기 위해선 `row.getValue("status").name`으로 설정해줘야할 것 같지만, 타입에러가 발생한다.
+
+![](./status-type-error.png)
+
+어떻게 status 내부에 있는 name 프로퍼티를 가져올 수 있을까?
+
+[공식문서 Column Defs의 Deep Keys](https://tanstack.com/table/latest/docs/guide/column-defs#deep-keys)를 살펴보면, 다음과 같이 적용할 수 있다.  
+(이 부분은 개인적으로 정말 신기했다.)
+
+```TSX
+type Status = {
+  id: number;
+  name: string;
+};
+
+type ColumnDataProps = {
+  //...
+  status: Status;
+};
+
+  export const columns: ColumnDef<ColumnDataProps>[] = [
+    //...
+    {
+-     accessorKey: 'status',
++     accessorKey: 'status.name',
++     id: 'name',
+      header: 'Status',
+-     cell: ({ row }) => <p>{row.getValue('status')}</p>,
++     cell: ({ row }) => <p>{row.getValue('name')}</p>,
+      enableSorting: false,
+    },
+ ];
+```
+
+accessorKey는 객체일 경우 다음과 같이 사용하면 된다. → `status.name` 또는 `status.id`  
+그리고 꼭 id를 추가해준다. → `id: name`  
+마지막으로, cell에서 row.getValue를 name으로 변경한다. → `row.getValue("name")`  
+이제 Status의 name을 가져올 수 있다.
+
+만약 id를 가져오고 싶다면,  
+accessorKey → `status.id`로 변경해주면 된다.  
+단, `row.getValue()`는 데이터를 가져올 때, id를 참조한다.  
+그래서 `id`와 `row.getValue(id)`는 동일해야한다.
 
 ### 2. pagination
 
@@ -211,3 +282,58 @@ export const Pagination = ({ table }) => {
 
 table/index.tsx 중 pagination에 해당하는 소스코드는 다음과 같다.  
 여기서 타입지정이 중요한데, 제네릭으로 설정해주면 편하다.
+
+```TSX
+type PaginationProps<TData> = {
+  table: Table<TData>;
+};
+
+export const Pagination = <TData,>({ table }: PaginationProps<TData>) => {
+  return (
+    //...
+  );
+};
+```
+
+글을 시작할 초반에, 메인테이너가 docs를 깔끔하게 정리중이라고 언급했었다.  
+공식문서 중, [Data Guide](https://tanstack.com/table/latest/docs/guide/data#data-guide)를 살펴보면,  
+제네릭 타입에 관한 잘 정리된 글을 확인할 수 있다.
+
+문서에서 `TData`라는게 눈에 띄는데,  
+내가 만든 예시에선 `Columns.tsx`에 존재하는, `ColumnDataProps`가 TData로 받게 될 것이다.
+
+```TSX
+type ColumnDataProps = {
+  task: string;
+  status: Status;
+  due?: Date | null;
+  notes: string;
+  done: boolean;
+};
+```
+
+이제 정리해보면, 다음과 같다.
+
+```TSX
+// table/index.tsx
+import { Pagination } from '@/components/table/pagination';
+
+
+export const TableComponents: React.FC = () => {
+  const table = useReactTable({
+   //...
+  });
+
+  return (
+    <>
+      //...
+
+      <Pagination table={table} />
+    </>
+  );
+};
+```
+
+<br/>
+
+### 3. selection
