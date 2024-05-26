@@ -33,10 +33,14 @@ shadcn/ui의 [Data Table docs](https://ui.shadcn.com/docs/components/data-table)
 <br/>
 
 기존에는 모든 소스코드가 table 내 index.tsx에 포함되어있었다.  
-table/index.tsx내 columns도, pagination, selection 모든게 포함되어있다.
-즉, 1번 사용할 순 있지만, 재사용하긴 어려운 구조다.
+table/index.tsx내 columns도, pagination, selection 모든게 포함되어있다.  
+**즉, 한 번 사용할 순 있지만, 재사용하긴 어려운 구조다.**
 
 폴더구조를 변경시킴으로써, 해당 부분에서 columns만 모아놓고 필요한 것만 빼내서 사용할 수 있다.
+
+<br/>
+
+### 1. columns.tsx
 
 ```TSX
 // table/columns.tsx
@@ -46,11 +50,164 @@ table/index.tsx내 columns도, pagination, selection 모든게 포함되어있�
 -  ];
 ```
 
-기존엔 `createColumnHelper`를 사용했었고, 이전 글에도 이걸 더 권장했다.  
+기존엔 `createColumnHelper`를 사용했었고, [이전 글에도 createColumnHelper 더 권장](https://geuni620.github.io/blog/2023/12/2/tanstack-table/#4-typescript-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0)했다.  
 하지만, 이번에 적용해보면서, 타입설정해주기가 너무 까다롭다는 걸 알게됐다.  
-data-table의 제네릭으로 내려주는 게 있는데, coulmns에서 타입에러를 뱉어냈다.  
+data-table의 제네릭으로 내려주는 게 있는데, columns에서 타입에러를 뱉어냈다.  
 고민하다가, 다음과 같은 방법으로 바꾸었다.
 
 ```TSX
+// table/columns.tsx
++  import { type ColumnDef } from '@tanstack/react-table';
 
++  type Status = {
++    id: number;
++    name: string;
++  };
++
++  type ColumnDataProps = {
++    task: string;
++    status: Status;
++    due?: Date | null;
++    notes: string;
++    done: boolean;
++  };
++
++  export const columns: ColumnDef<ColumnDataProps>[] = [
++    {
++      accessorKey: 'done',
++      header: ({ table }) => (
++        <Checkbox
++          checked={
++            table.getIsAllPageRowsSelected() ||
++            (table.getIsSomePageRowsSelected() && 'indeterminate')
++          }
++          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
++          aria-label="Select all"
++        />
++      ),
++      cell: ({ row }) => (
++        <Checkbox
++          checked={row.getIsSelected()}
++          onCheckedChange={(value) => row.toggleSelected(!!value)}
++          aria-label="Select row"
++        />
++      ),
++      size: 50,
++    },
++    {
++      accessorKey: 'task',
++      header: ({ column }) => (
++        <div
++          className="flex cursor-pointer items-center justify-center"
++          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
++        >
++          Task
++          <ArrowUpDown className="ml-2 size-4" />
++        </div>
++      ),
++      cell: ({ row }) => {
++        return <div>{row.getValue('task')}</div>;
++      },
++    },
++    {
++      accessorKey: 'statusName',
++      header: 'Status',
++      cell: ({ row }) => <p>{row.getValue('statusName')}</p>,
++      enableSorting: false,
++    },
++    {
++      accessorKey: 'due',
++      header: 'Due',
++      cell: ({ row }) => <p>{row.getValue('due')}</p>,
++      enableSorting: false,
++    },
++    {
++      accessorKey: 'notes',
++      header: 'Notes',
++      cell: ({ row }) => <p>{row.getValue('notes')}</p>,
++      enableSorting: false,
++    },
++  ];
 ```
+
+`ColumnDef`를 가져온 뒤, `columns`타입으로 지정해준다.  
+이는 column의 header나, cell을 지정해줄 때도 잘 추론해준다.
+
+![](./type-inference.png)
+
+<br/>
+
+columns를 분리하고 난 뒤, 다음과 같은 타입에러가 뜬다.
+
+![](./columns-type-error.png)
+
+```TS
+  export type ColumnDataProps = {
+    task: string;
+    status: Status;
+    due?: Date | null;
+    notes: string;
++   done: boolean;
+  };
+```
+
+원인을 찾아보니, 타입에는 done 프로퍼티 추가해줬는데, mocking 데이터에 done이 반영되지 않았기 떄문이었다.  
+여기서 done은 행(row)의 체크여부를 관리하기 위한 데이터이다.
+
+```JS
+// data.js
+const generateRandomData = () => {
+  const data = [];
+  for (let i = 0; i < 100; i++) {
+    data.push({
+      //...
+      done: false, // 해당 부분 추가
+    });
+  }
+  return data;
+};
+
+const DATA = generateRandomData();
+export default DATA
+```
+
+<br/>
+
+### 2. pagination
+
+```TSX
+// table/pagination.tsx
+import { Button } from '@/components/ui/button';
+
+export const Pagination = ({ table }) => {
+  return (
+    <div className="mt-[10px] flex items-center justify-center gap-2">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => table.previousPage()}
+        disabled={!table.getCanPreviousPage()}
+      >
+        {'‹'}
+      </Button>
+
+      <div className="text-sm font-bold text-slate-500">
+        Page {table.getState().pagination.pageIndex + 1} of{' '}
+        {table.getPageCount()}
+      </div>
+
+      <Button
+        variant="outline"
+        size="sm"
+        disabled={!table.getCanNextPage()}
+        onClick={() => table.nextPage()}
+      >
+        {'›'}
+      </Button>
+    </div>
+  );
+};
+```
+
+table/index.tsx 중 pagination에 해당하는 소스코드는 다음과 같다.  
+여기서 타입지정이 중요한데, 제네릭으로 설정해주면 편하다.
