@@ -482,7 +482,8 @@ tanstack-table은 재사용하기 쉽도록 만들어져있다.
 
 <br/>
 
-### 참고자료
+# 참고자료
 
+[Columns Definitions Guide](https://tanstack.com/table/v8/docs/guide/column-defs)  
 [Significance of "extends {}"](https://stackoverflow.com/questions/62552915/significance-of-extends)  
 [Cannot find TData or TValue in the tanstack typescript library](https://stackoverflow.com/questions/73255543/cannot-find-tdata-or-tvalue-in-the-tanstack-typescript-library)
