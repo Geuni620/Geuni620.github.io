@@ -16,7 +16,7 @@ shadcn/ui의 [Data Table docs](https://ui.shadcn.com/docs/components/data-table)
 
 <br/>
 
-## 재사용가능한 구조로 나누기
+# 재사용가능한 구조로 나누기
 
 ```
 - └── table
@@ -40,7 +40,7 @@ table/index.tsx내 columns도, pagination, selection 모든게 포함되어있�
 
 <br/>
 
-### 1. columns.tsx
+## 1. columns.tsx
 
 ```TSX
 // table/columns.tsx
@@ -50,84 +50,85 @@ table/index.tsx내 columns도, pagination, selection 모든게 포함되어있�
 -  ];
 ```
 
-기존엔 `createColumnHelper`를 사용했었고, [이전 글에도 createColumnHelper 더 권장](https://geuni620.github.io/blog/2023/12/2/tanstack-table/#4-typescript-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0)했다.  
+기존에 columns를 만들 때 `createColumnHelper`를 사용했었고,  
+[이전 글에도 createColumnHelper 더 권장](https://geuni620.github.io/blog/2023/12/2/tanstack-table/#4-typescript-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0)했다.
+
 하지만, 이번에 적용해보면서, 타입설정해주기가 너무 까다롭다는 걸 알게됐다.  
 data-table의 제네릭으로 내려주는 게 있는데, columns에서 타입에러를 뱉어냈다.  
 고민하다가, 다음과 같은 방법으로 바꾸었다.
 
 ```TSX
 // table/columns.tsx
-+  import { type ColumnDef } from '@tanstack/react-table';
+import { type ColumnDef } from '@tanstack/react-table';
 
-+  type Status = {
-+    id: number;
-+    name: string;
-+  };
-+
-+  type ColumnDataProps = {
-+    task: string;
-+    status: Status;
-+    due?: Date | null;
-+    notes: string;
-+    done: boolean;
-+  };
-+
-+  export const columns: ColumnDef<ColumnDataProps>[] = [
-+    {
-+      accessorKey: 'done',
-+      header: ({ table }) => (
-+        <Checkbox
-+          checked={
-+            table.getIsAllPageRowsSelected() ||
-+            (table.getIsSomePageRowsSelected() && 'indeterminate')
-+          }
-+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-+          aria-label="Select all"
-+        />
-+      ),
-+      cell: ({ row }) => (
-+        <Checkbox
-+          checked={row.getIsSelected()}
-+          onCheckedChange={(value) => row.toggleSelected(!!value)}
-+          aria-label="Select row"
-+        />
-+      ),
-+      size: 50,
-+    },
-+    {
-+      accessorKey: 'task',
-+      header: ({ column }) => (
-+        <div
-+          className="flex cursor-pointer items-center justify-center"
-+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-+        >
-+          Task
-+          <ArrowUpDown className="ml-2 size-4" />
-+        </div>
-+      ),
-+      cell: ({ row }) => {
-+        return <div>{row.getValue('task')}</div>;
-+      },
-+    },
-+    {
-+      accessorKey: 'status',
-+      header: 'Status',
-+      cell: ({ row }) => <p>{row.getValue('status')}</p>,
-+      enableSorting: false,
-+    },
-+    {
-+      accessorKey: 'due',
-+      header: 'Due',
-+      cell: ({ row }) => <p>{row.getValue('due')}</p>,
-+      enableSorting: false,
-+    },
-+    {
-+      accessorKey: 'notes',
-+      header: 'Notes',
-+      cell: ({ row }) => <p>{row.getValue('notes')}</p>,
-+      enableSorting: false,
-+    },
-+  ];
+type Status = {
+  id: number;
+  name: string;
+};
+type ColumnDataProps = {
+  task: string;
+  status: Status;
+  due?: Date | null;
+  notes: string;
+  done: boolean;
+};
+
+export const columns: ColumnDef<ColumnDataProps>[] = [
+  {
+    accessorKey: 'done',
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    size: 50,
+  },
+  {
+    accessorKey: 'task',
+    header: ({ column }) => (
+      <div
+        className="flex cursor-pointer items-center justify-center"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Task
+        <ArrowUpDown className="ml-2 size-4" />
+      </div>
+    ),
+    cell: ({ row }) => {
+      return <div>{row.getValue('task')}</div>;
+    },
+  },
+  {
+    accessorKey: 'status',
+    header: 'Status',
+    cell: ({ row }) => <p>{row.getValue('status')}</p>,
+    enableSorting: false,
+  },
+  {
+    accessorKey: 'due',
+    header: 'Due',
+    cell: ({ row }) => <p>{row.getValue('due')}</p>,
+    enableSorting: false,
+  },
+  {
+    accessorKey: 'notes',
+    header: 'Notes',
+    cell: ({ row }) => <p>{row.getValue('notes')}</p>,
+    enableSorting: false,
+  },
+];
 ```
 
 `ColumnDef`를 가져온 뒤, `columns`타입으로 지정해준다.  
@@ -136,6 +137,8 @@ data-table의 제네릭으로 내려주는 게 있는데, columns에서 타입�
 ![](./type-inference.png)
 
 <br/>
+
+### 🤔 columns의 타입에러
 
 columns를 분리하고 난 뒤, 다음과 같은 타입에러가 뜬다.
 ![](./columns-type-error.png)
@@ -150,7 +153,7 @@ columns를 분리하고 난 뒤, 다음과 같은 타입에러가 뜬다.
   };
 ```
 
-원인을 찾아보니, 타입에는 done 프로퍼티 추가해줬는데, mocking 데이터에 done이 반영되지 않았기 떄문이었다.  
+타입에는 done 프로퍼티 추가해줬는데, mocking 데이터에 done이 반영되지 않았기 때문이었다.  
 여기서 done은 행(row)의 체크상태를 관리하기 위한 데이터이다.
 
 ```JS
@@ -172,6 +175,8 @@ export default DATA
 
 <br/>
 
+### 🤔 columns내 cell의 format 에러
+
 이 상태로 페이지를 띄워보자.  
 화면이 흰색이라, 개발자도구를 확인해봤다.
 
@@ -180,7 +185,7 @@ export default DATA
 columns 내에서 에러가 발생한 것 같다.  
 대략 예상으론, cell의 \<p>태그 내, value가 잘 주입되어야하는데, 문제가 발생한 것 같다.
 
-확인해보니, 두 가지 문제가 발생했는데, 첫 번째는 `Date format` 설정이 되어있지 않았다.  
+확인해보니, `Date format` 설정이 되어있지 않았다.  
 [date-fns 라이브러리](https://github.com/date-fns/date-fns)를 통해, format을 지정해주었다.
 
 ```TSX
@@ -197,10 +202,12 @@ export const columns: ColumnDef<ColumnDataProps>[] = [
 ];
 ```
 
-나머지 하나는 새롭게 알게된 점이다.  
+### 🤔 columns의 Deep Keys
+
 Status 타입을 살펴보면, id와 name이 존재한다.  
 그리고 ColumnDateProps의 status 프로퍼티에 Status 타입을 지정해주었다.  
-즉, value를 가져오기 위해선 `row.getValue("status").name`으로 설정해줘야할 것 같지만, 타입에러가 발생한다.
+즉, value를 가져오기 위해선 `row.getValue("status").name`으로 설정해줘야할 것 같지만,  
+타입에러가 발생한다.
 
 ![](./status-type-error.png)
 
@@ -244,7 +251,7 @@ accessorKey → `status.id`로 변경해주면 된다.
 단, `row.getValue()`는 데이터를 가져올 때, id를 참조한다.  
 그래서 `id`와 `row.getValue(id)`는 동일해야한다.
 
-### 2. pagination
+## 2. pagination
 
 ```TSX
 // table/pagination.tsx
@@ -328,7 +335,7 @@ export const TableComponents: React.FC = () => {
     <>
       //...
 
-      <Pagination table={table} />
+      <Pagination table={table} /> // 컴포넌트 내 table 인스턴스만 주입시키면 된다.
     </>
   );
 };
@@ -336,10 +343,10 @@ export const TableComponents: React.FC = () => {
 
 <br/>
 
-### 3. data-table
+## 3. data-table
 
 이제 TableComponents를 변경시켜보자.  
-재사용하기 위해선, 크게 **columns과 data만** 내려받으면 된다.  
+테이블 전체를 재사용하기 위해선, 크게 **columns과 data만** 내려받으면 된다.  
 나머지는 [useReactTable hooks](https://tanstack.com/table/latest/docs/framework/react/react-table#usereacttable)을 통해 리턴받은 [table 인스턴스](https://tanstack.com/table/latest/docs/guide/tables)로 처리할 수 있다.
 
 ```TSX
@@ -402,11 +409,78 @@ export const TableComponents = <TData, TValue>({
 ```
 
 주목해야할 부분은 역시 타입인 것 같다.
+TData는 위에서 언급했지만, **TValue는 어떤 것일까?**
+
+```TS
+type ColumnDataProps = {
+  task: string;
+  status: Status;
+  due?: Date | null;
+  notes: string;
+  done: boolean;
+};
+```
+
+여기서 TValue는 type의 value(string, Status, Date)이다.  
+하지만 한 가지 의문이 드는게 있다.
+
+```TSX
+import { type ColumnDef } from '@tanstack/react-table';
+
+
+type TableProps<TData, TValue> = {
+  data: TData[];
+  columns: ColumnDef<TData, TValue>[];
+};
+
+export const TableComponents = <TData, TValue>({
+  data,
+  columns, // check type
+}: TableProps<TData, TValue>) => {
+  const table = useReactTable({
+    data,
+    columns, // check type
+    //...
+  });
+
+  return (
+  // ...
+  );
+};
+```
+
+매개변수로 받은 columns의 타입은 `columns: ColumnDef<TData, TValue>[]`이어야한다.  
+그리고 useReactTable 내에 주입되는 columns 역시 동일한 타입일 것이라고 예상했다.  
+확인해보자
+
+![](./parameter-column.png)
+
+![](./useReactTable-column.png)
+
+왜 useReactTable 내 columns는 `ColumnDef<TData, any>[]`인걸까..?  
+한참을 고민하면서 검색해봤는데, 내부 소스코드를 확인 후 바로 원인을 파악할 수 있었다.  
+이는 [useReactTable hooks 내부에서 columns의 타입이 `columnDef<TData, any>[]`타입](https://github.com/TanStack/table/blob/a4bd09a002949185bd4cca7cd2085faeaf87b682/packages/table-core/src/core/table.ts#L81)이었기 때문이었다. 😭
 
 <br/>
 
-## 최적화 시켜주기
+# 마치며
+
+이번 글을 작성하며 느낀 점을 간략히 적어보자면,
+
+tanstack-table은 재사용하기 쉽도록 만들어져있다.  
+스타일을 적용해주고, 파일을 나눠준 뒤, 타입을 반영시켜주면,  
+유연하게 사용할 수 있는 테이블 컴포넌트를 만들 수 있다.
+
+다음 글로 tanstack-table의 server side pagination을 작성 중인데,  
+이 역시 서버에서 받아온 데이터를 온전히 매개변수로 일정시점까지 전달해주면,  
+이후엔 table instance가 모든 기능을 담당한다.
+
+즉, 개발자가 기능 구현을 위해 신경써야할 부분을 테이블이 잡아준다.  
+정-말 편하다.
+
+<br/>
 
 ### 참고자료
 
-[Significance of "extends {}"](https://stackoverflow.com/questions/62552915/significance-of-extends)
+[Significance of "extends {}"](https://stackoverflow.com/questions/62552915/significance-of-extends)  
+[Cannot find TData or TValue in the tanstack typescript library](https://stackoverflow.com/questions/73255543/cannot-find-tdata-or-tvalue-in-the-tanstack-typescript-library)
