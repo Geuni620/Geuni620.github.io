@@ -1,9 +1,11 @@
 ---
-date: '2024-05-21'
+date: '2024-06-01'
 title: '재사용 가능하게, Tanstack-table 사용하기'
 categories: ['개발']
 summary: 'tanstack-table reusable'
 ---
+
+![](./img.png)
 
 올해 초 이직을 하면서 주된 프로덕트가 어드민이다.  
 어드민에서 테이블, 폼과 같은 구조를 많이 다루게 된다.  
