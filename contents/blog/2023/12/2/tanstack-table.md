@@ -828,3 +828,9 @@ const table = useReactTable({
 전반적인 글을 작성할 수 있게 해준 튜토리얼 영상  
 [I Never Want to Create React Tables Any Other Way](https://youtu.be/j6-ImdZW7aM?si=oTjAtC7MdighbaWt)  
 `5. 스타일`에서 소개했던 유튜브 영상'
+
+<br/>
+
+> [재사용 가능하게, Tanstack-table 사용하기](https://geuni620.github.io/blog/2024/5/19/tanstack-table-reusable/)  
+> 해당 내용의 글을 쓴 뒤, 지속적으로 tanstack-table을 사용해보면서,  
+> 재사용 가능한 Table 구조로 변경하는 글을 써봤어요 🙇‍♂️
