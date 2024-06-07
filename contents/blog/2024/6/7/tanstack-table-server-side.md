@@ -5,7 +5,7 @@ categories: ['개발']
 summary: '공식문서를 참고하며..'
 ---
 
-![](./img.png)
+![](./img.webp)
 
 ## Server side pagination
 
