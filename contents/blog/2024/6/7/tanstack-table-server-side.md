@@ -1,5 +1,5 @@
 ---
-date: '2024-06-04'
+date: '2024-06-07'
 title: 'Tanstack-table pagination server side로 구현하기'
 categories: ['개발']
 summary: '공식문서를 참고하며..'
