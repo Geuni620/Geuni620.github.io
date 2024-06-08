@@ -2,7 +2,7 @@
 date: '2024-06-01'
 title: '재사용 가능하게, Tanstack-table 사용하기'
 categories: ['개발']
-summary: 'tanstack-table reusable'
+summary: 'Tanstack table 재사용하기'
 ---
 
 ![](./img.png)
