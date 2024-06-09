@@ -473,7 +473,7 @@ tanstack-table은 재사용하기 쉽도록 만들어져있다.
 스타일을 적용해주고, 파일을 나눠준 뒤, 타입을 반영시켜주면,  
 유연하게 사용할 수 있는 테이블 컴포넌트를 만들 수 있다.
 
-다음 글로 tanstack-table의 server side pagination을 작성 중인데,  
+다음 글로 [tanstack-table의 server side pagination](https://geuni620.github.io/blog/2024/6/7/tanstack-table-server-side/)을 작성 중인데,  
 이 역시 서버에서 받아온 데이터를 온전히 매개변수로 일정시점까지 전달해주면,  
 이후엔 table instance가 모든 기능을 담당한다.
 
