@@ -205,8 +205,14 @@ Project API Keys를 확인할 수 있다.
 
 ![](./login.gif)
 
-Github의 인증을 거쳐서 로그인이 완료된 것을 확인할 수 있다.  
-(session state에 log를 찍어보면, Token 및 유저 정보가 담긴 것도 확인할 수 있다.[사진 미첨부])
+Github의 인증을 거쳐서 로그인이 완료된 것을 확인할 수 있다.
+
+<br/>
+
+![](./session.png)
+session state에 log를 찍어보면, Token 및 유저 정보가 담긴 것도 확인할 수 있다.
+
+<br/>
 
 ![](./supabase-authentication-user.png)
 
@@ -249,7 +255,7 @@ SELECT를 클릭하면, 기본 Templates로 왼쪽이 채워진다.
 여기서 `Target Roles`에 로그인 된 사용자만 데이터를 제공하기 위해,  
 authenticated를 설정해주었다.
 
-그리고 확인을 위해, 간단히 로그인 컴포넌트를 제거하고, Dropdown내 login 버튼을 추가해주었다.
+그리고 확인을 위해, 로그인 컴포넌트를 제거하고, Dropdown내 login 버튼을 추가해주었다.
 
 ![](./after-apply-rls.gif)
 
@@ -257,7 +263,7 @@ authenticated를 설정해주었다.
 
 <br/>
 
-### 참고자료
+# 참고자료
 
 [Supabase - 인증과 Serverless App 구현하기](https://youtu.be/yZ89etxVBKs?si=72ZKjDEJDUNDp7Ou)  
 [supabase 폼 미쳤다](https://velog.io/@racoon/supabase-%ED%8F%BC-%EB%AF%B8%EC%B3%A4%EB%8B%A4)
