@@ -2,7 +2,7 @@
 date: '2024-06-22'
 title: 'supabase Row Level Security(RLS) 적용하기'
 categories: ['개발']
-summary: '맞아버렸다.'
+summary: 'supabase로 로그인 구현하고, RLS를 적용해보자'
 ---
 
 Supabase를 사용할 때, 보통 Next.js로 사용해왔다.  
