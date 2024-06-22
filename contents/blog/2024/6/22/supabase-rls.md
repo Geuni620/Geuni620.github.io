@@ -1,5 +1,5 @@
 ---
-date: '2024-05-12'
+date: '2024-06-22'
 title: 'supabase Row Level Security(RLS) 적용하기'
 categories: ['개발']
 summary: '맞아버렸다.'
