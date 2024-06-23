@@ -5,7 +5,11 @@ categories: ['개발']
 summary: ''
 ---
 
-[이전 글](https://geuni620.github.io/blog/2024/6/22/supabase-rls/)을 작성하고 나서 RLS를 적용하던 중, 의문이 생겼다.
+> [이전 글](https://geuni620.github.io/blog/2024/6/22/supabase-rls/)을 작성하고 나서 RLS를 적용하던 중, 의문이 생겼다.
+
+<!-- 내용 추가해야함 -->
+
+<br/>
 
 ![](./supabase-rls-authenticated-list.png)
 
@@ -135,3 +139,35 @@ using (
 ```
 
 이제 로그인한 사용자만 삭제 가능한지 확인해보자.
+
+<br/>
+
+하지만 위에서 언급했던 문제의 상황이 발생했다.  
+삭제 문구는 정상적으로 동작하는데, 삭제가 되지 않는 것이다.
+
+명확히 구분하기 위해 columns을 하나 더 추가해보았다.
+
+```TSX
+export const columns: ColumnDef<TaskProps>[] = [
+ //...
+  {
+    accessorKey: 'author',
+    header: 'Author',
+    cell: ({ row }) => {
+      const userId = row.original.userId;
+      const { session } = useLogin();
+
+      const isMyTask = session?.user?.id === userId;
+      const authorText = isMyTask ? '내가 작성함' : '내가 작성안함';
+      const textColor = isMyTask ? 'text-blue-600' : 'text-red-600';
+
+      return <div className={`font-medium ${textColor}`}>{authorText}</div>;
+    },
+  },
+  //...
+];
+```
+
+내가 작성한 글일 경우, '내가 작성함'이라는 문구가 뜨도록 하였다.
+
+![](./test.gif)
