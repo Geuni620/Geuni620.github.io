@@ -1,6 +1,6 @@
 ---
 date: '2024-06-23'
-title: ''
+title: 'supabase RPC로 return 메시지 커스텀하기'
 categories: ['개발']
 summary: ''
 ---
@@ -171,3 +171,10 @@ export const columns: ColumnDef<TaskProps>[] = [
 내가 작성한 글일 경우, '내가 작성함'이라는 문구가 뜨도록 하였다.
 
 ![](./test.gif)
+
+<br/>
+
+### 참고자료
+
+[error is always null if delete is not successful due to RLS policy #902](https://github.com/supabase/supabase-js/issues/902)  
+[Supabase에서 Postgresql 함수 작성하기(feat.rpc())](https://velog.io/@inmyhead/Supabase-Postgresql-%ED%95%A8%EC%88%98-%EC%9E%91%EC%84%B1-rpc)
