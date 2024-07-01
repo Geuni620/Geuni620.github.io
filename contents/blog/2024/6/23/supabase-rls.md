@@ -11,6 +11,8 @@ summary: ''
 
 <br/>
 
+## 문제상황
+
 ![](./supabase-rls-authenticated-list.png)
 
 RLS를 위 이미지처럼 적용해주려고 했다.
@@ -33,7 +35,18 @@ select / insert / update / delete는 각각 다음과 같다.
 즉, 로그인한 유저에게만 데이터 조회가 가능하고,  
 데이터의 생성 / 수정 / 삭제는 본인의 글에만 가능하도록 하고 싶었다.
 
+<br/>
+
+하지만, RLS를 적용하고 나서 **문제가 발생했다.**  
+본인글에 대한 데이터는 정상적으로 삭제가 잘 된다.  
+하지만 본인글이 아닌 경우 삭제는 불가능하지만,  
+mutate의 **onSuccess 메서드 내 소스코드가 동작하는 것**이다.
+
 ---
+
+## 재현하기
+
+### UI & 비즈니스로직 구현
 
 테스트해보자.
 
@@ -57,12 +70,15 @@ export const columns: ColumnDef<TaskProps>[] = [
 
       return (
         <DropdownMenu>
+        // trigger
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="size-8 p-0">
               <span className="sr-only">Open menu</span>
               <MoreHorizontal className="size-4" />
             </Button>
           </DropdownMenuTrigger>
+
+          // content
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
@@ -171,6 +187,14 @@ export const columns: ColumnDef<TaskProps>[] = [
 내가 작성한 글일 경우, '내가 작성함'이라는 문구가 뜨도록 하였다.
 
 ![](./test.gif)
+
+위 GIF처럼, 내가 작성한 글은 삭제가 되지만,  
+내가 작성하지 않은 글은 삭제되지 않는다.  
+하지만, 메시지는 여전히 `데이터를 성공적으로 삭제하였습니다.`가 떠서 혼란스럽다.
+
+네트워크 탭을 열어서 확인해보면, 사실 아무것도 반환하지 않는다.
+
+![](./no-return-anything.png)
 
 <br/>
 
