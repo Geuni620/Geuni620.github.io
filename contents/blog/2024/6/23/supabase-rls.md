@@ -188,8 +188,8 @@ export const columns: ColumnDef<TaskProps>[] = [
 
 ![](./test.gif)
 
-위 GIF처럼, 내가 작성한 글은 삭제가 되지만,  
-내가 작성하지 않은 글은 삭제되지 않는다.  
+위 GIF처럼, 내가 작성한 글(파란색)은 삭제가 되지만,  
+내가 작성하지 않은 글(빨간색)은 삭제되지 않는다.  
 하지만, 메시지는 여전히 `데이터를 성공적으로 삭제하였습니다.`가 떠서 혼란스럽다.
 
 네트워크 탭을 열어서 확인해보면, 사실 아무것도 반환하지 않는다.
@@ -198,7 +198,28 @@ export const columns: ColumnDef<TaskProps>[] = [
 
 <br/>
 
+### 원인 분석
+
+처음엔 버그라고 생각했다.  
+supabase의 github issue에서 관련된 내용을 검색하다가 [이슈 하나](https://github.com/supabase/supabase-js/issues/902)를 발견했다.  
+나와 동일한 문제를 경험한 것 같았고, [답변](https://github.com/supabase/supabase-js/issues/902#issuecomment-1824702735)에서 버그가 아닌 것을 확인다.
+
+<br/>
+
+그럼 권한 없는 사람이 Delete 요청을 보내면, 적절한 메시지를 띄울 수 있는 방법은 없는 것일까..?
+
+<br/>
+
+### Supabase RPC로 해결하기
+
+Claude에게 해당 고민에 대해 질문했는데, 코드를 하나 짜주었다.
+
+```TSX
+
+```
+
+<br/>
+
 ### 참고자료
 
-[error is always null if delete is not successful due to RLS policy #902](https://github.com/supabase/supabase-js/issues/902)  
-[Supabase에서 Postgresql 함수 작성하기(feat.rpc())](https://velog.io/@inmyhead/Supabase-Postgresql-%ED%95%A8%EC%88%98-%EC%9E%91%EC%84%B1-rpc)
+[error is always null if delete is not successful due to RLS policy #902](https://github.com/supabase/supabase-js/issues/902)
