@@ -5,9 +5,9 @@ categories: ['개발']
 summary: ''
 ---
 
-> [이전 글](https://geuni620.github.io/blog/2024/6/22/supabase-rls/)을 작성하고 나서 RLS를 적용하던 중, 의문이 생겼다.
+![](./img.webp)
 
-<!-- 내용 추가해야함 -->
+> [이전 글](https://geuni620.github.io/blog/2024/6/22/supabase-rls/)을 작성하고 나서 RLS를 적용하던 중, 의문이 생겼다.
 
 <br/>
 
