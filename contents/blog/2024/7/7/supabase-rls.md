@@ -1,5 +1,5 @@
 ---
-date: '2024-06-23'
+date: '2024-07-07'
 title: 'supabase RPC로 Response 메시지 커스텀하기'
 categories: ['개발']
 summary: ''
