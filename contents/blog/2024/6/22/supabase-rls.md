@@ -5,6 +5,8 @@ categories: ['개발']
 summary: 'supabase로 로그인 구현하고, RLS를 적용해보자'
 ---
 
+![](./img.webp)
+
 Supabase를 사용할 때, 보통 Next.js로 사용해왔다.  
 API 핸들링은 Next.js API 폴더 내에서, Supabase는 ORM처럼 사용하곤 했다.  
 이번엔 React를 사용해서 Supabase를 써보려고 한다.
