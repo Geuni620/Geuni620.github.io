@@ -87,4 +87,5 @@ A유저가 B센터로 로그인
 - 이때 호출된 데이터는 화주사리스트에 isLoading fasle이고, isFetching은 true이다.
 - isLoading이 fasle 이니, 캐싱된 데이터를 사용해서 API를 쏜다. (A센터 화주리스트로 API를 호출함)
 - isFetching은 true이니, 변경된 화주사 리스트로도 API를 다시 호출한다. (레거시 코드라 API 호출은 일부 useEffect로 호출함)
-- 여기서 어떤 변경에 의해,
+- 그리고 setState 과정에서, 변경된 화주사 리스트로 업데이트 했다가, isFetching이 true가 되는 현상이후, 다시 기존 데이터로 setState 해버린다.
+- 명확히 원인을 파악하지 못했다. 예상은 isLoading 했던 부분을 isFetching으로 변경하니 잘 적용된다는 점이다.
