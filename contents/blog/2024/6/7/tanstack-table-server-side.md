@@ -7,7 +7,7 @@ summary: '공식문서를 참고하며..'
 
 ![](./img.webp)
 
-![예시 소스코드](https://github.com/Geuni620/tanstack-table-pagination-server-side)
+[예시 소스코드](https://github.com/Geuni620/tanstack-table-pagination-server-side)
 
 ## Server side pagination
 

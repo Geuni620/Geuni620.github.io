@@ -7,7 +7,7 @@ summary: '개인적으로 인상 깊었던 경험을 기록해봄.'
 
 ![](./img.webp)
 
-![예시 소스코드](https://github.com/Geuni620/isLoading-isFetching)
+[예시 소스코드](https://github.com/Geuni620/isLoading-isFetching)
 
 > 얼마 전 회사에서, 작은 경험을 했는데, 어디 남겨 놓을까 하다가  
 > 결국 블로그에 쓰게됐다.
