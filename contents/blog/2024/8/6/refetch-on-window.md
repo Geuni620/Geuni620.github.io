@@ -1,5 +1,5 @@
 ---
-date: '2024-08-04'
+date: '2024-08-21'
 title: 'Tanstack-query의 트리거(trigger)'
 categories: ['개발']
 summary: ''
@@ -10,6 +10,26 @@ summary: ''
 
 오늘 간단히 해결할 수 있는 문제를 가지고 또 시간을 허비했다.  
 대략 이러한 문제였다.
+
+<br/>
+
+- react-query로 데이터를 불러오고, 업데이트하는 Modal이 존재한다.
+- Modal창을 닫으면, 레거시코드가 존재하고, 이곳에선 데이터를 useEffect를 통해 불러온다.
+- Modal창에서 데이터가 업데이트되면, useEffect로 데이터를 불러오는 곳도 업데이트 되어야한다.
+- 반대로, useEffect를 통해 데이터를 불러오는 곳을 업데이트한 뒤, Modal창을 열면 해당 데이터도 업데이트 되어야하는 것이다.
+
+하지만 업데이트 되지 않았다.  
+참고로 staleTime과 cacheTime은 각각 default이다. (0ms / 5min)
+
+<br/>
+
+'분명 업데이트 되어야 맞는데, 왜 업데이트 되지 않는걸까...'
+시간이 급해서, 레거시 코드에서 데이터가 업데이트 되는 모든 이벤트의 마지막에 invalidateQueries를 설정해서 무효화시켰다.
+
+그리고 퇴근 후 다시 해당 부분에 대해서 테스트를 진행해봤다.  
+먼저 isFetching과 isLoading을 확인해봤다.
+
+---
 
 ```
 react-query v3를 사용합니다.
