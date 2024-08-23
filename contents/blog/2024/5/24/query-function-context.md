@@ -30,7 +30,7 @@ Custom hooks으로 만들어보면 대략 이런 구조를 갖추게 될 것 같
 
 ```TSX
 // useTaskGetQuery.ts
-type FetchProsp = {
+type FetchProps = {
   page: number;
   size: number;
   search: string;
@@ -41,7 +41,7 @@ const fetchTask = async ({
   page,
   size,
   search,
-}: FetchProsp): Promise<TaskResponse> => {
+}: FetchProps): Promise<TaskResponse> => {
   const start = page * size;
   const end = start + size - 1;
 
