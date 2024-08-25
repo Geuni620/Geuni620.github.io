@@ -1,8 +1,8 @@
 ---
-date: '2024-08-21'
-title: 'Tanstack-query의 트리거(trigger)'
+date: '2024-08-25'
+title: 'staleTime이 0ms인데, isFetching이 왜 false?'
 categories: ['개발']
-summary: ''
+summary: '컴포넌트 구조를 생각하며, useQuery 선언하기'
 ---
 
 > 최근까지 회사의 기술적 난이도가 높지 않고, 똑같은 일만 반복해야하는 점에 불만이 있었는데,  
