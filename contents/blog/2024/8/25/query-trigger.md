@@ -64,7 +64,7 @@ staleTime이 0ms로 데이터를 불러오자마자 낡은 데이터로 취급�
 이 문제의 주요 원인은 `useGetAssignedStatus` 훅을 `StatusChangeConfirmModal` 컴포넌트 내부가 아닌 바깥에서 선언했기 때문이다.  
 그로 인해 **마운트와 언마운트 트리거가 정상적으로 동작하지 않았다.**
 
-[예시코드](https://github.com/Geuni620/refetch-on-window)
+[예시코드](https://github.com/Geuni620/staletime-isfetching)
 
 ```TSX
 export function Dashboard() {
