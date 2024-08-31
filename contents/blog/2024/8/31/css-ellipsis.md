@@ -54,7 +54,7 @@ export const App = () => {
 
 <br/>
 
-그래서 [bofore](https://developer.mozilla.org/en-US/docs/Web/CSS/::before), [after](https://developer.mozilla.org/ko/docs/Web/CSS/::after)를 써보기로 했다.
+그래서 [before](https://developer.mozilla.org/en-US/docs/Web/CSS/::before), [after](https://developer.mozilla.org/ko/docs/Web/CSS/::after)를 써보기로 했다.
 
 ```CSS
 .title {
@@ -70,7 +70,6 @@ export const App = () => {
 .title::before,
 .title::after {
   position: absolute;
-  top: 0;
 }
 
 .title::before {
@@ -86,8 +85,8 @@ export const App = () => {
 
 ![](./failure_2.png)
 
-App.tsx의 넣어놓은 대괄호를 제거하고,  
-CSS 가상요소(before, after)를 사용해서, 대괄호를 추가했다.  
+App.tsx에 있던 대괄호를 제거하고  
+CSS 가상요소(before, after)를 사용하여 대괄호를 추가했다.  
 잘 된 것처럼 보이지만, 만약 제목이 짧다면 어떻게 될까?
 
 <br/>
@@ -98,7 +97,7 @@ CSS 가상요소(before, after)를 사용해서, 대괄호를 추가했다.
 
 <br/>
 
-영역을 나누는게 좋을 것 같다.  
+영역을 나누는 것이 더 좋다.  
 부모는 width만 처리하고, 자식은 그 width를 넘어가면 `...`만 표기,  
 그리고 자식의 가상요소는 대괄호만 표기해보자.
 
@@ -138,7 +137,6 @@ export const App = () => {
 - .title::before,
 - .title::after {
 -   position: absolute;
--   top: 0;
 - }
 
 .title::before {
@@ -159,7 +157,13 @@ export const App = () => {
 ```
 
 span을 추가하고, CSS를 수정했다.  
-특히, absolute를 제거해줬다.
+먼저, absolute를 제거해줬다.  
+왼쪽과 오른쪽에 각각 고정되어있던 left와 right를 풀어주었다.
+
+고정이던 width값을 제거하고, max-width 90%를 추가했다.  
+즉, 부모 width의 최대 90%까지만 width가 지정될 것이다.
+
+`.title`에 지정되어있던, overflow, text-overflow, padding은 `.text`로 옮겨주었다.
 
 ![](./success_1.png)
 
