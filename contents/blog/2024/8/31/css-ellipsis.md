@@ -129,6 +129,8 @@ export const App = () => {
 - text-overflow: ellipsis;
 - padding: 0 5px;
 + max-width: 90%
++ display: flex;
++ align-items: center;
   overflow: hidden;
   white-space: nowrap;
   position: relative;
@@ -162,6 +164,8 @@ span을 추가하고, CSS를 수정했다.
 
 고정이던 width값을 제거하고, max-width 90%를 추가했다.  
 즉, 부모 width의 최대 90%까지만 width가 지정될 것이다.
+
+display: flex를 추가해서, 부모 요소의 전체 너비에서 제목 내용물 너비에 맞게 조절해주었다.
 
 `.title`에 지정되어있던, overflow, text-overflow, padding은 `.text`로 옮겨주었다.
 
