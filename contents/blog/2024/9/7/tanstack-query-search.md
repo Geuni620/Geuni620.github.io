@@ -12,3 +12,8 @@ summary: 'tanstack query 검색 예시'
 > **두 번째 방법을 Tanstack-query를 사용했을 때 어떻게 구현할 수 있을까?**
 >
 > 그리고 추가로, 검색된 결과를 유지할 수 있는 방법에 대해 알아보자.
+
+사실 방법은 크게 두 가지가 존재하는 듯하다.
+하나는, useSearchParams를 사용하는 방법이 있는 것 같고,  
+다른 하나는, useLocation과 useNavigate를 함께 사용하는 방법이 있는 것 같다.  
+각각을 알아보자.
