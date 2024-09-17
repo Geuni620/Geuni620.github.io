@@ -92,7 +92,7 @@ export function Dashboard() {
 ```
 
 - 검색을 입력할 때, search state내 검색값을 저장 → onSubmit시 search state를 이용해서 API 호출
-- 페이지네이션이나, 페이지셀렉션에 따라 useEffect 디펜던시에 state를 추가해,  
+- 페이지네이션이나, 페이지셀렉션에 따라 useEffect dependency에 state를 추가해,  
   `getInventoryInspection`가 호출되어야한다.
 
 [Tkdodo 블로그 글](https://tkdodo.eu/blog/why-you-want-react-query)을 읽지 않았다면,  
@@ -110,11 +110,12 @@ Tanstack-query를 사용했을 때보다 간단하고 명확히 구성할 수 �
 Tanstack-query를 사용했을 때, 크게 3가지로 나눌 수 있을 것 같다.
 
 1. refetch를 사용하는 방법
-2. isSubmmited와 같은 상태값을 추가해서 submit인 경우 true가 되고, onSuccess일 경우, false로 변경
+2. isSubmmited와 같은 상태값을 추가해서 submit인 경우 true가 되고 → onSuccess일 경우, false로 변경
 3. queryClient의 fetchQuery
 
 이 중, 1번과 3번만 구현해봤다.  
-2번은 좋은 방법이 아닌 것 같다.  
+2번은 좋은 방법이 아닌 것 같다.
+
 불필요한 상태값의 추가로 useEffect를 사용하게 되고, 결국 복잡도가 올라갔다.  
 예시를 만들다가, 좋은 예가 아닌 것 같아서 제거했다.
 
@@ -229,7 +230,7 @@ fetchQuery와 useQuery를 함께 사용하면 어느정도 일부는 선언적�
 
 기획의 의도에 따라, 위 방법이 더 좋을 수 있지만,  
 내가 속한 현 회사의 프로덕트의 경우, 검색조건을 유지시켜서 데이터 변경이 일어났을 때,  
-해당 페이지가 전체가 refresh되는게 아닌 현 상태 검색조건을 유지 + 데이터만 업데이트 되길 원했다.  
+**해당 페이지가 전체가 refresh되는게 아닌 현 상태 검색조건을 유지 + 데이터만 업데이트** 되길 원했다.  
 이런 기획의 의도라면, 위 방법들은 맞지 않는다.
 
 # 2. 검색조건 유지시키기
@@ -238,11 +239,11 @@ fetchQuery와 useQuery를 함께 사용하면 어느정도 일부는 선언적�
 
 react-router-dom를 사용해서 구현해보려고 한다.  
 버전에 따라 v5에선 useLocation + useHistory를 사용해야했고,  
-v6에선 useSearchParams로 간편하게 구현할 수 있었다.
+v6에선 useSearchParams로 간편하게 구현할 수 있다.
 
-이번엔 v6의 useSearchParams를 사용해서 구현해보려고 한다.  
+이 글에선 v6의 useSearchParams를 사용해서 구현해보려고 한다.  
 v5의 구현은 [해당링크](https://codesandbox.io/p/sandbox/react-query-url-filtering-h0ikw?file=%2Fsrc%2FApp.tsx%3A64%2C30)를 통해 확인할 수 있다.  
-<small>출처는 하단에 링크로 남겨놓을게요.</small>
+<small>출처는 하단에 링크로 남겨놓을게요. 🙇‍♂️</small>
 
 <br/>
 
@@ -273,8 +274,8 @@ export const useQueryParams = () => {
 };
 ```
 
-예시에선, page, size, search의 상태를 관리하고 있었다.
-이는 각각, useSearchCondition과, usePagination으로 관리하고 있었다.
+예시에선, `page`, `size`, `search`의 상태를 관리하고 있었다.  
+이는 각각, `useSearchCondition`과, `usePagination`으로 관리하고 있었다.
 
 ```TSX
 // usePagination.ts
@@ -317,8 +318,7 @@ export const useSearchCondition = () => {
 };
 ```
 
-위와 같은 상태를 useSearchParams를 사용하면, 모두 제거할 수 있다.  
-즉, useQueryParams를 만들고, 모두 제거했다.
+위와 같은 상태를 **useSearchParams를 사용하면, 모두 제거할 수 있다.**
 
 <br/>
 
@@ -394,9 +394,9 @@ value를 사용하면, Input에 value를 변경하려 해도, 변경되지 않�
 onChange가 없기 때문이다.  
 즉, 제어 컴포넌트가 아닌 비제어컴포넌트로 구성하는 것이다.
 
-여기서 onSubmit 이벤트가 발생했을 때,  
-input의 변경된 value를 가져오기 위해선, name을 꼭 추가해줘야한다.  
-물론, type을 통해서도 가져올 수 있지만, name을 추가해서 명확히 가져오는게 더 좋은 방법인 것 같다.
+onChange가 없다면, 어떻게 search value를 가져올 수 있을까?  
+먼저, name을 꼭 추가해줘야한다. 물론 attribute를 통해 type을 지정해줘도 가져올 수 있지만,  
+name을 추가해서 명확히 가져오는게 더 좋은 방법이라고 생각된다.
 
 ```TSX
 const [queryParams, setQueryParams] = useQueryParams();
@@ -405,7 +405,7 @@ const { page, size, search } = queryParams;
 const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
   const formData = new FormData(e.currentTarget);
-  const newSearch = formData.get('search')?.toString() || '';
+  const newSearch = formData.get('search')?.toString() || ''; // here 🙋‍♂️
 
   setQueryParams((prevParams) => {
     prevParams.set('page', '1');
@@ -421,7 +421,7 @@ const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 };
 ```
 
-onSubmit 이벤트가 발생했을 때, formData를 통해 name의 현재 search 값을 가져올 수 있다.
+다음으로 onSubmit 이벤트가 발생했을 때, formData를 통해 name의 현재 search값을 가져올 수 있다.  
 이를 setQueryParams를 통해서, URL에 올려주는 것이다.
 
 <br/>
@@ -457,6 +457,17 @@ onSubmit 이벤트가 발생했을 때, formData를 통해 name의 현재 search
 마지막으로 페이지네이션이나, 페이지셀렉션 역시 동일하게 setQueryParams를 사용하면 된다.
 
 <br/>
+
+### 정리
+
+useSearchParams를 사용하기 위해 최근, react-router-dom v5 → v6로 버전 업을 진행했다.  
+아직 미숙한 부분도 존재하지만, useSearchParams를 통해서, 우리 프로덕트의 검색기능을 개선한다면,  
+불필요한 state를 대폭 제거할 수 있겠다는 확신이 생겼다.
+
+추가로 사용자들의 검색조건 유지를, 굳이 localStorage와 같은 곳에 보관할 필요도 없어지며,  
+컴포넌트 설계를 다시해서, re-rendering 잘 되던 state를 괜히 관심사에 맞지 않는 부모로 올리거나, 자식으로 내릴 필요도 없어진다.
+
+조금 더 고도화해보면서, 프로덕트에 잘 녹여봐야겠다.
 
 ### 참고자료
 
