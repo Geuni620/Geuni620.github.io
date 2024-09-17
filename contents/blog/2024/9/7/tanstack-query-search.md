@@ -474,3 +474,7 @@ useSearchParams를 사용하기 위해 최근, react-router-dom v5 → v6로 버
 [How to let Query are performed at the component onmount and triggered by user event later?](https://stackoverflow.com/questions/71077346/how-to-let-query-are-performed-at-the-component-onmount-and-triggered-by-user-ev/71093384#71093384)
 
 - codesandbox 참조한 링크
+
+[useQuery for a search API #957](https://github.com/TanStack/query/discussions/957)
+
+[useLazyQuery #1205](https://github.com/TanStack/query/discussions/1205#discussioncomment-7108969)
