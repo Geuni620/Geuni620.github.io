@@ -13,7 +13,7 @@ summary: 'tanstack query 검색 예시'
 >
 > 그리고 추가로, **검색된 결과를 유지할 수 있는 방법에 대해 알아보자.**
 
-# 엔터 또는 검색 버튼을 눌러야 서버로 API를 호출하는 방법
+# 1. 엔터(Enter) 또는 검색 버튼을 통해, <br/> 서버로 API를 호출하는 방법
 
 ## 1-1. useEffect를 사용했을 때
 
@@ -92,9 +92,10 @@ export function Dashboard() {
 ```
 
 - 검색을 입력할 때, search state내 검색값을 저장 → onSubmit시 search state를 이용해서 API 호출
-- 페이지네이션이나, 페이지셀렉션에 따라 useEffect 디펜던시에 state를 추가해, `getInventoryInspection`가 호출되어야한다.
+- 페이지네이션이나, 페이지셀렉션에 따라 useEffect 디펜던시에 state를 추가해,  
+  `getInventoryInspection`가 호출되어야한다.
 
-[Tkdodo 블로그 글](https://tkdodo.eu/blog/why-you-want-react-query)을 참고하지 않은 상태라면,  
+[Tkdodo 블로그 글](https://tkdodo.eu/blog/why-you-want-react-query)을 읽지 않았다면,  
 Tanstack-query를 사용했을 때보다 간단하고 명확히 구성할 수 있다는 생각도 든다.
 
 <br/>
@@ -110,7 +111,12 @@ Tanstack-query를 사용했을 때, 크게 3가지로 나눌 수 있을 것 같�
 
 1. refetch를 사용하는 방법
 2. isSubmmited와 같은 상태값을 추가해서 submit인 경우 true가 되고, onSuccess일 경우, false로 변경
-3. fetch
+3. queryClient의 fetchQuery
+
+이 중, 1번과 3번만 구현해봤다.  
+2번은 좋은 방법이 아닌 것 같다.  
+불필요한 상태값의 추가로 useEffect를 사용하게 되고, 결국 복잡도가 올라갔다.  
+예시를 만들다가, 좋은 예가 아닌 것 같아서 제거했다.
 
 ### 1-2-1. refetch
 
@@ -171,22 +177,7 @@ lint에러가 나지 않게 하려면 queryKey 내에 search를 넣어줘야하�
 
 <br/>
 
-### 1-2-2. isSubmmited
-
-```TSX
-  const [isSubmitted, setIsSubmitted] = useState(true); // 초기값을 true로 설정
-```
-
-**이 방법은 개인적으로 좋지 못한 방법인 것 같다.**  
-불필요한 state를 하나 더 추가해서, isSubmitted를 통해서 API의 호출여부를 핸들링하게 되는데,  
-페이지네이션, 페이지셀렉션이 추가될수록 useEffect의 의존성이 추가되고, 복잡도가 올라간다.
-
-Tanstack-query는 라이브러리 특성상 선언적인 라이브러리인데, 이를 명령형이게 억지로 끼워맞추려고 하니 온전히 동작하지 않는 경우가 많다.  
-즉, 이렇게 쓸 것이라면 Tanstack-query를 안쓰는게 더 효율적일 것이다. → refetch로 사용 또는 useEffect로 구현
-
-<br/>
-
-### 1-2-3. fetchQuery
+### 1-2-2. fetchQuery
 
 ```TSX
 export function Dashboard() {
@@ -234,24 +225,241 @@ fetchQuery와 useQuery를 함께 사용하면 어느정도 일부는 선언적�
 
 그리고 fetchQuery로 API를 호출했을 때, stockList로 isLoading이나, isFetching으로 로딩효과를 주면 된다.
 
-<br/>
+---
 
 기획의 의도에 따라, 위 방법이 더 좋을 수 있지만,  
 내가 속한 현 회사의 프로덕트의 경우, 검색조건을 유지시켜서 데이터 변경이 일어났을 때,  
-해당 페이지가 refresh되는게 아닌 현 상태 검색조건을 유지 + 데이터만 업데이트 되길 원했다.  
+해당 페이지가 전체가 refresh되는게 아닌 현 상태 검색조건을 유지 + 데이터만 업데이트 되길 원했다.  
 이런 기획의 의도라면, 위 방법들은 맞지 않는다.
 
-# 검색조건 유지시키기
+# 2. 검색조건 유지시키기
 
-검색조건을 유지시키는 방법도 크게는 한 가지이지만(url을 사용하는 방법), 버전에 따라 나눠보면 두 가지이다.
+검색조건을 유지시키는 방법도, 여러가지가 있겠지만, 이 글에서 제시하고 싶은 방법은 **URL**이다.
 
-react-router-dom v6의 경우, useSearchParams를 이용해서 쉽게 구현할 수 있다.  
-react-router-dom v5의 경우, useLocation, useHistory로 각각을 구현해야한다.
+react-router-dom를 사용해서 구현해보려고 한다.  
+버전에 따라 v5에선 useLocation + useHistory를 사용해야했고,  
+v6에선 useSearchParams로 간편하게 구현할 수 있었다.
 
-이 경우엔, tanstack-query와 useSearchParams를 이용해서 손 쉽게 검색조건을 유지시켜보자.
+이번엔 v6의 useSearchParams를 사용해서 구현해보려고 한다.  
+v5의 구현은 [해당링크](https://codesandbox.io/p/sandbox/react-query-url-filtering-h0ikw?file=%2Fsrc%2FApp.tsx%3A64%2C30)를 통해 확인할 수 있다.  
+<small>출처는 하단에 링크로 남겨놓을게요.</small>
+
+<br/>
+
+## 2-1 react-router-dom v6, useSearchParams
+
+단계별로 하나씩 수정해보자.
+
+### 2-1-1. useQueryParams 추가
+
+```TSX
+// useQueryParams.ts
+import { useSearchParams } from 'react-router-dom';
+
+export const useQueryParams = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const page = parseInt(searchParams.get('page') || '1', 10) - 1;
+  const size = parseInt(searchParams.get('size') || '20', 10);
+  const search = searchParams.get('search') || '';
+
+  const queryParams = {
+    page,
+    size,
+    search,
+  };
+
+  return [queryParams, setSearchParams] as const;
+};
+```
+
+예시에선, page, size, search의 상태를 관리하고 있었다.
+이는 각각, useSearchCondition과, usePagination으로 관리하고 있었다.
+
+```TSX
+// usePagination.ts
+export const usePagination = () => {
+  const [pagination, setPagination] = useState<Pagination>({
+    pageIndex: 0,
+    pageSize: 20,
+  });
+
+  const onPageSizeChange = (pageSize: number) => {
+    setPagination((prev) => {
+      return {
+        ...prev,
+        pageSize,
+      };
+    });
+  };
+
+  return {
+    pagination,
+    onPaginationChange: setPagination,
+    onPageSizeChange: onPageSizeChange,
+  };
+};
+
+---
+
+// useSearchCondition.ts
+export const useSearchCondition = () => {
+  const [search, setSearch] = useState('');
+
+  const onSearchChange = (newValue: string) => {
+    setSearch(newValue);
+  };
+
+  return {
+    search,
+    onSearchChange,
+  };
+};
+```
+
+위와 같은 상태를 useSearchParams를 사용하면, 모두 제거할 수 있다.  
+즉, useQueryParams를 만들고, 모두 제거했다.
+
+<br/>
+
+### 2-1-2. useGetInventoryInspection 수정
+
+useQuery를 호출하는, custom hook인 useGetInventoryInspection을 수정해줬다.
+
+```TSX
+// useGetInventoryInspection.ts
+// before
+export const useGetInventoryInspection = ({ page, size, search }: Props) => {
+  return useQuery({
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
+    queryKey: inventoryInspectionKeys.list({
+      page,
+      size,
+    }),
+    queryFn: ({ queryKey }) => getInventoryInspection({ queryKey, search }),
+    placeholderData: keepPreviousData,
+    enabled: false,
+  });
+};
+
+// after
+export const useGetInventoryInspection = () => {
+  const [{ page, size, search }] = useQueryParams();
+
+  return useQuery({
+    queryKey: inventoryInspectionKeys.list({
+      page,
+      size,
+      search,
+    }),
+    queryFn: getInventoryInspection,
+    placeholderData: keepPreviousData,
+  });
+};
+```
+
+refetch에서 사용했던 코드에 비해 훨씬 명확해졌다.
+
+- lint의 disabled를 제거할 수 있었다.
+- queryKey에 search를 추가해줄 수 있다.
+- props를 제거하고, useQueryParams hook으로 queryKey에 해당하는 인자값을 가져올 수 있다.
+
+<br/>
+
+### 2-1-3. Input 수정 (제어컴포넌트 → 비 제어컴포넌트)
+
+```TSX
+export const Search: React.FC<SearchProps> = ({ search }) => {
+  return (
+    <div className="ml-auto flex-1 sm:flex-initial">
+      <div className="relative">
+        <SearchIcon className="absolute left-2 top-1/2 size-4 -translate-y-1/2 text-gray-500 dark:text-gray-400" />
+        <Input
+          className="bg-white pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
+          placeholder="Search orders..."
+          type="search"
+          name="search"
+          defaultValue={search}
+        />
+      </div>
+    </div>
+  );
+};
+```
+
+위 코드에서 특이점은, onChange가 없다는 점이다.  
+그리고 value가 아닌 defaultValue를 사용한다.
+
+value를 사용하면, Input에 value를 변경하려 해도, 변경되지 않는다.  
+onChange가 없기 때문이다.  
+즉, 제어 컴포넌트가 아닌 비제어컴포넌트로 구성하는 것이다.
+
+여기서 onSubmit 이벤트가 발생했을 때,  
+input의 변경된 value를 가져오기 위해선, name을 꼭 추가해줘야한다.  
+물론, type을 통해서도 가져올 수 있지만, name을 추가해서 명확히 가져오는게 더 좋은 방법인 것 같다.
+
+```TSX
+const [queryParams, setQueryParams] = useQueryParams();
+const { page, size, search } = queryParams;
+
+const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  const formData = new FormData(e.currentTarget);
+  const newSearch = formData.get('search')?.toString() || '';
+
+  setQueryParams((prevParams) => {
+    prevParams.set('page', '1');
+
+    if (newSearch) {
+      prevParams.set('search', newSearch);
+    } else {
+      prevParams.delete('search');
+    }
+
+    return prevParams;
+  });
+};
+```
+
+onSubmit 이벤트가 발생했을 때, formData를 통해 name의 현재 search 값을 가져올 수 있다.
+이를 setQueryParams를 통해서, URL에 올려주는 것이다.
+
+<br/>
+
+### 2-1-4. page, size
+
+```TSX
+  const onPageSizeChange = (newPageSize: number) => {
+    setQueryParams((prevParams) => {
+      prevParams.set('size', newPageSize.toString());
+      prevParams.set('page', '1');
+      return prevParams;
+    });
+  };
+
+  const onPaginationChange: OnChangeFn<PaginationState> = (updaterOrValue) => {
+    setQueryParams((prevParams) => {
+      const currentPagination = { pageIndex: page, pageSize: size };
+
+      const newPagination =
+        typeof updaterOrValue === 'function'
+          ? updaterOrValue(currentPagination)
+          : updaterOrValue;
+
+      prevParams.set('page', (newPagination.pageIndex + 1).toString());
+      prevParams.set('size', newPagination.pageSize.toString());
+
+      return prevParams;
+    });
+  };
+```
+
+마지막으로 페이지네이션이나, 페이지셀렉션 역시 동일하게 setQueryParams를 사용하면 된다.
 
 <br/>
 
 ### 참고자료
 
 [How to let Query are performed at the component onmount and triggered by user event later?](https://stackoverflow.com/questions/71077346/how-to-let-query-are-performed-at-the-component-onmount-and-triggered-by-user-ev/71093384#71093384)
+
+- codesandbox 참조한 링크
