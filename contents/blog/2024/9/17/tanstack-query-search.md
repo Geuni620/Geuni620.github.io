@@ -1,8 +1,8 @@
 ---
-date: '2024-09-07'
-title: 'Tanstack-query를 이용한 다양한 검색기능 구현하기'
+date: '2024-09-17'
+title: 'Tanstack-query를 이용한 검색기능 구현하기 + 검색조건 유지하기'
 categories: ['개발']
-summary: 'tanstack query 검색 예시'
+summary: 'useSearchParams를 사용해보자'
 ---
 
 ![](./img.webp)
