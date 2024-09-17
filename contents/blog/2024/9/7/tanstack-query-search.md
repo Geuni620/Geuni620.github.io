@@ -5,6 +5,8 @@ categories: ['개발']
 summary: 'tanstack query 검색 예시'
 ---
 
+![](./img.webp)
+
 > 검색기능은 크게 두 가지 case가 있는 것 같다.
 >
 > 검색어를 입력하자마자 **debounce를 적용해서 일정시간 뒤에 서버로 API를 호출**하는 방법이 있고,  
