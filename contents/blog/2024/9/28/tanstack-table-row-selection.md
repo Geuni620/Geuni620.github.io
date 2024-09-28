@@ -5,6 +5,8 @@ categories: ['개발']
 summary: 'server side pagination일 경우, pagination index 변경에 따라 선택한 체크박스의 행 데이터를 추출해보자.'
 ---
 
+![](./img.webp)
+
 [이전 글에서도 언급했지만](https://geuni620.github.io/blog/2024/6/7/tanstack-table-server-side/), Tanstack-table을 페이지네이션을 client-side와 server-side 모두 적용할 수 있다.  
 server-side를 알게 된 이후, 최근까진 Tanstack-table을 사용해야할 경우 모두 server-side로 구현했다.
 
