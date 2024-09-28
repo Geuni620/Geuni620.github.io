@@ -148,8 +148,6 @@ export const RowSelection: TableFeature = {
     table: Table<TData>
   ): RowSelectionOptions<TData> => {
     return {
-      // makeStateUpdater는 여기 링크를 참고하면 된다.
-      // https://github.com/TanStack/table/blob/6b4d616dd7c8917616eb4fecaf09dda7030fd115/packages/table-core/src/utils.ts#L91C1-L103C2
       onRowSelectionChange: makeStateUpdater('rowSelection', table),
       enableRowSelection: true,
       enableMultiRowSelection: true,
@@ -209,7 +207,38 @@ rowSelection의 행을 기반으로 그 행의 row data를 다른 state에 저�
   });
 ```
 
-하지만 여기서 또 의문인게, updateOrValue가 무엇인지, 어떻게 동작하는지 잘 모르겠다.
+하지만 여기서 또 의문인게, updateOrValue가 무엇인지, 어떻게 동작하는지 잘 모르겠다.  
+이는 위에서 살펴본, makeStateUpdater를 확인해보면 될 것 같다.
+
+<br/>
+
+```TSX
+// https://github.com/TanStack/table/blob/6b4d616dd7c8917616eb4fecaf09dda7030fd115/packages/table-core/src/utils.ts#L81C1-L85C2
+export function functionalUpdate<T>(updater: Updater<T>, input: T): T {
+  return typeof updater === 'function'
+    ? (updater as (input: T) => T)(input)
+    : updater
+}
+
+// https://github.com/TanStack/table/blob/6b4d616dd7c8917616eb4fecaf09dda7030fd115/packages/table-core/src/utils.ts#L91C1-L103C2
+export function makeStateUpdater<K extends keyof TableState>(
+  key: K,
+  instance: unknown
+) {
+  return (updater: Updater<TableState[K]>) => {
+    ;(instance as any).setState(<TTableState>(old: TTableState) => {
+      return {
+        ...old,
+        [key]: functionalUpdate(updater, (old as any)[key]),
+      }
+    })
+  }
+}
+```
+
+아하... 정리해보면 다음과 같다.
+
+<br/>
 
 ### 2. rowSelection → useEffect
 
