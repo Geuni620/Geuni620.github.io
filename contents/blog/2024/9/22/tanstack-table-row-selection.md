@@ -148,6 +148,8 @@ export const RowSelection: TableFeature = {
     table: Table<TData>
   ): RowSelectionOptions<TData> => {
     return {
+      // makeStateUpdater는 여기 링크를 참고하면 된다.
+      // https://github.com/TanStack/table/blob/6b4d616dd7c8917616eb4fecaf09dda7030fd115/packages/table-core/src/utils.ts#L91C1-L103C2
       onRowSelectionChange: makeStateUpdater('rowSelection', table),
       enableRowSelection: true,
       enableMultiRowSelection: true,
@@ -207,36 +209,113 @@ rowSelection의 행을 기반으로 그 행의 row data를 다른 state에 저�
   });
 ```
 
-하지만 여기서 또 의문인게, updateOrValue가 무엇인지, 어떻게 동작하는지 잘 모르겠다.  
-이는 위에서 살펴본, makeStateUpdater를 확인해보면 될 것 같다.
+하지만 여기서 또 의문인게, updateOrValue가 무엇인지, 어떻게 동작하는지 잘 모르겠다.
+
+```TSX
+    console.log('updaterOrValue', updaterOrValue);
+```
+
+로그를 찍어 확인해보자.
 
 <br/>
 
 ```TSX
-// https://github.com/TanStack/table/blob/6b4d616dd7c8917616eb4fecaf09dda7030fd115/packages/table-core/src/utils.ts#L81C1-L85C2
-export function functionalUpdate<T>(updater: Updater<T>, input: T): T {
-  return typeof updater === 'function'
-    ? (updater as (input: T) => T)(input)
-    : updater
+// https://github.com/TanStack/table/blob/6b4d616dd7c8917616eb4fecaf09dda7030fd115/packages/table-core/src/features/RowSelection.ts#L469
+export const RowSelection: TableFeature = {
+  // ...
+  createRow: <TData extends RowData>(
+    row: Row<TData>,
+    table: Table<TData>
+  ): void => {
+    row.toggleSelected = (value, opts) => {
+      const isSelected = row.getIsSelected()
+
+      table.setRowSelection(old => {
+        value = typeof value !== 'undefined' ? value : !isSelected
+
+        if (row.getCanSelect() && isSelected === value) {
+          return old
+        }
+
+        const selectedRowIds = { ...old }
+
+        mutateRowIsSelected(
+          selectedRowIds,
+          row.id,
+          value,
+          opts?.selectChildren ?? true,
+          table
+        )
+
+        return selectedRowIds
+      })
+    }
+  },
 }
 
-// https://github.com/TanStack/table/blob/6b4d616dd7c8917616eb4fecaf09dda7030fd115/packages/table-core/src/utils.ts#L91C1-L103C2
-export function makeStateUpdater<K extends keyof TableState>(
-  key: K,
-  instance: unknown
-) {
-  return (updater: Updater<TableState[K]>) => {
-    ;(instance as any).setState(<TTableState>(old: TTableState) => {
-      return {
-        ...old,
-        [key]: functionalUpdate(updater, (old as any)[key]),
-      }
-    })
+const mutateRowIsSelected = <TData extends RowData>(
+  selectedRowIds: Record<string, boolean>,
+  id: string,
+  value: boolean,
+  includeChildren: boolean,
+  table: Table<TData>
+) => {
+  const row = table.getRow(id, true)
+
+  // const isGrouped = row.getIsGrouped()
+
+  // if ( // TODO: enforce grouping row selection rules
+  //   !isGrouped ||
+  //   (isGrouped && table.options.enableGroupingRowSelection)
+  // ) {
+  if (value) {
+    if (!row.getCanMultiSelect()) {
+      Object.keys(selectedRowIds).forEach(key => delete selectedRowIds[key])
+    }
+    if (row.getCanSelect()) {
+      selectedRowIds[id] = true
+    }
+  } else {
+    delete selectedRowIds[id]
+  }
+  // }
+
+  if (includeChildren && row.subRows?.length && row.getCanSelectSubRows()) {
+    row.subRows.forEach(row =>
+      mutateRowIsSelected(selectedRowIds, row.id, value, includeChildren, table)
+    )
   }
 }
 ```
 
-아하... 정리해보면 다음과 같다.
+로그로 확인해보면, 해당 부분은 table.setRowSelection을 호출한다.
+
+그리고 여기서 변경사항이 동일하다면 old를 return하고, 변경사항이 존재한다면, mutateRowIsSelected를 호출한다.
+그리고, if(value)내부의 코드를 통해 rowSelection을 업데이트하는 것이다.
+
+즉 위에서 우린 이런 코드를 본 적이 있다.
+
+```TSX
+  tableRef.current.setOptions(prev => ({
+    ...prev,
+    ...options,
+    state: {
+      ...state,
+      ...options.state,
+    },
+    // Similarly, we'll maintain both our internal state and any user-provided
+    // state.
+    onStateChange: updater => {
+      setState(updater)
+      options.onStateChange?.(updater)
+    },
+  }))
+```
+
+여기서 우린 setState를 통해, Table내의 table를 업데이트시키는 과정이었던 것이다.
+그리고 options.onStateChange?.(updater)이 우리가 등록한 setRowSelection을 업데이트하는 부분이다.
+
+<br/>
 
 <br/>
 
