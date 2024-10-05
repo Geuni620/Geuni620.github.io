@@ -27,6 +27,8 @@ npm run build:win
 
 <br/>
 
+### Error: windows is not working on installation
+
 생성된 설치파일을 윈도우 컴퓨터로 옮겨준 뒤, 설치 후 실행하면 다음과 같은 메시지를 보게 된다.
 
 ![](./not-found-app.png)
@@ -58,6 +60,8 @@ win:
 <br/>
 
 ---
+
+### Error: Installer integrity check has failed
 
 회사에선 mac을 통해 개발했기 때문에, 윈도우에서 확인을 하기위해선 항상 테스트를 요청드려야했다.  
 설치파일을 전달드리고 설치 후 테스트가 끝나서 삭제하려고 하는데, 다음과 같은 에러메시지를 접했다.
@@ -113,4 +117,6 @@ win:
 
 ### 참고자료
 
-[Electron Application Built on macOS for windows is not working on installation](https://stackoverflow.com/questions/74060787/electron-application-built-on-macos-for-windows-is-not-working-on-installation)
+[Electron Application Built on macOS for windows is not working on installation](https://stackoverflow.com/questions/74060787/electron-application-built-on-macos-for-windows-is-not-working-on-installation)  
+[Windows NSIS uninstall fails when built from MacOS Catalina](https://github.com/electron-userland/electron-builder/issues/4875)  
+[Missing shortcut when installing built app for Windows](https://github.com/alex8088/electron-vite/issues/592)
