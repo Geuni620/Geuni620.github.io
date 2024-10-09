@@ -1,8 +1,8 @@
 ---
 date: '2024-10-09'
-title: 'electron, window에서 발생하는 오류 수정하기'
+title: 'Electron 앱의 윈도우 배포 시 발생하는 오류 해결 방법'
 categories: ['개발']
-summary: ''
+summary: 'Electron을 사용해 윈도우용 설치 파일을 배포하면서 발생한 오류들을 해결하는 방법을 정리 ✌️'
 ---
 
 ![](./img.webp)
