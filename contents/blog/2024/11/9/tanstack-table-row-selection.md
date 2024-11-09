@@ -5,6 +5,8 @@ categories: ['개발']
 summary: 'onRowSelectionChange 메서드를 살펴보자'
 ---
 
+![](./img.webp)
+
 [이전 글](https://geuni620.github.io/blog/2024/9/28/tanstack-table-row-selection/)을 살펴보다가, 추가로 궁금한 점이 생겼다.  
 tanstack-table에선 체크박스의 상태를 관리하기 위해 rowSelection이라는 상태를 만들고 적용하는데, 일반적으로 다음과 같다.
 
