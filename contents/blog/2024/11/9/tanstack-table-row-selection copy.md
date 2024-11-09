@@ -1,8 +1,8 @@
 ---
 date: '2024-11-09'
-title: 'Tanstack-table의 onRowSelectionChange 내부 살펴보기'
+title: 'Tanstack-table 내부코드 살펴보기'
 categories: ['개발']
-summary: 'onRowSelectionChange 메서드를 살펴보자'
+summary: ''
 ---
 
 [이전 글](https://geuni620.github.io/blog/2024/9/28/tanstack-table-row-selection/)을 살펴보다가, 추가로 궁금한 점이 생겼다.  
@@ -294,8 +294,6 @@ export const RowSelection: TableFeature = {
 ```
 
 `onRowSelectionChange`함수가 사용된 3개의 메서드만 추려봤다.  
-(`getInitialState`, `getDefaultOptions`, `createTable`)
-
 먼저 getDefaultOptions가 보이는데, onRowSelectionChange에 `makeStateUpdater`가 보인다.  
 무엇일까..?
 
@@ -426,7 +424,7 @@ value가 존재하는 상태에서 각 분기별로, multiSelect가 가능한지
 
 ---
 
-### table.setRowSelection
+### createRow
 
 궁금증은 해결되었다. onRowSelectionChange는 table의 setRowSelection이었다.  
 그럼, table의 setRowSelection은 어디서 만들어질까?
@@ -507,21 +505,88 @@ createTable의 매개변수인 updater는 위에서 확인했던 콜백함수와
 
 정리해보면 다음과 같다.
 
-- Tanstack-table의 onRowSelectionChange는 결국 table이 생성될 때 만들어진, setRowSelection이었다.  
-  그리고 이는 tanstack-table core에 정의된 createTable이 생성될 때 만들어 진 것이다.
+Tanstack-table의 onRowSelectionChange는 결국 table이 생성될 때 만들어진, setRowSelection이었다.  
+그리고 이는 tanstack-table core에 정의된 createTable이 생성될 때 만들어 진 것이다.
 
-- 생성된 table 인스턴스는 useReactTable의 tableRef를 통해 주입된다.
+생성된 table 인스턴스는 useReactTable의 tableRef를 통해 주입된다.  
+이때 core에서 정의된 부분 중, 사용자가 변경하고 싶은 부분은 options를 통해 반영된다.
 
-정리해보니 많지 않은 내용인데, 내부코드를 모르는 상태에서 하나씩 살펴보다보니 오래 걸린 것 같다.
+나의 경우는 onRowSelectionChange를 변경하고 싶었으니, 이때 반영되는 것이다.
 
-정리하다가, 너무 길어지는 것 같아서, 조금 맥을 끊고 싶기도 했다.  
-사실 한 가지 남은 의문이 더 있다.
+<br/>
 
-바로 createRow는 어디서 실행되는가인데, 어디서 실행되었기 때문에 row.toggleSelection이 생성되었을 것이다.  
-그리고 이를 통해 사용자가 체크박스를 체크 or 해지 할 수 있으며, row.toggleSelection이 호출되는 것이다.
+두 번째로 createRow는 어떻게 실행될까?  
+일단, 위 RowSelection createTable을 살펴봤는데, 조금만 내려보면 createRow가 존재한다.
 
-이후엔 오늘 살펴본 내용과 같다.  
-(setRowSelection을 통해 state가 업데이트되고, table내부 state, rowSelection이 업데이트 됨.)
+```TSX
+// https://github.com/TanStack/table/blob/6b4d616dd7c8917616eb4fecaf09dda7030fd115/packages/table-core/src/features/RowSelection.ts#L469
+export const RowSelection: TableFeature = {
+  createRow: <TData extends RowData>(
+    row: Row<TData>,
+    table: Table<TData>
+  ): void => {
+    row.toggleSelected = (value, opts) => {
+      const isSelected = row.getIsSelected()
 
-한 가지 알게 된 내용은, createTable이 실행될 땐 createRow가 생성되지 않았다.  
-이 부분은 다음 글로 찾아봐야할 것 같다.
+      table.setRowSelection(old => {
+        value = typeof value !== 'undefined' ? value : !isSelected
+
+        if (row.getCanSelect() && isSelected === value) {
+          return old
+        }
+
+        const selectedRowIds = { ...old }
+
+        mutateRowIsSelected(
+          selectedRowIds,
+          row.id,
+          value,
+          opts?.selectChildren ?? true,
+          table
+        )
+
+        return selectedRowIds
+      })
+    }
+
+    //...
+  },
+}
+```
+
+createRow가 실행되면, row.toggleSelected가 만들어지는 것을 확인할 수 있다.  
+이는 columns를 주입할 때 정의하게 되는데 체크박스에서 row를 인자로 받아와서, toggleSelected를 호출해서 state를 업데이트한다.  
+그리고 이 state의 업데이트는 rowSelection가 업데이트 되는 것이다.  
+위에서 살펴본, setRowSelection이 onRowselectionChange이니 말이다.
+
+```TSX
+export const columns: ColumnDef<InventoryInspectionResponse['data'][number]>[] =
+  [
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          checked={table.getIsAllPageRowsSelected()}
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="모두 선택"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)} // here!!! 🙋‍♂️
+          aria-label="행 선택"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+  ];
+```
+
+<br/>
+
+자 그럼 진짜 마지막으로, createRow가 언제 생성되는지만 확인하면 될 것 같다.  
+일단, createTable에서는 생성되지 않았다.
+
+<br/>
