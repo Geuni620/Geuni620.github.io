@@ -298,8 +298,7 @@ export const RowSelection: TableFeature = {
 `onRowSelectionChange`함수가 사용된 3개의 메서드만 추려봤다.  
 (`getInitialState`, `getDefaultOptions`, `createTable`)
 
-먼저 getDefaultOptions가 보이는데, onRowSelectionChange에 `makeStateUpdater`가 보인다.  
-무엇일까..?
+먼저 getDefaultOptions가 보이는데, onRowSelectionChange에 `makeStateUpdater`가 보인다.
 
 ```TSX
 // https://github.com/TanStack/table/blob/6b4d616dd7c8917616eb4fecaf09dda7030fd115/packages/table-core/src/utils.ts#L81C1-L85C2
@@ -326,7 +325,7 @@ export function makeStateUpdater<K extends keyof TableState>(
 ```
 
 처음엔 이 부분이 내가 위에서 접한 useReactTable의 onRowSelectionChange라고 생각했다.  
-하지만, 위에서 확인했던, log를 대조해보니, 조금 달랐다.
+하지만, 위에서 확인했던, log를 대조해보니, 확실히 다르다는 것을 알 수 있었다..
 
 ```TSX
   // 다시 확인
@@ -344,8 +343,6 @@ export function makeStateUpdater<K extends keyof TableState>(
     // ...
   }}
 ```
-
-많이 다르다..
 
 <br/>
 
@@ -426,6 +423,16 @@ value가 존재하는 상태에서 각 분기별로, multiSelect가 가능한지
 
 <br/>
 
+그리고 한 가지 특이점이라면, mutateRowIsSelected는 반환값이 없다는 점이다.
+그 이유는 참조값으로 전달된 객체를 직접 변경하기 때문이다. mutateRowIsSelected 함수가 호출될 때, `const selectedRowIds = {...old}`로 얕은 복사가 이뤄지며,
+이로 인해 selectedRowIds는 새로운 객체지만 그 내부 구조는 여전히 참조로 연결되어있다.
+
+mutateRowIsSelected는 이 selectedRowIds 객체를 직접 변경하여, 함수 외부에서도 동일한 객체의 변경이 반영되도록 한다.
+결과적으로, mutateRowIsSelected가 selectedRowIds를 변경하면, 이 변경된 상태가 table.setRowSelection 함수에서 반환되어 최종적으로 새로운 상태가 반영된다.  
+이렇게 복사된 후 직접 변경된 객체가 반환됨으로써 테이블의 선택상태가 업데이트 되는 것이다.
+
+<br/>
+
 ---
 
 ### table.setRowSelection
@@ -459,7 +466,7 @@ export function createTable<TData extends RowData>(
 ```
 
 creatTable을 다시 살펴보면, 함수가 끝나는 마지막쯤 for문이 보인다.  
-table.\_features에 Rowselection도 포함되어있는데, for문을 돌면서, 해당 feature를 꺼내오고, createTable 메서드를 실행시킨다.  
+table.\_features에 RowSelection도 포함되어있는데, for문을 돌면서, 해당 feature를 꺼내오고, createTable 메서드를 실행시킨다.  
 이때 RowSelection의 createTable도 존재한다면, 실행될 것이다.
 
 확인해보니, RowSelection도 createTable이 존재하며 다음과 같다.
@@ -510,7 +517,7 @@ createTable의 매개변수인 updater는 위에서 확인했던 콜백함수와
 정리해보면 다음과 같다.
 
 - Tanstack-table의 onRowSelectionChange는 결국 table이 생성될 때 만들어진, setRowSelection이었다.  
-  그리고 이는 tanstack-table core에 정의된 createTable이 생성될 때 만들어 진 것이다.
+  그리고 이는 tanstack-table core에 정의된 createTable의 호출에 의해 만들어 진 것이다.
 
 - 생성된 table 인스턴스는 useReactTable의 tableRef를 통해 주입된다.
 
@@ -519,11 +526,11 @@ createTable의 매개변수인 updater는 위에서 확인했던 콜백함수와
 정리하다가, 너무 길어지는 것 같아서, 조금 맥을 끊고 싶기도 했다.  
 사실 한 가지 남은 의문이 더 있다.
 
-바로 createRow는 어디서 실행되는가인데, 어디서 실행되었기 때문에 row.toggleSelection이 생성되었을 것이다.  
-그리고 이를 통해 사용자가 체크박스를 체크 or 해지 할 수 있으며, row.toggleSelection이 호출되는 것이다.
+**createRow는 어디서 실행되는가**인데, 어디서 실행되었기 때문에 row.toggleSelected이 생성되었을 것이다.  
+그리고 이를 통해 사용자가 체크박스를 체크 or 해지 할 수 있으며, row.toggleSelected이 호출되는 것이다.
 
 이후엔 오늘 살펴본 내용과 같다.  
 (setRowSelection을 통해 state가 업데이트되고, table내부 state, rowSelection이 업데이트 됨.)
 
 한 가지 알게 된 내용은, createTable이 실행될 땐 createRow가 생성되지 않았다.  
-이 부분은 다음 글로 찾아봐야할 것 같다.
+이 부분은 다음 글에서 찾아봐야할 것 같다.
