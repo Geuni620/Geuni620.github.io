@@ -29,7 +29,7 @@ setRowSelection은 setState인데, 이를 함수로 받아서 사용해야하는
 
 <br/>
 
-나의 경우 최초엔, 다음과 같이 반영했었다.  
+나의 경우 최초엔, 다음과 같이 반영하려했다.  
 단순 rowSelection을 넘겨받아서, setState에 담아주겠거니 생각했다.
 
 ```TSX
@@ -62,7 +62,7 @@ setRowSelection은 setState인데, 이를 함수로 받아서 사용해야하는
     setRowSelection(rowSelection);
   };
 
-  // rowSelection
+  // rowSelection log
   rowSelection (old) => {
       var _opts$selectChildren;
       value = typeof value !== "undefined" ? value : !isSelected;
@@ -98,7 +98,8 @@ onRowSelectionChange?: OnChangeFn<RowSelectionState>
 ### useReactTable
 
 > 사전에 내가 이해하고 있는 부분은,  
-> Tanstack-table은 여러 라이브러리를 지원하는데(react, vue, angular, svelte 등등) core를 주입하는 방식으로 이를 가능하게 한다는 점이다.  
+> Tanstack-table은 여러 라이브러리를 지원하는데(react, vue, angular, svelte 등등) core를 주입하는 방식으로 이를 가능하게 한다는 점이다.
+>
 > 예를들어 core를 구현해놓은 상태에서, 이를 react에 주입하는 것이다.  
 > 그럼 React에서 사용할 수 있는 react-table이 된다.
 
@@ -148,7 +149,7 @@ export function useReactTable<TData extends RowData>(
 }
 ```
 
-위에서 언급했듯이 table-core를 만들어서 useReactTable에 주입하는 과정이다.
+위에서 언급했듯이 table-core를 만들어서 useReactTable에 주입하는 과정이다.  
 그래서 폴더구조도 이게 끝이다.
 
 ```
@@ -186,16 +187,19 @@ tableRef는 상태명 그대로, table의 인스턴스를 관리하는 것이다
   });
 ```
 
-다른 하나는 state인데, tanstack-table의 초기값을 지정하고 싶으면, useReactTable 내 [initialState](https://tanstack.com/table/latest/docs/api/core/table#initialstate)를 통해 state를 등록한다.  
-즉 초기값의 지정과, table 인스턴스 내부에서 관리하는 state로 보인다.
+다른 하나는 state인데, tanstack-table의 초기값을 지정하고 싶으면, useReactTable 내 [initialState](https://tanstack.com/table/latest/docs/api/core/table#initialstate)를 등록할 수 있다. 즉 **초기값의 지정**과, **table 인스턴스 내부에서 관리하는 state**로 보인다.
 
 그리고, options.state도 보이는데, 이게 rowSelection과 같은 외부에서 주입받은 state를 관리하는 것으로 보인다.  
 onStateChange를 살펴보면, updater를 인자로 받아서, setState, options.onStateChange?.(updater)로 넘겨주는데, 각각 **table 내부에서 관리하는 state**와 **사용자에 의해 주입된 외부 state**이다.
 
-table 인스턴스의 state 덕분에 table.getState().rowSelection을 확인하면 state를 확인할 수 있었던 것이다.  
+table 인스턴스의 state 덕분에 `table.getState().rowSelection`을 확인하면 state를 확인할 수 있었던 것이다.  
 cc. [Access Row Selection State](https://tanstack.com/table/v8/docs/guide/row-selection#access-row-selection-state)
 
 <br/>
+
+---
+
+### table-core
 
 나는 계속 rowSelection의 업데이트를 위해 onRowSelectionChange를 살펴보는 중이다.  
 눈에 띄는게, createTable함수이다. 이는 table-core에 정의되어있다.
@@ -289,8 +293,8 @@ export const RowSelection: TableFeature = {
 }
 ```
 
-onRowSelectionChange이 사용된 3개의 메서드만 추려봤다.  
-먼저 getDefaultOptions가 보이는데, onRowSelectionChange에 makeStateUpdater가 보인다.  
+`onRowSelectionChange`함수가 사용된 3개의 메서드만 추려봤다.  
+먼저 getDefaultOptions가 보이는데, onRowSelectionChange에 `makeStateUpdater`가 보인다.  
 무엇일까..?
 
 ```TSX
@@ -321,8 +325,9 @@ export function makeStateUpdater<K extends keyof TableState>(
 하지만, 위에서 확인했던, log를 대조해보니, 조금 달랐다.
 
 ```TSX
+  // 다시 확인
   const onRowSelectionChange = (rowSelection: RowSelectionState) => {
-    console.log('rowSelection', rowSelection);
+    console.log('rowSelection', rowSelection); // log!!!
     setRowSelection(rowSelection);
   };
 
@@ -336,11 +341,14 @@ export function makeStateUpdater<K extends keyof TableState>(
   }}
 ```
 
-많이 다르다.. 뭐지..?
+많이 다르다..
 
 <br/>
 
-로그에 찍힌 부분을 다시 찾아봤다. 아래에 조금 내리니, 브라우저 로그에서 확인했던 코드와 유사한 코드를 발견했다.
+---
+
+로그에 찍힌 부분을 다시 찾아봤다.  
+아래에 조금 내리니, 브라우저 로그에서 확인했던 코드와 유사한 코드를 발견했다.
 
 ```TSX
 // https://github.com/TanStack/table/blob/6b4d616dd7c8917616eb4fecaf09dda7030fd115/packages/table-core/src/features/RowSelection.ts#L473
@@ -378,7 +386,7 @@ export const RowSelection: TableFeature = {
 
 createRow 중, row.toggleSelected가 onRowSelectionChange와 연결된 매개변수의 로그와 동일했다.  
 정확히 `old => {}`부분이 매개변수로 받게 되는 onChangeFn함수로 보인다.  
-즉 onChangeFn은 table의 setRowSelection이었던 것이다.
+즉, onChangeFn은 table의 setRowSelection이었던 것이다.
 
 ```TSX
 // https://github.com/TanStack/table/blob/6b4d616dd7c8917616eb4fecaf09dda7030fd115/packages/table-core/src/features/RowSelection.ts#L547
@@ -391,12 +399,8 @@ const mutateRowIsSelected = <TData extends RowData>(
   ) => {
     const row = table.getRow(id, true)
 
-    // const isGrouped = row.getIsGrouped()
+    //...
 
-    // if ( // TODO: enforce grouping row selection rules
-    //   !isGrouped ||
-    //   (isGrouped && table.options.enableGroupingRowSelection)
-    // ) {
     if (value) {
       if (!row.getCanMultiSelect()) {
         Object.keys(selectedRowIds).forEach(key => delete selectedRowIds[key])
@@ -407,16 +411,52 @@ const mutateRowIsSelected = <TData extends RowData>(
     } else {
       delete selectedRowIds[id]
     }
-    // }
-
   //...
   }
 ```
 
-여기서 value는 boolean, 즉 rowSelection id에 해당하는 체크 유무이다.  
-value가 존재하는 상태에서, 각 분기별로, multiSelect가 가능한지, select가능한지, 만약 value가 없다면 제거하는 것이다.  
+먼저 row가 몇 번째 행인지 id로 찾는다.
+
+value는 boolean타입인데, rowSelection id에 해당하는 체크상태인 것 같다.  
+value가 존재하는 상태에서 각 분기별로, multiSelect가 가능한지, select가능한지, 만약 value가 없다면 제거하는 것이다.  
 (실제 rowSelection에는 선택된 체크박스 ID만 담긴다.)
 
 <br/>
 
+---
+
 ### 정리
+
+즉, 내가 궁금했던 onRowSelectionChange는 table의 setRowSelection이었다.
+하지만 정확히 createRow가 어떻게 실행된 건지, 아직 머리속에 잘 그려지지 않는다.  
+그리고 table의 setRowSelection을 가지고 있는 이유도 어디서부터 추가되었을까?
+
+```TSX
+export function createTable<TData extends RowData>(
+  options: TableOptionsResolved<TData>
+): Table<TData> {
+  //...
+
+  // builtInFeatures에 RowSelection이 포함되어있다.
+  const _features = [...builtInFeatures, ...(options._features ?? [])]
+
+  let table = { _features } as unknown as Table<TData>
+
+  //...
+
+  Object.assign(table, coreInstance)
+
+  // for문을 돌면서, 해당하는 builtInFeatures에 포함된 인스턴스 중 createTable이 있다면 이를 호출하여 테이블 인스턴스에 포함한다.
+  for (let index = 0; index < table._features.length; index++) {
+    const feature = table._features[index]
+    feature?.createTable?.(table)
+  }
+
+  return table
+}
+```
+
+creatTable을 다시 살펴보자. 마지막에 feature 변수로 table의 '\_features를 모두 가져온 뒤, createTable로 실행시킨다.  
+RowSelection의 createTable을 살펴보면, table을 인자로 받은 뒤,
+
+---
