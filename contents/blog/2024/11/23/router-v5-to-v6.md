@@ -1,6 +1,6 @@
 ---
 date: '2024-11-23'
-title: 'react-router v5 → v6로 업그레이드 하기'
+title: 'react-router v5 → v6 업그레이드 하기'
 categories: ['개발']
 summary: '왜 올렸을까? 굳이 올려야했을까?'
 ---
@@ -12,7 +12,7 @@ summary: '왜 올렸을까? 굳이 올려야했을까?'
 
 ## 예시를 만들어보며.
 
-예시를 만들어보다가 routing을 적용했는데 url만 바뀌고 페이지 이동이 이루어지지 않는 현상이 발생했다.  
+예시를 만들어보다가 routing을 적용했는데 URL만 바뀌고 페이지 이동이 이루어지지 않는 현상이 발생했다.  
 무엇이 문제일까 고민하던 찰나, main.tsx에서 **React.StrictMode가 BrowserRouter보다 상위에 존재하면, 페이지 이동이 이루어지지 않는 것**이다.
 
 [react-router #7870](https://github.com/remix-run/react-router/issues/7870#issuecomment-1099884642)
@@ -48,7 +48,7 @@ enableMocking().then(() => {
 > 굳이 올릴 필요 있었을까?
 
 **먼저 기존 소스코드는 일관된 포맷을 제공하고 있지 않았다.**  
-즉, 어떤 페이지는 hooks을 통해 useHistory나 useLocation으로 반영되어있고,  
+즉, 어떤 페이지는 hooks를 통해 useHistory나 useLocation으로 반영되어있고,  
 다른 일부 페이지는 withRouter를 감싸서 props를 통해 받는 형태로 routing을 사용하고 있었다.
 
 <br/>
