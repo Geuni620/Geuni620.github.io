@@ -348,4 +348,5 @@ router.ts에는 PAGES에 대한 정의를 적어두었다.
 ### 참고자료
 
 [React Router v6 튜토리얼](https://velog.io/@velopert/react-router-v6-tutorial)  
-[[Docs]: Protected routes example using createBrowserRouter #10637](https://github.com/remix-run/react-router/issues/10637#issuecomment-1802180978)
+[[Docs]: Protected routes example using createBrowserRouter #10637](https://github.com/remix-run/react-router/issues/10637#issuecomment-1802180978)  
+[How to create a protected route with react-router-dom?](https://stackoverflow.com/questions/66289122/how-to-create-a-protected-route-with-react-router-dom/66289280#66289280)
