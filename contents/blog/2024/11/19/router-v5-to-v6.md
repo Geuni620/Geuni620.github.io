@@ -1,8 +1,8 @@
 ---
-date: '2024-11-19'
+date: '2024-11-23'
 title: 'react-router v5 → v6로 업그레이드 하기'
 categories: ['개발']
-summary: 'react-router v5 → v6로 업그레이드 하기'
+summary: '왜 올렸을까? 굳이 올려야했을까?'
 ---
 
 > 8월즈음, react-router-dom v5에서 v5-compat 버전으로 업데이트를 했고,  
