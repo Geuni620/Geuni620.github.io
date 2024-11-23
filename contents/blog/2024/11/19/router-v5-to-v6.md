@@ -5,7 +5,7 @@ categories: ['개발']
 summary: 'react-router v5 → v6로 업그레이드 하기'
 ---
 
-> 8월쯔음, react-router-dom v5에서 v5-compat 버전으로 업데이트를 했고,  
+> 8월즈음, react-router-dom v5에서 v5-compat 버전으로 업데이트를 했고,  
 > 최근 노드버전을 올리면서, 드디어 v6까지 업데이트 했다.
 
 <br/>
@@ -87,7 +87,7 @@ enableMocking().then(() => {
 
 ## compat v5 → v6
 
-8월쯔음, react-router-dom v5에서 v5-compat 버전으로 업데이트를 했고,  
+8월즈음, react-router-dom v5에서 v5-compat 버전으로 업데이트를 했고,  
 최근 노드버전을 올리면서, 드디어 v6까지 업데이트 했다.
 
 마이그레이션 과정에서 헤맸던 몇 가지만 적어보려고 한다.
@@ -246,13 +246,17 @@ enableMocking().then(() => {
 });
 ```
 
+v6에서는 상대경로를 제공한다.  
+즉, \*를 표시하면 직접 자식이 없더라도, [더 깊은 URL과 일치하도록 설정](https://reactrouter.com/6.28.0/start/faq#how-do-i-nest-routes-deep-in-the-tree)해줄 수 있다.
+
 <br/>
 
 ### Outlet + createBrowserRouter
 
-회사에서 반영된 코드를 확인하고, 글을 쓰는 현재도 헷갈린다.  
-그래서 복잡도를 낮추기 위해 영역을 명확히 구분지어주는게 좋을 것 같다.  
-CRA 기준으로 index.tsx, Vite기준으로 main.tsx에는 다음과 같이 구성하는게 좋을 것 같다.
+현재, 회사에서 반영된 코드를 확인한 뒤 글을 쓰는데도 헷갈린다.  
+그래서 복잡도를 낮추기 위해 영역을 명확히 구분지어주는게 좋을 것 같다.
+
+이 작업을 위해, [Outlet](https://reactrouter.com/6.28.0/components/outlet)과 createBrowserRouter를 사용했다.
 
 <br/>
 
@@ -315,18 +319,33 @@ enableMocking().then(() => {
 router.ts에는 PAGES에 대한 정의를 적어두었다.  
 서버에서 받아오는 auth를 비교해야하기 때문이다.
 
-사실 createBrowserRouter를 사용해서 loader를 통해 서버의 호출로도 확인할 수 있는 것 같다.  
+사실 createBrowserRouter를 사용해서 loader를 통해 auth를 체크할 수 있는 것 같다.  
 하지만 마이그레이션 과정에 loader를 적용하기보단, 만들어진 PAGES를 최대한 사용하고 싶었다.
 
 <br/>
 
 ### 마무리
 
-잘 작성된 문서를 확인했음에도 불구하고, v5에 비해 v6에 많은 사항이 변경되어서 글을 작성하는 현재도 헤맸다.  
-자주 듣는 44bits에서 인프런 CTO 이동욱님이 나와서 했던 이야기가 떠올랐다.
+자료를 찾아보면서 react-router-dom v6가 나온지도 꽤 오랜 시간이 흘렀다는 생각이 들었다.  
+심지어 어제(22일) [react-router v7](https://remix.run/blog/react-router-v7)이 나왔다.
+
+<br/>
+
+나 역시, 비교적 최근에 나온 기술에 더 눈이 가는게 사실이다.  
+하지만, 현재 회사에 존재하는 레거시 코드는, 현재의 나를 과거 당시로 돌려놓아준다. (약 2~3년 전)
+
+항상 글로만 보던, 또는 다른 경험많은 개발자의 '그땐 그랬지'를 직접 체험해볼 수 있는 체험기회를 제공해준다.  
+물론 과거, 그 당시의 사람들보다 훨-씬 많은 해결방법이 존재하지만 말이다.
+
+처음 나는 레거시코드에 [투덜거리곤 했다.](https://geuni620.github.io/blog/2024/5/3/boomerang/)  
+하지만 요즘은 이 모든게 축복받은 경험이라는 생각을 한다.
+
+하나씩 퀘스트를 깨는기분이다.  
+낡은 코드를 정리하고, 불필요한 부분을 제거하며, 마치 내 캐릭터에게 현재 시대에 어울리는 세련된 옷을 입혀주는 기분이다.
 
 <br/>
 
 ### 참고자료
 
+[React Router v6 튜토리얼](https://velog.io/@velopert/react-router-v6-tutorial)  
 [[Docs]: Protected routes example using createBrowserRouter #10637](https://github.com/remix-run/react-router/issues/10637#issuecomment-1802180978)
