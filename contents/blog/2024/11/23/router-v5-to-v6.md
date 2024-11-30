@@ -5,6 +5,8 @@ categories: ['개발']
 summary: '왜 올렸을까? 굳이 올려야했을까?'
 ---
 
+![](./img.webp)
+
 > 8월즈음, react-router-dom v5에서 v5-compat 버전으로 업데이트를 했고,  
 > 최근 노드버전을 올리면서, 드디어 v6까지 업데이트 했다.
 
