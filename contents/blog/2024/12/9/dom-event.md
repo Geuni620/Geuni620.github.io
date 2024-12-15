@@ -368,7 +368,7 @@ onKeydown이나 onKeyup 이벤트는 event.key가 Enter인지 확인한 뒤 분�
 
 <br/>
 
-최근 자주보는 유튜버 판교 뚜벅초 영상 중 [상담내용에 공감가는 게 있어서](https://youtu.be/ctFainw-I_M?si=eqJST2Eo9eKvpJzG&t=394)같이 첨부해둔다.  
+최근 자주보는 유튜버 판교 뚜벅초 영상 중 [상담내용에 공감가는 게 있어서](https://youtu.be/ctFainw-I_M?si=uIxfrnM2oFIwbhAp&t=427)같이 첨부해둔다.  
 히스토리를 알지 못한 채, 소스코드를 파악하고, 좋다 나쁘다를 판단했던 내가 부끄러웠다.  
 그러지 말아야지 하다가도, 막상 마음에 들지 않는 코드가 보이면 스멀스멀 이런 생각들이 올라왔던 것 같다.
 
