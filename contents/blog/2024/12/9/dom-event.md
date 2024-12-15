@@ -1,8 +1,8 @@
 ---
 date: '2024-12-16'
-title: 'onKeyup, onKeydown, onSubmit의 이벤트 실행순서는 어떻게 될까?'
+title: '바코드 스캐너와 이벤트 처리: onKeyup, onKeydown, onSubmit의 실행 순서'
 categories: ['개발']
-summary: ''
+summary: 'onKeyup, onKeydown, onSubmit의 이벤트 실행순서는 어떻게 될까?'
 ---
 
 > 회사에서 급하게 일정이 잡힌 백로그를 개발하게 되었다.  
