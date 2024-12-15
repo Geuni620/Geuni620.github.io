@@ -12,7 +12,7 @@ summary: '왜 올렸을까? 굳이 올려야했을까?'
 결국 일정이 잡혔고, 팀장의 빠른 공유 덕분에 바로 개발에 착수할 수 있었다.  
 요구사항은 간단해보였다.
 
-백로그 요청사항은, 검수페이지로 진입 전, 해당 주문건에 대한 총수량을 모달창으로 띄워달라는 것이었다.  
+백로그 요청사항은, **검수페이지로 진입 전, 해당 주문건에 대한 총수량을 모달창으로 띄워달라는 것**이었다.  
 검수자가 총수량을 인지할 수 있도록 단계를 하나 더 추가하고자 했던 것 같다.
 
 <br/>
@@ -22,9 +22,9 @@ summary: '왜 올렸을까? 굳이 올려야했을까?'
 스캔 후, 인식된 송장번호를 Input창에 입력하고, 확인을 누르면 API가 호출되고 페이지 전환이 이루어진다.
 
 1. 검수스캔페이지 진입
-2. Input창에 Auto Focus
+2. Input창에 Focusing
 3. 바코드 스캐너로 송장번호가 기입된 바코드 스캔
-4. Input창에 리더기로 인식한 송장번호가 입력되고 Enter 동작
+4. Input창에 스캐너를 통해 인식한 송장번호가 입력되고 Enter 동작
    - 바코드스캐너로 송장번호가 기입된 바코드를 스캔하면, Input창에 송장번호가 입력되고, onSubmit 또는 keyboard event가 순차적으로 동작한다.
 5. 페이지 전환
 
@@ -202,7 +202,7 @@ export const ModalComponent: React.FC<ModalComponentProps> = ({
 ```
 
 회사코드를 가져올 수 없어서, 최대한 유사하게 만들었다.  
-해당코드를 살펴보면, 특이점이 보이는데, onKeyup을 사용한다는 점이다.
+해당코드를 살펴보면, 특이점이 보이는데, **onKeyup을 사용한다는 점**이다.
 
 이것 때문에 내가 예상했던 것과 다른 동작으로 고생했다.  
 살펴보자.
@@ -211,14 +211,11 @@ export const ModalComponent: React.FC<ModalComponentProps> = ({
 
 ### onSubmit, onKeyup, onKeyDown
 
-개인적으로 나는, onKeyup이나 onKeydown보다 onSubmit을 선호한다.  
-뭐가 더 좋은지 사실 잘 모르겠다. 단지, onSubmit 이벤트가 이벤트 동작이 명확하다고 생각하기 때문이다.
+> onSubmit: 이벤트는 폼(form)에서 제출(Submit) 동작이 발생할 때 호출  
+> onKeydown: 이벤트는 키보드 키를 누르는 순간 (키가 내려가는 순간)에 발생  
+> onKeyup: 이벤트는 키보드 키를 눌렀다가 뗄 때 (키가 올라가는 순간) 발생
 
-해당 코드는 기존에 작성된 코드에 모달창을 추가하는 구조였다.  
-즉, 기존 소스코드를 조금 수정한 상태에서, `ModalComponent`만 내가 추가로 만든 것이다.
-
-기존의 App.tsx는 onKeyup으로 onSearchList를 호출하고 있었던 것이다.  
-이때 문제가 발생했는데, 다음과 같다.
+백로그 요구사항을 파악하고, 개발하던 중 문제가 발생했다.
 
 ![](./error-status.gif)
 
@@ -227,12 +224,12 @@ export const ModalComponent: React.FC<ModalComponentProps> = ({
 1. 해당 페이지 진입 시, Input에 focusing
 2. 송장번호가 기입된 바코드 스캔
 3. 모달창 노출  
-   3-1. 총 수량과 현재 상품수량이 일치한다면 Enter 바코드 스캔  
-   3-2. 총 수량과 현재 상품수량이 일치하지 않는다면, Close 바코드 스캔
+   3-1. 총 수량과 현재 상품수량이 일치 ✅ → Enter 바코드 스캔  
+   3-2. 총 수량과 현재 상품수량이 일치 ❎ → Close 바코드 스캔
 
 <br/>
 
-Close 바코드를 스캔했다면, 모달창이 닫히고, Input에 focusing 된다.  
+Close 바코드를 스캔했다면, 모달창이 닫히고, Input에 다시 focusing 된다.  
 하지만, 해당 GIF파일을 참고하면, onSearchList 함수를 한번 더 호출하는 것으로 보인다.
 
 ```TSX
@@ -253,7 +250,7 @@ onSubmit이벤트로 인해, 발생한 이벤트 전파가 onKeyup에도 영향�
 ```TSX
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    event.stopPropagation(); // here!
+    event.stopPropagation(); // here 🙋‍♂️!
 
     if (isEnterCommand(scannedValue)) {
       onConfirm();
@@ -273,21 +270,22 @@ onSubmit이벤트로 인해, 발생한 이벤트 전파가 onKeyup에도 영향�
 
 <br/>
 
-사실 살펴보면 원인은 onKeyup 때문이다.  
-이벤트의 순서는 다음과 같다 onKeydown > onSubmit > onKeyup
+알고보니 원인은 **onKeyup 때문이다.**  
+간단히 onKeyup과 onKeydown, onSubmit 이벤트가 동작하는 순서를 테스트해보았다.
 
-그럼 해당 부분은 다음과 같이 동작한다.
+![input태그에 'test'를 입력한 뒤 Enter를 3번 누름](./event-ordering.png)
+
+이벤트의 순서는 다음과 같았다. → **onKeydown > onSubmit > onKeyup**
+
+즉, 다음과 같이 동작하는 것이다.
 
 1. 해당 페이지 진입 시, Input에 focusing
-2. 송장번호가 기입된 바코드 스캔
-   - 위에서도 언급했듯이, 바코드를 스캔하면, onChange + onSubmit 또는 onKeyup, onKeydown이 함께 동작한다.
-   - 즉, onChange를 통해 송장번호가 기입되고, 자동으로 onKeyup, onKeydown, onSubmit이 동작하는 것이다.
-   - 이때 onKeyup, onKeydown, onSubmit 이벤트 중, 해당하는 게 실행된다.
-3. onKeyup이 실행되었을 것이다. 그리고 모달창이 노출된다.
-4. 모달창 노출
-   - 총 수량과 현재 상품수량이 일치한다면 Enter 바코드 스캔
-   - 총 수량과 현재 상품수량이 일치하지 않는다면, Close 바코드 스캔
-5. Close 바코드를 스캔했다면, onSubmit 이벤트가 동작
+2. 송장번호가 기입된 바코드 스캔  
+   이때 onKeyup이 실행되었을 것이다. 그리고 모달창이 노출된다.
+3. 모달창 노출  
+   3-1. 총 수량과 현재 상품수량이 일치 ✅ → Enter 바코드 스캔  
+   3-2. 총 수량과 현재 상품수량이 일치 ❎ → Close 바코드 스캔
+4. Close 바코드를 스캔했다면, onSubmit 이벤트가 동작
    - handleCancel 호출
 
 ```TSX
@@ -308,15 +306,18 @@ onSubmit이벤트로 인해, 발생한 이벤트 전파가 onKeyup에도 영향�
   };
 ```
 
-6. handleCancel이 동작하고 난 뒤, onKeyup이 동작한다.
-   - 즉 Close 바코드 onChange + Enter인데, Enter 과정에서 onSubmit 이후 onKeyup이 도는 것이다.
+5. handleCancel이 실행  
+   값이 초기화(onReset)되고, 모달창이 닫힌다.  
+   모달창이 닫힌 후 Input이 다시 focusing 된다.
 
-즉 onSubmit 이후에 onKeyup이 한번 더 돌고, 이로 인해 모달창이 닫히면서 focusing 되어있단 Input의 onKeyup인 onSearchList가 호출되는 것이다.  
-그로인해, toast.error가 노출된다.
+6. onSubmit 이후에 onKeyup 이벤트가 동작  
+   onKeyup에서 onSearchList가 실행되고, 불필요한 toast.error가 뜬다.
 
 ```TSX
 toast.error('운송장 번호를 입력해주세요.');
 ```
+
+즉, 바코드 스캐너를 통해 onSubmit 이벤트가 동작하고 난 뒤, focusing된 Input에서 onKeyup이벤트가 발생해, toast.error 문구가 노출되는 것이다.
 
 <br/>
 
@@ -327,11 +328,19 @@ onKeydown > onSubmit > onKeyup의 순으로 이벤트 순서가 정의되기 때
 
 <br/>
 
-Enter 바코드를 스캔한 뒤, 페이지 전환이 이루어졌다고 해도, 마찬가지이다.
+Enter 바코드를 스캔한 뒤 페이지 전환이 이루어졌다고 해도, 마찬가지이다.
 
 ![](./success-status.gif)
 
-페이지 전환 이후에도 Input에 focusing 이루어지기 때문이다.
+페이지 전환 이후에도 Input에 focusing 이루어지기 때문이다.  
+동일하게 onKeydown으로 변경하면 해결할 수 있다.
+
+<br/>
+
+물론, onSubmit으로 변경하는 것도 가능하다.  
+개인적으로는 onSubmit이 더 명확한 해결책이라고 생각한다.
+
+onKeydown이나 onKeyup 이벤트는 event.key가 Enter인지 확인한 뒤 분기 처리를 하는 반면, onSubmit 이벤트는 폼이 실제 제출되는 순간에 정확히 동작하기 때문에 onKeyup이나 onKeydown보다 더 직관적이다.
 
 <br/>
 
@@ -340,8 +349,8 @@ Enter 바코드를 스캔한 뒤, 페이지 전환이 이루어졌다고 해도,
 > Input에 focusing을 안 주면 해결되지 않나요?
 
 위 궁금증이 자연스럽게 생길 수 있다.  
-결론부터 말하자면 focusing을 해지할 수 없다.  
-focusing을 없앨 경우 센터 직원들의 불만이 급증할 것이다.
+결론부터 말하자면 **focusing을 해지할 수 없다.**  
+focusing을 없앨 경우, 센터 직원들의 불만이 급증할 것이다.
 
 센터 현장에서는 검수 화면을 띄워둔 채 모든 작업이 바코드 스캐너를 통해 이루어진다.
 
@@ -365,6 +374,12 @@ focusing을 없앨 경우 센터 직원들의 불만이 급증할 것이다.
 회사에선 [Reactstrap](https://reactstrap.github.io/?path=/story/home-installation--page)이라는 [Bootstrap](https://getbootstrap.com/)기반 UI 라이브러리를 사용한다.  
 처음 예시를 만들 때 사용했던 UI라이브러리는, Radix 기반의 ShadcnUI이었다.
 
+<br/>
+
+### 참고자료
+
+[Avoiding useEffect with callback refs](https://tkdodo.eu/blog/avoiding-use-effect-with-callback-refs)
+
 ---
 
     - [ ] event preventdefault () event stoppropagation ()
@@ -372,3 +387,5 @@ focusing을 없앨 경우 센터 직원들의 불만이 급증할 것이다.
     - [ ] useEffect + inputRef focus + requestAnimation
     - [ ] waitFor
     - [ ] react-strap일 때와, 일단 tag를 사용했을 때,
+
+<br/>
