@@ -1,5 +1,5 @@
 ---
-date: '2024-12-16'
+date: '2024-12-19'
 title: '이벤트 처리: onKeyup, onKeydown, onSubmit의 실행 순서'
 categories: ['개발']
 summary: 'onKeyup, onKeydown, onSubmit의 이벤트 실행순서는 어떻게 될까?'
