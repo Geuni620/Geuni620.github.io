@@ -5,6 +5,8 @@ categories: ['개발']
 summary: 'onKeyup, onKeydown, onSubmit의 이벤트 실행순서는 어떻게 될까?'
 ---
 
+![](./img.webp)
+
 > 회사에서 급하게 일정이 잡힌 백로그를 개발하게 되었다.  
 > 이 과정에서 얻은 인사이트를 기록해둔다.
 
