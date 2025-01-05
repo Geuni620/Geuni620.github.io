@@ -367,10 +367,7 @@ QA가 없지만, 기획자, 프론트엔드 개발자가 배포 후 회귀테스
 또, 글을 쓰고 내 글을 잘 읽어보지 못했던 해였다.  
 날 잡고 썼으니 잘 썼겠거니 생각했는데, 우연히 다시 읽어본 날 오타를 발견하고 수정하는 커밋을 올리기도 했다.
 
-2025년엔 자주 글을 쓰고, 기재해보고, 읽어보고, 다듬어가보자..!
-
-**또 한가지만 더 ☝️**  
-Tanstack-query의 메인테이너인 [Tkdodo의 블로그 글](https://tkdodo.eu/blog/practical-react-query)을 보면, update한 날(Last update)을 기재해놓는다. 글을 작성할 당시와 달라진 [변경된 내용](https://tkdodo.eu/blog/practical-react-query#the-defaults-explained)을 꾸준히 관리하는 것이다.
+Tanstack-query의 메인테이너인 [Tkdodo의 블로그 글](https://tkdodo.eu/blog/practical-react-query)을 보면, 글 상단에 Last update을 기재해놓는다. 글을 작성할 당시와 달라진 [변경된 내용](https://tkdodo.eu/blog/practical-react-query#the-defaults-explained)을 꾸준히 관리하는 것이다.
 
 내 글도 소중한 나의 자산이다.  
 꾸준히 관리하고 내가 발행한 글에 책임을 다해야한다. 👊
@@ -386,7 +383,7 @@ Tanstack-query의 메인테이너인 [Tkdodo의 블로그 글](https://tkdodo.eu
 24년 매일 입에 달고 살았던 말이었다.  
 그 만큼 나이가 들어간다는 의미일 것이고, 시간에 무뎌지는 것 같다.
 
-올해는 내가 두려워 하는 일에 **조금 더 마주서보는 내가 되려고 한다.**  
+2025년은 내가 두려워 하는 일에 **조금 더 마주서보는 내가 되려고 한다.**  
 업무를 진행하며 못할 것 같아 피했던 일들, 두려움에 지레 겁먹고 포기했던 일들, 주위의 시선을 지나치게 의식하다 스스로를 갉아먹었던 경험들—이 모든 것들이 떠오른다.
 
 이 모든 두려움은 결국 익숙하지 않음의 차이에서 비롯된 것일 뿐이다. 내가 지금 잘하지 못하는 것은 내 능력이 부족해서가 아니라 단지 익숙하지 않았기 때문이다.
