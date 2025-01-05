@@ -2,7 +2,7 @@
 date: '2025-01-05'
 title: '2024년 회고'
 categories: ['일상']
-summary: '-'
+summary: '두려워하는 일에 마주서기'
 ---
 
 ![2025년 Hi](./2025-hi.png)
