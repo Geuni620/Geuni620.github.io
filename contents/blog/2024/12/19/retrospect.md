@@ -1,5 +1,5 @@
 ---
-date: '2024-12-19'
+date: '2025-01-05'
 title: '2024년 회고'
 categories: ['일상']
 summary: '-'
@@ -7,6 +7,8 @@ summary: '-'
 
 ![2025년 Hi](./2025-hi.png)
 
+> [2022년 회고](https://geuni620.github.io/blog/2023/1/12/2022%20%ED%9A%8C%EA%B3%A0/)  
+> [2023년 회고](https://geuni620.github.io/blog/2024/1/7/retrospect/)  
 > 올해도 어김없이.
 
 # 1. 이직
