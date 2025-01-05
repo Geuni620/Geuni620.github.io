@@ -53,3 +53,13 @@ script태그의 src 어트리뷰트에 정의된 자바스크립트 파일을 �
 
 async와 defer는 **둘다 비동기적으로 동시에 진행**된다.  
 단, 둘의 차이는 자바스크립트의 실행 시점의 차이가 있다.
+
+<br/>
+
+### 참고자료
+
+[defer, async 스크립트](https://ko.javascript.info/script-async-defer)
+[왜 Async 보다는 Defer를 써야할까](https://yceffort.kr/2020/10/defer-than-async)
+[script 요소의 defer과 async 속성을 통한 효과적인 스크립트 로딩](https://www.daleseo.com/js-script-defer-async/)
+[프론트엔드 강사가 알려주는 async & defer](https://velog.io/@hbin12212/%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%94%EB%93%9C-%EA%B0%95%EC%82%AC%EA%B0%80-%EC%95%8C%EB%A0%A4%EC%A3%BC%EB%8A%94-async-defer)
+[스크립트의 실행 시점을 조절하는 Async와 Defer 속성](https://wormwlrm.github.io/2021/03/01/Async-Defer-Attributes-of-Script-Tag.html)
