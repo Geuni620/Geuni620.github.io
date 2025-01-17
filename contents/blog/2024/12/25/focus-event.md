@@ -168,9 +168,23 @@ export const ModalComponent: React.FC<ModalComponentProps> = ({
 하지만 궁금하다.  
 왜 requestAnimationFrame을 적용해야하는걸까..? 🤔
 
+<br/>
+
 ### 3. requestAnimationFrame이 뭐지?
 
-먼저 requestAnimationFrame이 무엇인지부터 살펴보자.
+<small>블로그 글의 주된 내용이 아니라 간략히 설명만 먹어놓을게요.</small>
+
+[requestAnimationFrame](https://developer.mozilla.org/ko/docs/Web/API/Window/requestAnimationFrame)은 브라우저 렌더링 시, 리페인트 바로 전에 브라우저가 애니메이션을 업데이트를 지정한 함수를 호출하도록 요청한다.
+
+특이점은 자바스크립트 이벤트 루프를 살펴봤을 때, task queue의 종류가 크게 3가지 있다는 점이고,  
+이 중에 requestAnimation이 포함되어있다는 것이다.
+
+크게 종류가 3가지 존재하고, 각각의 우선순위도 다르다.  
+Microtask queue > Animation Frames > Task queue 순이다.
+
+그럼, requestAnimation이 아니라, microtask queue와 Task queue에 해당하는 함수로 감쌌을 때도 동일하게 focus가 유지될까?
+
+### 4. react-strap의 내부는 어떻게 동작하길래?
 
 <br/>
 
