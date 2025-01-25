@@ -8,9 +8,11 @@ summary: 'focus 이벤트 처리 방법'
 [이전 글](https://geuni620.github.io/blog/2024/12/9/dom-event/)에서 한 가지 문제가 더 존재했다.  
 바로 focus(이하 포커스)에 관련된 이벤트처리이다.
 
-물류센터의 사용자들은 대체로 바코드 스캐너를 사용한다고 했다.  
-키보드와 마우스가 가까운 위치에 놓여있지 않다.  
-즉, Input에 포커스 되어있는 상태를 유지하는게 중요했다.
+물류센터의 사용자들은 키보드와 마우스를 사용하지 않는다고 했다.  
+대신, 바코드 스캐너에 의존한다.
+
+나의 역할은 최대한 사용자들이 바코드스캐너로만 필요한 모든 동작을 할 수 있도록 지원하는 일이다.  
+대표적인 것 중 하나가 Input에 포커스 되어있는 상태를 유지하는 것이다.
 
 <br/>
 
@@ -56,7 +58,7 @@ export const ModalComponent: React.FC<ModalComponentProps> = ({
 
 ```
 
-useEFfect의 dependency array로 isModalOpen을 추가한 뒤, 모달이 닫혔을 때도 포커스가 유지되도록 적용했다.
+useEffect의 dependency array로 isModalOpen을 추가한 뒤, 모달이 닫혔을 때도 포커스가 유지되도록 적용했다.
 
 ![](./effect-ref-normal.gif)
 
@@ -163,8 +165,6 @@ export const ModalComponent: React.FC<ModalComponentProps> = ({
 };
 ```
 
-<br/>
-
 하지만 궁금하다.  
 왜 requestAnimationFrame을 적용해야하는걸까..? 🤔
 
@@ -190,8 +190,9 @@ useEffect(() => {
 ```
 
 눈치빠른 사람들은 알겠지만, useEffect 실행 시, 사용된 함수들은 모두 Web API이다.  
-즉, 이 모든 함수는 자바스크립트 런타임 중, **Call Stack에서 즉시 처리할 수 없는 동작(=스택)**들이다.  
-Task Queue, Microtask Queue, Animation Queue를 통해 Call Stack이 비었는지 이벤트루프가 확인한 후, 해당 Queue에서 사용 가능한 첫 번째 작업들을 호출 스택으로 이동해서 실행하는 것이다. 핵심은 Call Stack이 비워져야 Queue에 있는 스택들이 호출스택으로 이동하는 것이다.
+즉, 이 모든 함수는 자바스크립트 런타임 중, **Call Stack에서 즉시 처리할 수 없는 동작**이다.
+
+Task Queue, Microtask Queue, Animation Queue를 통해 Call Stack(콜 스택)이 비었는지 이벤트루프가 확인한 후, 해당 Queue에서 사용 가능한 첫 번째 작업들을 콜 스택으로 이동해서 실행하는 것이다. 핵심은 콜 스택이 비워져야 Queue에 있는 스택들이 콜 스택으로 이동하는 것이다.
 
 - Promise: Microtaks Queue
 - setTimeout: Task Queue
