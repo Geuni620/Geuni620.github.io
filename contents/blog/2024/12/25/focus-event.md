@@ -1,5 +1,5 @@
 ---
-date: '2024-12-25'
+date: '2025-01-26'
 title: 'focus 이벤트 처리'
 categories: ['개발']
 summary: 'focus 이벤트 처리 방법'
