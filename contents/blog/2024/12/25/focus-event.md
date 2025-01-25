@@ -170,21 +170,39 @@ export const ModalComponent: React.FC<ModalComponentProps> = ({
 
 <br/>
 
-### 3. requestAnimationFrame이 뭐지?
+사실 requestAnimationFrame만 가능한 것은 아니다.  
+setTimeout도 가능하고, Promise를 사용해도 가능하다.
 
-<small>블로그 글의 주된 내용이 아니라 간략히 설명만 먹어놓을게요.</small>
+```TSX
+// # promise → ✅
+useEffect(() => {
+  Promise.resolve().then(() => {
+    inputRef.current?.focus();
+  });
+}, []);
 
-[requestAnimationFrame](https://developer.mozilla.org/ko/docs/Web/API/Window/requestAnimationFrame)은 브라우저 렌더링 시, 리페인트 바로 전에 브라우저가 애니메이션을 업데이트를 지정한 함수를 호출하도록 요청한다.
+// # setTimeout → ✅
+useEffect(() => {
+  setTimeout(() => {
+    inputRef.current?.focus();
+  }, 0);
+}, []);
+```
 
-특이점은 자바스크립트 이벤트 루프를 살펴봤을 때, task queue의 종류가 크게 3가지 있다는 점이고,  
-이 중에 requestAnimation이 포함되어있다는 것이다.
+눈치빠른 사람들은 알겠지만, useEffect 실행 시, 사용된 함수들은 모두 Web API이다.  
+즉, 이 모든 함수는 자바스크립트 런타임 중, **Call Stack에서 즉시 처리할 수 없는 동작(=스택)**들이다.  
+Task Queue, Microtask Queue, Animation Queue를 통해 Call Stack이 비었는지 이벤트루프가 확인한 후, 해당 Queue에서 사용 가능한 첫 번째 작업들을 호출 스택으로 이동해서 실행하는 것이다. 핵심은 Call Stack이 비워져야 Queue에 있는 스택들이 호출스택으로 이동하는 것이다.
 
-크게 종류가 3가지 존재하고, 각각의 우선순위도 다르다.  
-Microtask queue > Animation Frames > Task queue 순이다.
+- Promise: Microtaks Queue
+- setTimeout: Task Queue
+- requestAnimationFrame: Animation Frame Queue
 
-그럼, requestAnimation이 아니라, microtask queue와 Task queue에 해당하는 함수로 감쌌을 때도 동일하게 focus가 유지될까?
+<br/>
 
 ### 4. react-strap의 내부는 어떻게 동작하길래?
+
+react-strap은 어떤 동작들이 있길래, useEffect만으로 실행이 안되는걸까?  
+궁금해서 chatGPT에게 간략히 요약을 부탁해봤다.
 
 <br/>
 
