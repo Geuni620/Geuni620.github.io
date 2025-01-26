@@ -364,7 +364,7 @@ export const ReactStrapModal: React.FC<ModalComponentProps> = ({
 
 총 4 곳에 반영했다.
 
-- useEffct → focus ❌
+- useEffect → focus ❌
 - callback ref → focus ❌
 - useEffect + requestAnimation → focus ✅
 - onOpened → focus ✅
@@ -380,7 +380,7 @@ export const ReactStrapModal: React.FC<ModalComponentProps> = ({
 
 <br/>
 
-![useEffct → focus ❌](./useEffect.png)
+![useEffect → focus ❌](./useEffect.png)
 
 useEffect를 통한 focus를 시도했지만, Modal이 아직 렌더링 중이라, ref는 null이었을 것이다. → ❌
 
@@ -419,7 +419,7 @@ callback ref가 실행되었지만, Modal은 여전히 렌더링 중이다.
 
 먼저 나는 console.time을 총 4곳에 반영했었고, focus가 적용된 여부에 대해 기록해두었다.
 
-- useEffct → focus ❌
+- useEffect → focus ❌
 - callback ref → focus ❌
 - useEffect + requestAnimation → focus ✅
 - onOpened → focus ✅
