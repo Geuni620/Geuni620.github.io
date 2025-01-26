@@ -112,7 +112,7 @@ export const ModalComponent: React.FC<ModalComponentProps> = ({
 
 <br/>
 
-### 2. useEffect + Ref + requestAnimation
+### 2. useEffect + Ref + requestAnimationFrame
 
 이전 글에서도 언급했지만, 회사에서 급하게 일정이 잡힌 백로그라 원인을 파악하고 하나씩 개선하기보단, 일단 동작하도록 만드는게 우선되었다.  
 그래서 여러 방법을 찾아보다가, chatGPT에서 언급해준 [requestAnimationFrame](https://developer.mozilla.org/ko/docs/Web/API/Window/requestAnimationFrame)을 적용하니 원하는대로 동작했다.
@@ -131,7 +131,7 @@ export const ModalComponent: React.FC<ModalComponentProps> = ({
 }) => {
 
   useEffect(() => {
-    // requestAnimation
+    // requestAnimationFrame 🙋‍♂️
     requestAnimationFrame(() => {
       inputRef.current?.focus();
     });
@@ -187,10 +187,10 @@ useEffect(() => {
 }, []);
 ```
 
-눈치빠른 사람들은 알겠지만, useEffect 실행 시, 사용된 함수들은 모두 Web API이다.  
-즉, 이 모든 함수는 자바스크립트 런타임 중, **Call Stack에서 즉시 처리할 수 없는 동작**이다.
+눈치빠른 사람들은 알겠지만, useEffect 실행 시, 사용된 함수들은 **모두 Web API이다.**  
+즉, 이 모든 함수는 자바스크립트 런타임 중, **Call Stack(이하 콜 스택)에서 즉시 처리할 수 없는 동작**이다.
 
-Task Queue, Microtask Queue, Animation Queue를 통해 Call Stack(콜 스택)이 비었는지 이벤트루프가 확인한 후, 해당 Queue에서 사용 가능한 첫 번째 작업들을 콜 스택으로 이동해서 실행하는 것이다. 핵심은 콜 스택이 비워져야 Queue에 있는 스택들이 콜 스택으로 이동하는 것이다.
+Task Queue, Microtask Queue, Animation Queue를 통해 콜 스택이 비었는지 이벤트루프가 확인한 후, 해당 Queue에서 사용 가능한 첫 번째 작업들을 콜 스택으로 이동해서 실행하는 것이다. 핵심은 콜 스택이 비워져야 Queue에 있는 스택들이 콜 스택으로 이동하는 것이다.
 
 - Promise: Microtaks Queue
 - setTimeout: Task Queue
@@ -200,7 +200,7 @@ Task Queue, Microtask Queue, Animation Queue를 통해 Call Stack(콜 스택)이
 
 ### 3. 원인 분석 & 추측
 
-사실 react-strap에서는 useEffect를 통한 focus를 적용하는 방법이 아닌, 권장하는 방법이 존재한다.  
+사실 reactstrap에서는 useEffect를 통한 focus를 적용하는 방법이 아닌, 권장하는 방법이 존재한다.  
 바로 **onOpened 메서드를 사용하는 것**이다.
 
 ```TSX
@@ -220,8 +220,7 @@ Modal이 모두 렌더링 된 이후에 focus를 적용하면 되는 것이다.
 아래는 reactstrap 모달컴포넌트 소스코드 일부이다.
 
 ```JS
-//...
-
+// https://github.com/reactstrap/reactstrap/blob/090bc1eeb19bcc269970151d330c6bc03f731635/src/Modal.js#L113
 class Modal extends React.Component {
   constructor(props) {
     //..
@@ -409,6 +408,124 @@ callback ref가 실행되었지만, Modal은 여전히 rendering 중이다.
 
 <br/>
 
+### 5. 잘못된 전제를 수정하기
+
+위 **4. performance + console.time**에서 한 가지 잘못된 전제를 수정해야한다.  
+이 내용은 [Avoiding useEffect with callback refs](https://tkdodo.eu/blog/avoiding-use-effect-with-callback-refs) 글을 읽고 깨닫게 된 사실이다.
+
+<br/>
+
+먼저 나는 console.time을 총 4곳에 반영했었고, 포커스가 적용된 여부에 대해 기록해두었다.
+
+- useEffct → focus ❌
+- useEffect + requestAnimation → focus ✅
+- onOpened → focus ✅
+- callback ref → focus ❌
+
+<br/>
+
+곰곰이 생각해보면, Modal Rendering이라고 표기했던 것은 onSearchList 함수가 호출된 이후 실행되는 일련의 동작들을 의미하며, 이를 통칭하여 Modal Rendering이라고 명명하였던 것이다.
+
+그럼, **Modal Rendering 도중에 포커스를 DOM에 반영하는 로직이 포함되면 무조건 반영되지 않을 것일까?**
+
+포커스를 반영하려는 ref가 input DOM 요소를 참조하게 될 때, 즉 요소가 생성되고 DOM에 삽입된 시점을 정확히 파악하여 focus를 설정해야한다.
+
+**위 예시에서 "callback ref"인 경우**이다.
+
+- callback ref → focus ❌
+
+하지만 callback ref의 경우 포커스가 반영되지 않았다. 왜 일까..? 🤔  
+고민하던 찰나, **내부코드에서 autoFocus가 default true로 되어있는 것을 확인**했다.
+
+<br/>
+
+```TSX
+// https://github.com/reactstrap/reactstrap/blob/090bc1eeb19bcc269970151d330c6bc03f731635/src/Modal.js#L139
+componentDidMount() {
+  if (isOpen) {
+    this.init();
+    this.setState({ isOpen: true });
+    if (autoFocus) {
+      this.setFocus();
+    }
+  }
+  // ...
+}
+```
+
+reactstrap의 모달은 컴포넌트 마운트 시, autoFocus가 true일 경우 setFocus 메서드를 호출해서 포커스를 설정한다.
+
+```TSX
+// https://github.com/reactstrap/reactstrap/blob/090bc1eeb19bcc269970151d330c6bc03f731635/src/Modal.js#L295
+setFocus() {
+  if (
+    this._dialog &&
+    this._dialog.parentNode &&
+    typeof this._dialog.parentNode.focus === 'function'
+  ) {
+    this._dialog.parentNode.focus();
+  }
+}
+```
+
+setFocus 모달 다이얼로그의 부모 요소에 포커스를 설정한다.  
+참고로 dialog는 Modal 대화상자 컨테이너와 같다.
+
+![](./dialog-modal.png)
+
+this.\_dialog.parentNode의 focus를 맞추니, 이미지에서 확인할 수 있는 modal 자체를 focus로 잡는다.  
+즉 **modal-dialog의 부모를 포커스로 잡는 것**이다.
+
+```TSX
+<div class="modal fade show" ...>
+```
+
+혹시 그럼 autoFocus 때문에 input의 callback ref focus가 잡히지 않는걸까..? 🤔
+
+autoFocus를 false로 둔 상태에서 동일하게 동작시켜보았다.  
+**아..!☝️ focus가 잡힌다.**
+
+- autoFocus = false + callback ref → focus ✅
+
+<br/>
+
+### 6. 그럼 어떻게?
+
+autoFocus를 false로 둔 상태에서, callback ref를 사용하면 focus가 잡힌다는 사실을 알았다.  
+그럼 autoFocus 때문에 callback ref의 focus가 덮혔던걸까? 무시된건가? 어떻게 확인할 수 있을까?
+
+조금 무식한 방법이지만, reactstrap modal에 필요한 컴포넌트를 그대로 복사해서 동일하게 구성했다.  
+그리고 해당 내부에 필요한 요소에 console.time을 추가했다.
+
+즉 node_modules의 파일에 존재하는 소스코드가 아닌, 내 로컬에 내려받은 reactstrap 모달로 테스트해보았다.
+
+![autoFocus: true](./active-autofucus.png)
+
+callback-ref가 실행되고 난 뒤, setFocus가 잡힌다.  
+즉, callback-ref가 setFocus에 의해 무시 & 덮혀버리는게 맞았다.
+
+![autoFocus: false](./inactive-autofocus.png)
+
+당연한 이야기겠지만, autoFocus false로 지정한 뒤, performance 탭을 이용해 확인해보면, stFocus는 잡히지 않는다.
+
+<br/>
+
 ### 마무리
 
+리액트는 여전히 어렵다.  
+리액트에서 브라우저로 이어지는 렌더링 전체과정을 이해하고 있다고 생각했는데, 조금만 복잡해져도 헤매기 일쑤다.
+
+<br/>
+
 ### 참고자료
+
+[JavaScript Visualized - Event Loop, Web APIs, (Micro)task Queue](https://youtu.be/eiC58R16hb8?si=uhK2Cn4Tya5sFyhE)  
+[웹 애니메이션 최적화 requestAnimationFrame 가이드](https://inpa.tistory.com/entry/%F0%9F%8C%90-requestAnimationFrame-%EA%B0%80%EC%9D%B4%EB%93%9C)  
+[리액트의 리렌더링 조건을 더 쉽게 이해해보기](https://velog.io/@mogulist/understanding-react-rerender-easily)
+
+<br/>
+
+callback ref를 통해서 → ❌
+자식 useEFfect → ✅
+opened → ✅
+부모에서 useEffect → ❌
