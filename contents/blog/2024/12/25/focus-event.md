@@ -5,6 +5,8 @@ categories: ['개발']
 summary: 'performance tab을 이용한 렌더링 시점 분석하기'
 ---
 
+![](./img.webp)
+
 [이전 글](https://geuni620.github.io/blog/2024/12/9/dom-event/)에서 한 가지 문제가 더 존재했다.  
 바로 focus(이하 포커스)에 관련된 이벤트처리이다.
 
