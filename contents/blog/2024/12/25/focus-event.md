@@ -363,46 +363,46 @@ export const ReactStrapModal: React.FC<ModalComponentProps> = ({
 총 4 곳에 반영했다.
 
 - useEffct → focus ❌
+- callback ref → focus ❌
 - useEffect + requestAnimation → focus ✅
 - onOpened → focus ✅
-- callback ref → focus ❌
 
 단독으로 적용했을 때, useEffect + requestAnimationFrame와 onOpened는 focus가 잘 반영되고,  
 나머지 useEffect만 사용했을 때와, callback ref는 focus가 반영되지 않았다.
 
 <br/>
 
-![](./onSearchList-rendering.png)
+![onSearchList → modal rendering](./onSearchList-rendering.png)
 
 해당 부분은 onSearchList 함수를 호출하고 난 뒤, modal 렌더링이 시작되는 부분이다.
 
 <br/>
 
-![](./useEffect.png)
+![useEffct → focus ❌](./useEffect.png)
 
 useEffect를 통한 focus를 시도했지만, Modal이 아직 렌더링 중이라, ref는 null이었을 것이다. → ❌
 
 <br/>
 
-![](./ref-rendering.png)
+![callback ref → focus ❌](./ref-rendering.png)
 
 callback ref가 실행되었지만, Modal은 여전히 rendering 중이다.
 
 <br/>
 
-![](./modal-render-end.png)
+![rendered modal](./modal-render-end.png)
 
 드디어 모달이 모두 그려졌다.
 
 <br/>
 
-![](./requestAnimation-focus.png)
+![useEffect + requestAnimation → focus ✅](./requestAnimation-focus.png)
 
 콜 스택이 빈 뒤에 이벤트 루프가 requstAnimationFrame을 콜 스택에 반영했을 것이다.
 
 <br/>
 
-![](./opened.png)
+![onOpened → focus ✅](./opened.png)
 
 참고로 onOpened는 가장 마지막에 실행되었다.
 
@@ -418,9 +418,9 @@ callback ref가 실행되었지만, Modal은 여전히 rendering 중이다.
 먼저 나는 console.time을 총 4곳에 반영했었고, 포커스가 적용된 여부에 대해 기록해두었다.
 
 - useEffct → focus ❌
+- callback ref → focus ❌
 - useEffect + requestAnimation → focus ✅
 - onOpened → focus ✅
-- callback ref → focus ❌
 
 <br/>
 
@@ -480,7 +480,7 @@ this.\_dialog.parentNode의 focus를 맞추니, 이미지에서 확인할 수 �
 <div class="modal fade show" ...>
 ```
 
-혹시 그럼 autoFocus 때문에 input의 callback ref focus가 잡히지 않는걸까..? 🤔
+혹시 그럼 **autoFocus 때문에 input의 callback ref focus가 잡히지 않는걸까..?** 🤔
 
 autoFocus를 false로 둔 상태에서 동일하게 동작시켜보았다.  
 **아..!☝️ focus가 잡힌다.**
@@ -492,10 +492,10 @@ autoFocus를 false로 둔 상태에서 동일하게 동작시켜보았다.
 ### 6. 그럼 어떻게?
 
 autoFocus를 false로 둔 상태에서, callback ref를 사용하면 focus가 잡힌다는 사실을 알았다.  
-그럼 autoFocus 때문에 callback ref의 focus가 덮혔던걸까? 무시된건가? 어떻게 확인할 수 있을까?
+그럼 autoFocus 때문에 callback ref의 focus가 덮혔던걸까? 무시된건가? 또, 이를 어떻게 확인할 수 있을까?
 
-조금 무식한 방법이지만, reactstrap modal에 필요한 컴포넌트를 그대로 복사해서 동일하게 구성했다.  
-그리고 해당 내부에 필요한 요소에 console.time을 추가했다.
+조금 무모한 방법이지만, **reactstrap modal에 필요한 컴포넌트를 그대로 복사해서 동일하게 구성**했다.  
+이후 내부에 필요한 요소에 console.time을 추가했다.
 
 즉 node_modules의 파일에 존재하는 소스코드가 아닌, 내 로컬에 내려받은 reactstrap 모달로 테스트해보았다.
 
@@ -506,7 +506,7 @@ callback-ref가 실행되고 난 뒤, setFocus가 잡힌다.
 
 ![autoFocus: false](./inactive-autofocus.png)
 
-당연한 이야기겠지만, autoFocus false로 지정한 뒤, performance 탭을 이용해 확인해보면, stFocus는 잡히지 않는다.
+당연한 이야기겠지만, autoFocus false로 지정한 뒤, performance 탭을 이용해 확인해보면, setFocus는 잡히지 않는다.
 
 <br/>
 
