@@ -1,8 +1,8 @@
 ---
 date: '2025-01-26'
-title: 'focus 이벤트 처리'
+title: 'ReactStrap 모달 focus 이벤트'
 categories: ['개발']
-summary: 'focus 이벤트 처리 방법'
+summary: 'performance tab을 이용한 렌더링 시점 분석하기'
 ---
 
 [이전 글](https://geuni620.github.io/blog/2024/12/9/dom-event/)에서 한 가지 문제가 더 존재했다.  
@@ -43,7 +43,7 @@ export const ModalComponent: React.FC<ModalComponentProps> = ({
   onReset,
   totalCount,
 }) => {
-
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -513,7 +513,38 @@ callback-ref가 실행되고 난 뒤, setFocus가 잡힌다.
 ### 마무리
 
 리액트는 여전히 어렵다.  
-리액트에서 브라우저로 이어지는 렌더링 전체과정을 이해하고 있다고 생각했는데, 조금만 복잡해져도 헤매기 일쑤다.
+리액트에서 브라우저로 이어지는 렌더링 전체 과정을 이해하고 있다고 생각했는데, 조금만 복잡해져도 헤매기 일쑤다.
+
+이 모든 근원은 useEffect가 아니었나싶다.  
+결국 **callback ref를 통해 처리하는게 명확한 방법**이었던 것 같다.  
+DOM이 반영될 때의 여부를 명확히 파악할 수 있으니 말이다.
+
+사실 이 글을 작성하며, 여러 방법에 대해 고민했다.  
+Portal이 문제인건지, Transition의 지연때문인지, 아니면 다른 요인이 있는건지,  
+requestAnimation이나 setTimout으로 가능은 하지만, 결국 useEffect를 사용해야하는게 마음에 들지 않았다.
+
+onOpened 메서드를 사용하면 문제를 해결할 수는 있지만, 다른 방법이 왜 안되는지 모르는 상황이 답답해서 이렇게까지 확인해보고 싶었던 것 같다.
+
+또, 이를 눈으로 볼 수 없는 상황이 답답했다.  
+테스트코드를 통해 focus의 반영여부를 DOM에서 확인할 수 있겠지만, 난 항상 순서가 궁금하다.  
+그 시점이 눈으로 보이지 않는 상황이 답답했던 것 같다.
+
+개발자도구를 열어서 이것저것 눌러보다가, performance 탭으로 렌더링을 순서에 맞게 시각적으로 보여주는 것을 확인한 뒤, performance Main의 각 Task를 하나씩 살펴보기도 했다. 하지만 이 많은 것을 모두 하나씩 확인하며 시점 비교 & 체크하기엔 시간이 너무 오래걸렸다..
+
+신기하게 모르면 모를수록, 고민이 깊어지면 깊어질수록, 이 주제로 글을 쓰는 빈도가 줄어들었다.  
+'시간이 허락하면..' '더 많은 시간이 주어진다면..'과 같은 핑계로 멀리하게 되더라.  
+사실은 복잡한 문제를 머리를 굴려가며 부딪혀보기 겁났던 것 같기도하다.
+
+머리가 못따라가니 물어보기 급급했다.  
+이 글을 쓰며 chatGPT, claude, gemini 그리고 최근 떠오르는 deepseek까지 모두 사용했다.  
+이 중에 가장 도움이 되었던 건, chatGPT의 o1 모델이 아니었나 싶다.  
+console.time을 제안해준 것도 chatGPT이다.  
+<small>claude와 함께 reactstrap을 벤치마킹해서 같이 구현해보던 중, 원인을 파악했다고 생각했는데 claude가 말을 바꾼 적도 있다. 👊</small>
+
+이러나 저러나, 겉으로 보이는 현상 너머의 본질을 파악하는 것의 중요성을 알게되었다.  
+단순히 문제를 해결하는 것에 그치지 않고 '왜'라는 질문을 끊임없이 던져봤던 시간이었다.
+
+이제는 오랫동안 궁금해했지만 어려워서 미뤄뒀던 리액트~브라우저 렌더링 과정에 대해서 글을 쓸 수 있을 것 같다.
 
 <br/>
 
@@ -521,11 +552,5 @@ callback-ref가 실행되고 난 뒤, setFocus가 잡힌다.
 
 [JavaScript Visualized - Event Loop, Web APIs, (Micro)task Queue](https://youtu.be/eiC58R16hb8?si=uhK2Cn4Tya5sFyhE)  
 [웹 애니메이션 최적화 requestAnimationFrame 가이드](https://inpa.tistory.com/entry/%F0%9F%8C%90-requestAnimationFrame-%EA%B0%80%EC%9D%B4%EB%93%9C)  
-[리액트의 리렌더링 조건을 더 쉽게 이해해보기](https://velog.io/@mogulist/understanding-react-rerender-easily)
-
-<br/>
-
-callback ref를 통해서 → ❌
-자식 useEFfect → ✅
-opened → ✅
-부모에서 useEffect → ❌
+[리액트의 리렌더링 조건을 더 쉽게 이해해보기](https://velog.io/@mogulist/understanding-react-rerender-easily)  
+[Timeline of a React Component With Hooks](https://julesblom.com/writing/react-hook-component-timeline)
