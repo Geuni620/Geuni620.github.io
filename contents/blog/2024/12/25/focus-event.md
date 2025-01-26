@@ -1,8 +1,8 @@
 ---
 date: '2025-01-26'
-title: 'ReactStrap 모달 focus 이벤트'
+title: 'ReactStrap 모달에서의 focus 문제와 이벤트 반영 시점 분석'
 categories: ['개발']
-summary: 'performance 탭을 이용한 렌더링 시점 분석하기'
+summary: '크롬 DevTools의 performance 탭을 이용한 focus 이벤트 반영 시점 분석하기'
 ---
 
 ![](./img.webp)
@@ -278,14 +278,14 @@ reactstrap은 [Portal](https://github.com/reactstrap/reactstrap/blob/090bc1eeb19
 
 <br/>
 
-### 4. 모달 렌더링 시점 분석
+### 4. focus 이벤트 반영 시점
 
 지금까지 내용을 확인하고 난 뒤, 여전히 몇 가지 '찝찝함'이 남았다.  
 조금 더 명확하게 확인해보고 싶은데, 추측이 아닌 직접 눈으로 검증할 수 있는 방법은 없을까..?
 
 <br/>
 
-> 크롬 DevTools 중, performance을 이용해서 각 렌더링 시점을 알 수 있는 방법이 없을까?
+> 크롬 DevTools 중, performance을 이용해서 각 focus 이벤트 반영시점을 알 수 있는 방법이 없을까?
 
 이와 같은 고민을 하던 중, `console.time`을 활용하여 시작 시점과 종료 시점을 기록하면,  
 performance 탭의 Timings 섹션에서 해당 로그를 확인할 수 있다는 사실을 알게 되었다.
@@ -304,7 +304,7 @@ export const ReactStrapModal: React.FC<ModalComponentProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      // # useEffct → ❌
+      // # useEffect → ❌
       console.time('useEffect');
       inputRef.current?.focus();
       console.timeEnd('useEffect');
@@ -388,7 +388,7 @@ useEffect를 통한 focus를 시도했지만, Modal이 아직 렌더링 중이�
 
 ![callback ref → focus ❌](./ref-rendering.png)
 
-callback ref가 실행되었지만, Modal은 여전히 rendering 중이다.
+callback ref가 실행되었지만, Modal은 여전히 렌더링 중이다.
 
 <br/>
 
@@ -428,7 +428,7 @@ callback ref가 실행되었지만, Modal은 여전히 rendering 중이다.
 
 곰곰이 생각해보면, Modal Rendering이라고 표기했던 것은 onSearchList 함수가 호출된 이후 실행되는 일련의 동작들을 의미하며, 이를 통칭하여 Modal Rendering이라고 명명하였던 것이다.
 
-그럼, **Modal Rendering 도중에 focus를 DOM에 반영하는 로직이 포함되면 무조건 반영되지 않을 것일까?**
+그럼, **Modal 렌더링 도중에 focus를 DOM에 반영하는 로직이 포함되면 무조건 반영되지 않을 것일까?**
 
 focus를 반영하려는 ref가 input DOM 요소를 참조하게 될 때, 즉 요소가 생성되고 DOM에 삽입된 시점을 정확히 파악하여 focus를 설정해야한다.
 
@@ -517,7 +517,7 @@ callback-ref가 실행되고 난 뒤, setFocus가 잡힌다.
 리액트는 여전히 어렵다.  
 리액트에서 브라우저로 이어지는 렌더링 전체 과정을 이해하고 있다고 생각했는데, 조금만 복잡해져도 헤매기 일쑤다.
 
-이 모든 근원은 useEffect가 아니었나싶다.  
+이 모든 문제의 근원은 useEffect가 아니었나 싶다.  
 결국 **callback ref를 통해 처리하는게 명확한 방법**이었던 것 같다.  
 DOM이 반영될 때의 여부를 명확히 파악할 수 있으니 말이다.
 
