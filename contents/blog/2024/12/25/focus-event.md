@@ -2,23 +2,23 @@
 date: '2025-01-26'
 title: 'ReactStrap 모달 focus 이벤트'
 categories: ['개발']
-summary: 'performance tab을 이용한 렌더링 시점 분석하기'
+summary: 'performance 탭을 이용한 렌더링 시점 분석하기'
 ---
 
 ![](./img.webp)
 
 [이전 글](https://geuni620.github.io/blog/2024/12/9/dom-event/)에서 한 가지 문제가 더 존재했다.  
-바로 focus(이하 포커스)에 관련된 이벤트처리이다.
+바로 focus에 관련된 이벤트처리이다.
 
 물류센터의 사용자들은 키보드와 마우스를 사용하지 않는다고 했다.  
 대신, 바코드 스캐너에 의존한다.
 
 나의 역할은 최대한 사용자들이 바코드스캐너로만 필요한 모든 동작을 할 수 있도록 지원하는 일이다.  
-대표적인 것 중 하나가 Input에 포커스 되어있는 상태를 유지하는 것이다.
+대표적인 것 중 하나가 Input에 focus 되어있는 상태를 유지하는 것이다.
 
 <br/>
 
-### 1. useEffect + Ref
+### 1. useEffect와 Ref를 이용한 focus 관리
 
 처음 회사업무를 진행할 당시엔, 회사에서 이와 같은 코드를 사용하고 있어서 그대로 차용했었다.
 
@@ -27,7 +27,7 @@ summary: 'performance tab을 이용한 렌더링 시점 분석하기'
 export const App = () => {
    //...
   useEffect(() => {
-    // 모달이 닫힐 때 포커스 유지
+    // 모달이 닫힐 때 focus 유지
     if (!isModalOpen) {
       inputRef.current?.focus();
     }
@@ -58,7 +58,7 @@ export const ModalComponent: React.FC<ModalComponentProps> = ({
 
 ```
 
-useEffect의 dependency array로 isModalOpen을 추가한 뒤, 모달이 닫혔을 때도 포커스가 유지되도록 적용했다.
+useEffect의 dependency array로 isModalOpen을 추가한 뒤, 모달이 닫혔을 때도 focus가 유지되도록 적용했다.
 
 ![](./effect-ref-normal.gif)
 
@@ -110,11 +110,11 @@ export const ModalComponent: React.FC<ModalComponentProps> = ({
 
 ![](./effect-ref-react-strap.gif)
 
-모달창에서 포커스가 잡히지 않는다. 😭
+모달창에서 focus가 잡히지 않는다. 😭
 
 <br/>
 
-### 2. useEffect + Ref + requestAnimationFrame
+### 2. ReactStrap 모달에서의 focus 이슈와 requestAnimationFrame 활용
 
 이전 글에서도 언급했지만, 회사에서 급하게 일정이 잡힌 백로그라 원인을 파악하고 하나씩 개선하기보단, 일단 동작하도록 만드는게 우선되었다.  
 그래서 여러 방법을 찾아보다가, chatGPT에서 언급해준 [requestAnimationFrame](https://developer.mozilla.org/ko/docs/Web/API/Window/requestAnimationFrame)을 적용하니 원하는대로 동작했다.
@@ -200,7 +200,7 @@ Task Queue, Microtask Queue, Animation Queue를 통해 콜 스택이 비었는�
 
 <br/>
 
-### 3. 원인 분석 & 추측
+### 3. ReactStrap focus 문제의 원인 분석
 
 사실 reactstrap에서는 useEffect를 통한 focus를 적용하는 방법이 아닌, 권장하는 방법이 존재한다.  
 바로 **onOpened 메서드를 사용하는 것**이다.
@@ -278,7 +278,7 @@ reactstrap은 [Portal](https://github.com/reactstrap/reactstrap/blob/090bc1eeb19
 
 <br/>
 
-### 4. performance + console.time
+### 4. 모달 렌더링 시점 분석
 
 지금까지 내용을 확인하고 난 뒤, 여전히 몇 가지 '찝찝함'이 남았다.  
 조금 더 명확하게 확인해보고 싶은데, 추측이 아닌 직접 눈으로 검증할 수 있는 방법은 없을까..?
@@ -417,7 +417,7 @@ callback ref가 실행되었지만, Modal은 여전히 rendering 중이다.
 
 <br/>
 
-먼저 나는 console.time을 총 4곳에 반영했었고, 포커스가 적용된 여부에 대해 기록해두었다.
+먼저 나는 console.time을 총 4곳에 반영했었고, focus가 적용된 여부에 대해 기록해두었다.
 
 - useEffct → focus ❌
 - callback ref → focus ❌
@@ -428,15 +428,15 @@ callback ref가 실행되었지만, Modal은 여전히 rendering 중이다.
 
 곰곰이 생각해보면, Modal Rendering이라고 표기했던 것은 onSearchList 함수가 호출된 이후 실행되는 일련의 동작들을 의미하며, 이를 통칭하여 Modal Rendering이라고 명명하였던 것이다.
 
-그럼, **Modal Rendering 도중에 포커스를 DOM에 반영하는 로직이 포함되면 무조건 반영되지 않을 것일까?**
+그럼, **Modal Rendering 도중에 focus를 DOM에 반영하는 로직이 포함되면 무조건 반영되지 않을 것일까?**
 
-포커스를 반영하려는 ref가 input DOM 요소를 참조하게 될 때, 즉 요소가 생성되고 DOM에 삽입된 시점을 정확히 파악하여 focus를 설정해야한다.
+focus를 반영하려는 ref가 input DOM 요소를 참조하게 될 때, 즉 요소가 생성되고 DOM에 삽입된 시점을 정확히 파악하여 focus를 설정해야한다.
 
 **위 예시에서 "callback ref"인 경우**이다.
 
 - callback ref → focus ❌
 
-하지만 callback ref의 경우 포커스가 반영되지 않았다. 왜 일까..? 🤔  
+하지만 callback ref의 경우 focus가 반영되지 않았다. 왜 일까..? 🤔  
 고민하던 찰나, **내부코드에서 autoFocus가 default true로 되어있는 것을 확인**했다.
 
 <br/>
@@ -455,7 +455,7 @@ componentDidMount() {
 }
 ```
 
-reactstrap의 모달은 컴포넌트 마운트 시, autoFocus가 true일 경우 setFocus 메서드를 호출해서 포커스를 설정한다.
+reactstrap의 모달은 컴포넌트 마운트 시, autoFocus가 true일 경우 setFocus 메서드를 호출해서 focus를 설정한다.
 
 ```TSX
 // https://github.com/reactstrap/reactstrap/blob/090bc1eeb19bcc269970151d330c6bc03f731635/src/Modal.js#L295
@@ -470,13 +470,13 @@ setFocus() {
 }
 ```
 
-setFocus 모달 다이얼로그의 부모 요소에 포커스를 설정한다.  
+setFocus 모달 다이얼로그의 부모 요소에 focus를 설정한다.  
 참고로 dialog는 Modal 대화상자 컨테이너와 같다.
 
 ![](./dialog-modal.png)
 
 this.\_dialog.parentNode의 focus를 맞추니, 이미지에서 확인할 수 있는 modal 자체를 focus로 잡는다.  
-즉 **modal-dialog의 부모를 포커스로 잡는 것**이다.
+즉 **modal-dialog의 부모를 focus로 잡는 것**이다.
 
 ```TSX
 <div class="modal fade show" ...>
@@ -491,7 +491,7 @@ autoFocus를 false로 둔 상태에서 동일하게 동작시켜보았다.
 
 <br/>
 
-### 6. 그럼 어떻게?
+### 6. callback ref와 autoFocus 간 focus 우선순위 확인
 
 autoFocus를 false로 둔 상태에서, callback ref를 사용하면 focus가 잡힌다는 사실을 알았다.  
 그럼 autoFocus 때문에 callback ref의 focus가 덮혔던걸까? 무시된건가? 또, 이를 어떻게 확인할 수 있을까?
@@ -512,7 +512,7 @@ callback-ref가 실행되고 난 뒤, setFocus가 잡힌다.
 
 <br/>
 
-### 마무리
+### 7. 마무리
 
 리액트는 여전히 어렵다.  
 리액트에서 브라우저로 이어지는 렌더링 전체 과정을 이해하고 있다고 생각했는데, 조금만 복잡해져도 헤매기 일쑤다.
