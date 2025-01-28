@@ -517,9 +517,15 @@ callback-ref가 실행되고 난 뒤, setFocus가 잡힌다.
 리액트는 여전히 어렵다.  
 리액트에서 브라우저로 이어지는 렌더링 전체 과정을 이해하고 있다고 생각했는데, 조금만 복잡해져도 헤매기 일쑤다. 🤦‍♂️
 
-다시 처음으로 돌아가서, reactstrap에서 useEffect만으로 focus가 제대로 동작하지 않았던 이유는, **callback-ref나 useEffect 통해 반영된 input의 focus가, reactstrap의 autoFocus 속성(true)으로 인해 내부적으로 실행되는 setFocus에 의해 덮여졌기 때문**이다.
+다시 처음으로 돌아가서, reactstrap에서 useEffect만으로 focus가 제대로 동작하지 않았던 이유는 **useEffect가 실행되는 시점에 reactstrap의 Modal이 아직 생성되지 않았기 때문이다. 그 결과 inputRef.current가 null 상태이며, focus를 설정할 수 없다.**  
+일반 엘리멘트(element)일 경우 useEffect를 통해서 focus가 잡히지만, reactstrap에서 잡히지 않는 이유는, **Portal, Transition에 의한 지연 때문인 것으로 추측**된다. (블로그 글에 추가하진 못했지만, 부모에서 useEffect가 실행되고 이후, Modal의 Portal, Transition이 실행되는 것을 확인했다.)
+
+**그럼 DOM이 정확히 렌더링된 직후에 focus를 적용하려면 어떻게 해야할까?**  
+callback-ref를 통해 반영하면 된다. 하지만 reactstrap은 autoFocus 속성(true)으로 인해 내부적으로 실행되는 setFocus가 callback-ref의 focus를 덮어버리는 현상이 발생했었다. 그래서 autoFocus를 false로 설정해주면 잘 반영된다.
 
 **requestAnimation이나 onOpened를 통해 input에 focus가 설정될 수 있었던 이유는, reactstrap의 setFocus가 실행된 이후에 해당 로직이 실행되어 focus를 다시 input으로 되돌렸기 때문**이었다.
+
+<br/>
 
 이 모든 문제의 근원은 autoFocus가 아니었나 싶다.  
 결국 **callback ref를 통해 처리하는게 명확한 방법**이었던 것 같다.  
@@ -527,11 +533,28 @@ DOM이 반영될 때의 여부를 명확히 파악할 수 있으니 말이다.
 
 <br/>
 
-사실 이 글을 작성하며, 여러 방법에 대해 고민했다.  
-Portal이 문제인건지, Transition의 지연때문인지, 아니면 다른 요인이 있는건지,  
-requestAnimation이나 setTimout으로 가능은 하지만, 결국 useEffect를 사용해야하는게 마음에 들지 않았다.
+**[번외 I]**
 
-onOpened 메서드를 사용하면 문제를 해결할 수는 있지만, 다른 방법이 왜 안되는지 모르는 상황이 답답해서 이렇게까지 확인해보고 싶었던 것 같다.
+번외로 하나 더 알아봤던 내용을 기록차 남겨둔다.  
+정확한 원인은 파악하지 못했고, 어디까지나 추측이다.
+
+[4. focus 이벤트 반영 시점](https://geuni620.github.io/blog/2024/12/25/focus-event/#4-focus-%EC%9D%B4%EB%B2%A4%ED%8A%B8-%EB%B0%98%EC%98%81-%EC%8B%9C%EC%A0%90)을 살펴보면, useEffect → callback-ref 순으로 실행되는 것을 볼 수 있다. 생각해보면, callback-ref가 실행되고 난 뒤, useEffect가 실행되어야할 것 같은데, 왜 이렇게 동작하는걸까?
+
+reactstrap의 모달 컴포넌트 때문이다.  
+모달 컴포넌트를 주석처리한 뒤 확인해본 결과, callback-ref → useEffect 순으로 동작한다.  
+그럼 Modal 내부에서 어떠한 영향에 의해 다음과 같이 동작하는 것 같은데, 명확한 원인은 잘 모르겠다. 😭
+
+추측 정도만 가는데, Portal, Transition 등이 영향을 받을 것 같고, Modal이나 Portal, Transition에서 리액트의 라이프사이클을 깨트리는, DOM을 직접 생성하거나, 추가하는 로직이 존재한다. 이 때문에 확인이 어려웠다.  
+대략적으로 다음과 같은 순서로 동작했다.
+
+Modal init > useEffect > Portal > callback-ref  
+추후 기회가 된다면 다시 살펴봐야겠다.
+
+<br/>
+
+**[번외 II]**
+
+사실 동작만 가능하게 하려면, requestAnimation이나, setTimeout으로 잘 동작하고, onOpened 메서드를 사용해도 문제없이 잘 동작한다. 하지만 당시 내 주된 관심사는 **잘 동작하는 코드보다, 동작하지 않는 코드가 왜 동작하지 않는지 모르는 상황이 답답해서 이렇게까지 확인해보고 싶었다.**
 
 또, 이를 눈으로 볼 수 없는 상황이 답답했다.  
 테스트코드를 통해 focus의 반영여부를 DOM에서 확인할 수 있겠지만, 난 항상 순서가 궁금하다.  
@@ -549,7 +572,7 @@ onOpened 메서드를 사용하면 문제를 해결할 수는 있지만, 다른 
 console.time을 제안해준 것도 chatGPT이다.  
 <small>claude와 함께 reactstrap을 벤치마킹해서 같이 구현해보던 중, 원인을 파악했다고 생각했는데 claude가 말을 바꾼 적도 있다. 👊</small>
 
-이러나 저러나, 겉으로 보이는 현상 너머의 본질을 파악하는 것의 중요성을 깨달았다.  
+이러나 저러나, **겉으로 보이는 현상 너머의 본질을 파악하는 것의 중요성을 깨달았다.**  
 단순히 문제를 해결하는 것에 그치지 않고 '왜'라는 질문을 끊임없이 던져봤던 시간이었다.
 
 앞으로 useEffect에 대한 시점을 분석할 일이 있다면 performance를 적극 사용해볼 것 같다.  
