@@ -515,11 +515,17 @@ callback-ref가 실행되고 난 뒤, setFocus가 잡힌다.
 ### 7. 마무리
 
 리액트는 여전히 어렵다.  
-리액트에서 브라우저로 이어지는 렌더링 전체 과정을 이해하고 있다고 생각했는데, 조금만 복잡해져도 헤매기 일쑤다.
+리액트에서 브라우저로 이어지는 렌더링 전체 과정을 이해하고 있다고 생각했는데, 조금만 복잡해져도 헤매기 일쑤다. 🤦‍♂️
 
-이 모든 문제의 근원은 useEffect가 아니었나 싶다.  
+다시 처음으로 돌아가서, reactstrap에서 useEffect만으로 focus가 제대로 동작하지 않았던 이유는, **callback-ref나 useEffect 통해 반영된 input의 focus가, reactstrap의 autoFocus 속성(true)으로 인해 내부적으로 실행되는 setFocus에 의해 덮여졌기 때문**이다.
+
+**requestAnimation이나 onOpened를 통해 input에 focus가 설정될 수 있었던 이유는, reactstrap의 setFocus가 실행된 이후에 해당 로직이 실행되어 focus를 다시 input으로 되돌렸기 때문**이었다.
+
+이 모든 문제의 근원은 autoFocus가 아니었나 싶다.  
 결국 **callback ref를 통해 처리하는게 명확한 방법**이었던 것 같다.  
 DOM이 반영될 때의 여부를 명확히 파악할 수 있으니 말이다.
+
+<br/>
 
 사실 이 글을 작성하며, 여러 방법에 대해 고민했다.  
 Portal이 문제인건지, Transition의 지연때문인지, 아니면 다른 요인이 있는건지,  
