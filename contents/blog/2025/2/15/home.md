@@ -5,7 +5,7 @@ categories: ['일상']
 summary: '새로운 공간으로,'
 ---
 
-> 이사가요. 새로운 공간으로
+> 이사가요. [새로운 공간](https://www.geuni.me/)으로
 
 ![](./img.webp)
 
