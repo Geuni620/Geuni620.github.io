@@ -15,10 +15,12 @@ const ProfileImage: FunctionComponent = function () {
   `)
 
   return (
-    <ProfileImageWrapper
-      image={file.childImageSharp.gatsbyImageData}
-      alt="Profile Image"
-    />
+    <React.Fragment>
+      <ProfileImageWrapper
+        image={file.childImageSharp.gatsbyImageData}
+        alt="Profile Image"
+      />
+    </React.Fragment>
   )
 }
 

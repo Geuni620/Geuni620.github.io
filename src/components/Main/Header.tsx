@@ -33,6 +33,11 @@ const Header: FunctionComponent = function () {
         <Link to="/">
           <ProfileImage />
         </Link>
+        <SpeechBubble>
+          <StyledLink target="_blank" to="https://www.geuni.me/">
+            블로그를 옮겼어요.
+          </StyledLink>
+        </SpeechBubble>
       </Wrapper>
     </Background>
   )
@@ -60,11 +65,61 @@ const Background = styled.header<VisibleProps>`
 `
 
 const Wrapper = styled.div`
+  position: relative;
   display: flex;
   margin: 0 auto;
   padding: 10px 60px;
 
   @media (max-width: 768px) {
     padding: 10px 20px;
+  }
+`
+
+const SpeechBubble = styled.div`
+  position: absolute;
+  top: 2rem;
+  left: 7rem;
+  padding: 0.5rem 1rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  animation: float 2s ease-in-out infinite;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 20%;
+    transform: translateY(-50%);
+    border: 4px solid transparent;
+    border-right-color: white;
+    rotate: 10deg;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+
+  @media (max-width: 768px) {
+    left: 4.5rem;
+  }
+`
+
+const StyledLink = styled(Link)`
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: #3182ce;
+  text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #2c5282;
   }
 `
