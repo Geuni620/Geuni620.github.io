@@ -149,6 +149,9 @@ span {
 
 ## 2-3. inline-flex
 
+> update: 2025-03-15  
+> [inline-flex를 재정리한 글](https://www.geuni.me/blog/2025/03/15/flex)을 업데이트 했습니다.
+
 - 다음과 같은 코드가 있다.
 
 ```HTML
