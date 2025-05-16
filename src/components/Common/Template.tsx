@@ -71,6 +71,10 @@ const Template: FunctionComponent<TemplateProps> = function ({
         <link rel="manifest" href="assets/favicon/site.webmanifest" />
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="theme-color" content="#ffffff"></meta>
+        <meta
+          name="google-adsense-account"
+          content="ca-pub-9901489090188954"
+        ></meta>
 
         <html lang="ko" />
       </Helmet>
