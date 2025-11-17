@@ -61,6 +61,8 @@
     "start": "npm run develop",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
-    "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
+    "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1",
+    "add-scrap": "./scripts/add-scrap.sh",
+    "add-scrap-auto": "./scripts/add-scrap-auto.sh"
   }
 }
