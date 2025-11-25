@@ -30,7 +30,10 @@
    - 새 브랜치 생성: `add-scrap-{timestamp}`
    - 변경사항 커밋: `git add [파일] && git commit -m "Add scrap link: [제목]"`
    - 푸시: `git push -u origin [브랜치명]`
-6. **PR 링크 생성**: scrap 브랜치로 머지할 수 있는 PR 링크 표시
+6. **PR 생성**: 
+   - `~/.cursor_gh_token` 파일에서 토큰을 읽어서 사용
+   - `GH_TOKEN=$(cat ~/.cursor_gh_token) gh pr create --base scrap ...`
+   - **scrap 브랜치로 머지하는 PR 생성**
 
 ## 스크랩 파일 포맷
 
@@ -48,6 +51,7 @@
 - 사용자가 구체적인 설명 없이 "스크랩 추가해줘"라고만 해도 자동으로 처리
 - URL이 포함되어 있으면 자동으로 스크랩 추가 작업 시작
 - 무조건 새롭게 브랜치를 만들고, PR을 작성 → scrap 브랜치로 머지할 수 있게 해야함
+- **GitHub 토큰은 `~/.cursor_gh_token` 파일에서 읽어서 사용**
 
 ## 예시
 
