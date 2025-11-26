@@ -26,11 +26,14 @@
    [제목](링크)
    ```
    - 파일 끝에 `<br/>` 후 새 항목 추가
-5. **Git 작업**:
-   - 새 브랜치 생성: `add-scrap-{timestamp}`
+5. **기존 PR 확인**:
+   - `gh pr list --base scrap --state open`으로 scrap을 base로 하는 열린 PR 확인
+   - **PR이 있으면**: 해당 PR의 브랜치로 체크아웃하여 내용 추가
+   - **PR이 없으면**: 새 브랜치 생성 (`add-scrap-{timestamp}`)
+6. **Git 작업**:
    - 변경사항 커밋: `git add [파일] && git commit -m "Add scrap link: [제목]"`
-   - 푸시: `git push -u origin [브랜치명]`
-6. **PR 생성**: 
+   - 푸시: `git push origin [브랜치명]`
+7. **PR 생성 (기존 PR이 없을 경우에만)**:
    - `~/.cursor_gh_token` 파일에서 토큰을 읽어서 사용
    - `GH_TOKEN=$(cat ~/.cursor_gh_token) gh pr create --base scrap ...`
    - **scrap 브랜치로 머지하는 PR 생성**
@@ -47,16 +50,19 @@
 
 - 항상 현재 날짜의 스크랩 파일을 사용
 - 링크에서 제목을 자동으로 가져오되, 실패 시 사용자에게 수동 입력 요청
-- scrap 브랜치로 머지할 수 있는 PR을 생성해야 함
+- **스크랩 PR은 1개로 관리** (scrap 브랜치를 base로 하는 열린 PR)
 - 사용자가 구체적인 설명 없이 "스크랩 추가해줘"라고만 해도 자동으로 처리
 - URL이 포함되어 있으면 자동으로 스크랩 추가 작업 시작
-- 무조건 새롭게 브랜치를 만들고, PR을 작성 → scrap 브랜치로 머지할 수 있게 해야함
+- **기존 scrap PR이 있으면**: 해당 브랜치에 커밋 추가 (새 PR 생성 X)
+- **기존 scrap PR이 없으면**: 새 브랜치 생성 후 PR 생성
 - **GitHub 토큰은 `~/.cursor_gh_token` 파일에서 읽어서 사용**
 
 ## 예시
 
+### 기존 PR이 없는 경우
 사용자: "스크랩 추가해줘: https://example.com/article"
-→ 자동으로 링크 추출, 제목 가져오기, 파일 추가, 커밋, 푸시, PR 링크 표시
+→ 자동으로 링크 추출, 제목 가져오기, 파일 추가, 새 브랜치 생성, 커밋, 푸시, PR 생성
 
+### 기존 PR이 있는 경우
 사용자: "https://velog.io/@user/post"
-→ URL만 있어도 자동으로 스크랩 추가 작업 시작
+→ 기존 PR 브랜치로 체크아웃, 파일에 내용 추가, 커밋, 푸시 (PR 자동 업데이트됨)
