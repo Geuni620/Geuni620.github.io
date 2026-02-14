@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: https://geuni620.github.io/sitemap-index.xml
+Host: https://geuni620.github.io
