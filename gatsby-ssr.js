@@ -1,7 +1,11 @@
-/**
- * Implement Gatsby's SSR (Server Side Rendering) APIs in this file.
- *
- * See: https://www.gatsbyjs.com/docs/ssr-apis/
- */
+const React = require('react')
 
-// You can delete this file if you're not using it
+exports.onRenderBody = ({ setHeadComponents }) => {
+  setHeadComponents([
+    React.createElement('meta', {
+      key: 'google-adsense-account',
+      name: 'google-adsense-account',
+      content: 'ca-pub-9901489090188954',
+    }),
+  ])
+}
